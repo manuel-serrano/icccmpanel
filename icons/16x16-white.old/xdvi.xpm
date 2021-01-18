@@ -1,0 +1,24 @@
+/* XPM */
+static char *xdvi[] = {
+/* columns rows colors chars-per-pixel */
+"16 14 4 1",
+"  c black",
+". c #C0C0C0",
+"X c gray100",
+"o c None",
+/* pixels */
+" X....X...XX ooo",
+" XXXXXXXXXXX ooo",
+" X.XX.   .XX ooo",
+" XXX. XXX .X ooo",
+" X.X XX.XX X ooo",
+" XXX XX..X X ooo",
+" XXX XXXXX X ooo",
+" XXX. XXX  X ooo",
+" ..X..    X  ooo",
+" .X...XXXX X ooo",
+" ..XX.XXXXX X oo",
+" .X..XXXXXXX X o",
+"o           o X ",
+"oooooooooooooo o"
+};

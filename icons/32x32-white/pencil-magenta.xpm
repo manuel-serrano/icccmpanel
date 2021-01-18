@@ -1,0 +1,34 @@
+/* XPM */
+static char *pencil-magenta[] = {
+/* width height num_colors chars_per_pixel */
+"    16    14       13            1",
+/* colors */
+". c #000000",
+"# c #303030",
+"a c #00003f",
+"b c #7a007f",
+"c c #808080",
+"d c #a0a0a0",
+"e c #b300c1",
+"f c #c3c3c3",
+"g c #cecece",
+"h c #d2d2d2",
+"i c #dcdcdc",
+"j c #c0c0ff",
+"k c None",
+/* pixels */
+"kkkkkkkkkbejeeeb",
+"kkkkkkkkbejeeebb",
+"kkkkkkkbejeeebb.",
+"kkkkkkbejeeebb.k",
+"kkkkkbejeeebb.kk",
+"kkkkbejeeebb.kkk",
+"kkkbejeeebb.kkkk",
+"kkkkfeeebb.kkkkk",
+"kkikifebb.kkkkkk",
+"kkkiffcb.kkkkkkk",
+"kkiffc#.kkkkkkkk",
+"kefd#.kkkkkkkkkk",
+"eba.kkkkkkkkkkkk",
+"baghkkkkkkkkkkkk"
+};

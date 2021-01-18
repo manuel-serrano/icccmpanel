@@ -1,0 +1,22 @@
+/* XPM */
+static char *gv[] = {
+/* width height num_colors chars_per_pixel */
+"    16    12        3            1",
+/* colors */
+". c gray",
+"# c #000000",
+"a c #f8fcf8",
+/* pixels */
+".....####.......",
+"....#aaaa#......",
+"...#aaaaaa#.....",
+"...#aaaaaa#.....",
+"..##a#aa#a###...",
+".#aaa#aa#a#aa#..",
+".#aaaaaaaaaaa#..",
+"..#aaaaaaaaa#...",
+"...#aaaaaaa#....",
+"...#aaaaaaa#....",
+"...#aaaaaaa#....",
+"..#aaaaaaaaa#...",
+};

@@ -1,0 +1,85 @@
+#*=====================================================================*/
+#*    serrano/prgm/utils/icccmpanel/Makefile.in                        */
+#*    -------------------------------------------------------------    */
+#*    Author      :  Manuel Serrano                                    */
+#*    Creation    :  Sat Oct 11 05:26:43 2003                          */
+#*    Last change :  Wed Mar 27 08:40:53 2019 (serrano)                */
+#*    Copyright   :  2003-19 Manuel Serrano                            */
+#*    -------------------------------------------------------------    */
+#*    The Makefile to build ICCCMPANEL                                 */
+#*=====================================================================*/
+
+#*---------------------------------------------------------------------*/
+#*    Compilers and flags                                              */
+#*---------------------------------------------------------------------*/
+CC	= gcc
+#CFLAGS	= -g -I/usr/X11R6/include -DHAVE_XPM -DDEBUG
+#LDFLAGS	= -g -L/usr/X11R6/lib -lX11 -lXpm
+#CFLAGS	= -O2 -I/usr/X11R6/include -DHAVE_XPM -DNOSTDLIB -nostdlib
+STRIP	= -s
+EFLAGS  = -O2 $(STRIP)
+CFLAGS	= $(EFLAGS) -I/usr/X11R6/include -DHAVE_XPM
+LDFLAGS	= $(EFLAGS) -L/usr/X11R6/lib -lX11 -lXpm @LIBIW@
+NAME	= icccmpanel
+RELEASE	= @RELEASE@
+
+#*---------------------------------------------------------------------*/
+#*    Directories                                                      */
+#*---------------------------------------------------------------------*/
+PREFIX	= @PREFIX@
+
+#*---------------------------------------------------------------------*/
+#*    Objects                                                          */
+#*---------------------------------------------------------------------*/
+OBJECTS	= main.o mstk.o list.o evloop.o tooltips.o config.o \
+          taskbar.o area.o read.o \
+          grip.o desktop.o hfill.o clock.o app.o icons.o command.o cron.o \
+          systray.o wifi.o applet.o hibernate.o volume.o mixer.o exec.o \
+          battery.o
+INCLUDES= iccmppanel.h mstk.h list.h evloop.h tooltips.h config.h \
+          taskbar.h area.h \
+          grip.h desktop.h hfill.h clock.h app.h icons.h command.h cron.h \
+          systray.h wifi.h applet.h hibernate.h volume.h mixer.h exec.h \
+          battery.h
+XPM	= # icon.xpm larrow.xpm rarrow.xpm
+
+#*---------------------------------------------------------------------*/
+#*    SUFFIXES                                                         */
+#*---------------------------------------------------------------------*/
+.SUFFIXES:
+.SUFFIXES: .c .h .o
+
+#*---------------------------------------------------------------------*/
+#*    Targets                                                          */
+#*---------------------------------------------------------------------*/
+.PHONY: all
+
+all: $(NAME)
+
+$(NAME): Makefile $(OBJECTS)
+	$(CC) $(CFLAGS) $(OBJECTS) -o $(NAME) $(LDFLAGS)
+
+clean:
+	/bin/rm -f $(OBJECTS) $(NAME)
+
+distclean: clean
+	/bin/rm -f configure.h
+	/bin/rm -f Makefile
+	/bin/rm -f icccmpanelrc/icccmpanelrc
+
+install:
+	install -m a+rx -d $(PREFIX)/bin
+	install -m a+rx -d $(PREFIX)/share/$(NAME)
+	install -m a+rx $(STRIP) $(NAME) $(PREFIX)/bin/$(NAME)
+	/bin/rm -rf $(PREFIX)/share/$(NAME)/icons
+	cp -r icons $(PREFIX)/share/$(NAME)/icons
+	chmod a+rx -R $(PREFIX)/share/$(NAME)/icons
+
+uninstall:
+	/bin/rm $(PREFIX)/bin/$(NAME)
+
+#*---------------------------------------------------------------------*/
+#*    Dependencies                                                     */
+#*---------------------------------------------------------------------*/
+# DO NOT DELETE
+

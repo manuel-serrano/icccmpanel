@@ -1,0 +1,82 @@
+;; font
+(font "-*-lucidatypewriter-medium-r-normal-*-10-100-75-75-m-60-iso8859-*")
+(font-bold "-*-lucidatypewriter-bold-r-normal-*-10-100-75-75-m-60-iso8859-*")
+(font-tooltips "-*-lucidatypewriter-bold-r-normal-*-10-100-75-75-m-60-iso8859-*")
+
+;; icon-path:
+;;    (icon-path <path>)
+(icons-path "@PREFIX@/share/icccmpanel/icons/16x14")
+
+;; auto-hiding:
+;;    (auto-hide <#t|#f>)
+(auto-hide #f)
+
+;; icons description:
+;;    (icons (icon <string> {:name <string>}? <string>)*)
+(icons-descr
+  ("Emacs" :name "^[*]" "emacs-mod.xpm")
+  ("Emacs" "emacs.xpm")
+  ("XTerm" "term.xpm")
+  ("Mozilla" "moz.xpm")
+  ("Bbdb" "who.xpm")
+  ("XDvi" "xdvi.xpm")
+  ("Sylpheed" "email.xpm")
+  ("Mozilla-bin" "mozilla.xpm")
+  ("Firefox-bin" "mozilla2.xpm")
+  ("Firefox" "fennec.xpm")
+  ("navigator:browser" "mozilla.xpm")
+  ("Dillo" "dillo.xpm")
+  ("XVroot" "xv.xpm")
+  ("GV" "gv.xpm")
+  ("Gimp" "gimp.xpm")
+  ("toolbox" "gimp.xpm")
+  ("AcroRead" "acroread.xpm")
+  ("Xpdf" "acroread.xpm")
+  ("xfig" "xfig.xpm")
+  ("Grip" "cd.xpm")
+  ("Unison" "floppy.xpm")
+  ("Skype" "skype.xpm")
+  ("Bbdb" "who.xpm"))
+
+;; taskbar dimensions:
+;;    (dimension <signed-integer>)
+(taskbar-height 19)
+(taskbar-width -1)
+(taskbar-x -1)
+(taskbar-y -1)
+
+;; the grip:
+;;    (grip {:width <integer>}?)
+(grip :width 9)
+
+;; the desktop:
+;;    (desktop {:width <integer>}?)
+(desktop :width 40)
+
+;; a hfill:
+;;    (hfill {:width <integer>}?)
+(hfill :width 5)
+
+;; the apps:
+;;    (apps {:command <#t|#f>}? {:command-icon <path>}?
+;;          (<string> :icon <name>)*)
+(apps :command #t :command-icon "exec.xpm"
+      ("emacs" :icon "emacs.xpm")
+      ("mozilla" :icon "moz.xpm")
+      ("term" :icon "term.xpm")
+      ("bbdb" :icon "who.xpm")
+      ("skype" :icon "skype.xpm"))
+(hfill :width 5)
+
+;; the icons
+;;    (icons {:width <integer>}? {:mapped <#t|#f>}? {:all-desktop <#t|#f>}?)
+(icons :width 0)
+
+;; a system tray
+(tray)
+
+(hfill :width 5)
+
+;; a clock:
+;;    (clock {:width <integer>}?)
+(clock :width 40)
