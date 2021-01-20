@@ -4,7 +4,7 @@
 #*    Author      :  Manuel Serrano                                    */
 #*    Creation    :  Sat Oct 11 05:26:43 2003                          */
 #*    Last change :  Wed Mar 27 08:40:53 2019 (serrano)                */
-#*    Copyright   :  2003-19 Manuel Serrano                            */
+#*    Copyright   :  2003-21 Manuel Serrano                            */
 #*    -------------------------------------------------------------    */
 #*    The Makefile to build ICCCMPANEL                                 */
 #*=====================================================================*/
@@ -16,8 +16,8 @@ CC	= gcc
 #CFLAGS	= -g -I/usr/X11R6/include -DHAVE_XPM -DDEBUG
 #LDFLAGS	= -g -L/usr/X11R6/lib -lX11 -lXpm
 #CFLAGS	= -O2 -I/usr/X11R6/include -DHAVE_XPM -DNOSTDLIB -nostdlib
-STRIP	= -s
-EFLAGS  = -O2 $(STRIP)
+STRIP	= @STRIP@
+EFLAGS  = @CFLAGS@ $(STRIP)
 CFLAGS	= $(EFLAGS) -I/usr/X11R6/include -DHAVE_XPM
 LDFLAGS	= $(EFLAGS) -L/usr/X11R6/lib -lX11 -lXpm @LIBIW@
 NAME	= icccmpanel
