@@ -4,7 +4,7 @@
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Fri Oct 17 22:18:02 2003                          */
 /*    Last change :  Sat Nov 30 10:30:08 2019 (serrano)                */
-/*    Copyright   :  2003-19 Manuel Serrano                            */
+/*    Copyright   :  2003-21 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    The parsing of the MSpanel config file.                          */
 /*=====================================================================*/
@@ -258,7 +258,7 @@ default_config( config_t *config ) {
    len = strlen( ICCCMPANEL_PREFIX ) +
       strlen( ICCCMPANEL_DIR ) + 
       strlen( ICCCMPANEL_ICON_DIR ) +
-      strlen( "16x16" ) + 2 + 1;
+      strlen( "16x16" ) + 3 + 1;
    dir = malloc( len );
    sprintf( dir, "%s/%s/%s/%s",
 	    ICCCMPANEL_PREFIX,
