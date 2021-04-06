@@ -4,7 +4,7 @@
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Thu Jul 22 14:32:38 2004                          */
 /*    Last change :  Sat Nov 30 10:41:57 2019 (serrano)                */
-/*    Copyright   :  2004-19 Manuel Serrano                            */
+/*    Copyright   :  2004-21 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    Taskbar management                                               */
 /*=====================================================================*/
@@ -458,6 +458,7 @@ taskbar_register_xclients( taskbar_t *tbar ) {
    wins = get_window_prop_data( disp, root_win,
 				atom__NET_CLIENT_LIST, XA_WINDOW,
 				&num );
+
    /* check all the windows */
    for( i = 0; i < num; i++ ) {
       Window w = wins[ i ];

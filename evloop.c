@@ -4,7 +4,7 @@
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Fri Jul 23 05:59:11 2004                          */
 /*    Last change :  Sat Apr 20 16:10:36 2019 (serrano)                */
-/*    Copyright   :  2004-19 Manuel Serrano                            */
+/*    Copyright   :  2004-21 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    Event loop                                                       */
 /*=====================================================================*/
@@ -149,7 +149,7 @@ evloop( taskbar_t *tbar ) {
 
       while( XPending( tbar->xinfo->disp ) ) {
 	 XNextEvent( tbar->xinfo->disp, &ev );
-	 
+
 	 switch( ev.type ) {
 	    case ButtonPress:
 	       // reset the possible timeout
@@ -213,7 +213,7 @@ evloop( taskbar_t *tbar ) {
 	 }
       }
 
-      // once all the pending events have been handled, we process
+      // once all pending events have been handled, we process
       // the last leave/enter event for the tbar window
       switch( evt ) {
 	 case EnterNotify:
