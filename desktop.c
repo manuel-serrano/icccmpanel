@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Fri Jul 23 22:15:38 2004                          */
-/*    Last change :  Sat Nov 30 10:37:58 2019 (serrano)                */
+/*    Last change :  Thu Oct 28 08:07:28 2021 (serrano)                */
 /*    Copyright   :  2004-21 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    The desktop                                                      */
@@ -40,9 +40,6 @@ static char *desktop_names[] = { "one", "two", "three",
 #define DESKTOPNAMES_COUNT \
   (sizeof( desktop_names ) / sizeof( desktop_names[ 0 ]) )
 
-// DEBUG
-static long K = 0;
-
 /*---------------------------------------------------------------------*/
 /*    static void                                                      */
 /*    refresh_desktop ...                                              */
@@ -59,7 +56,9 @@ refresh_desktop( area_t *ar ) {
    int desktop = current_desktop( xinfo->disp, xinfo->root_win );
 
    // DEBUG
-   fprintf( stderr, "refresh_desktop dk=%d (%d)\n", desktop, K++ );
+#if (DEBUG !=0)   
+   fprintf(stderr, "DESKTOP: refresh %d **************************\n", desktop);
+#endif
    
    /* compute the desktop info */
    if( desktop > DESKTOPNAMES_COUNT ) {

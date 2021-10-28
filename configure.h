@@ -10,7 +10,7 @@
 /*    The auto-configuration                                           */
 /*=====================================================================*/
 
-#if( !defined( MSPANEL_CONFIGURE_H ) )
+#if (!defined( MSPANEL_CONFIGURE_H))
 #define MSPANEL_CONFIGURE_H
 
 #define ICCCMPANEL_RELEASE "1.4.3"
@@ -19,6 +19,8 @@
 #define ICCCMPANEL_ICON_DIR "icons"
 
 #define HAVE_LIBIW 0
+
+#define DEBUG 1
 
 #endif
 

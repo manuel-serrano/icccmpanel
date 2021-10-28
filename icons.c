@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Thu Jul 22 15:21:17 2004                          */
-/*    Last change :  Sat Nov 30 10:42:30 2019 (serrano)                */
+/*    Last change :  Thu Oct 28 07:58:55 2021 (serrano)                */
 /*    Copyright   :  2004-21 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    The icons.                                                       */
@@ -95,9 +95,10 @@ xcli_unmap_window( taskbar_t *tbar, xclicon_t *xcli ) {
 /*    xclicon_showp ...                                                */
 /*---------------------------------------------------------------------*/
 char
-xclicon_showp( xclicon_t *xcli, ipicons_t *ip, taskbar_t *tbar ) {
-   return ( (ip->icon_all_desktop || (tbar->desktop == xcli->xcl->desktop) ) &&
-	    (ip->icon_mapped || xcli->xcl->unmappedp) );
+xclicon_showp(xclicon_t *xcli, ipicons_t *ip, taskbar_t *tbar) {
+   return ((ip->icon_all_desktop || (tbar->desktop == xcli->xcl->desktop))
+	   &&
+	   (ip->icon_mapped || xcli->xcl->unmappedp));
 }
 
 /*---------------------------------------------------------------------*/
@@ -105,23 +106,16 @@ xclicon_showp( xclicon_t *xcli, ipicons_t *ip, taskbar_t *tbar ) {
 /*    refresh_xclicon ...                                              */
 /*---------------------------------------------------------------------*/
 void
-refresh_xclicon( area_t *ar ) {
+refresh_xclicon(area_t *ar) {
    taskbar_t *tbar = ar->taskbar;
    Xinfo_t *xinfo = tbar->xinfo;
    xclicon_t *xcli = (xclicon_t *)ar;
    config_t *config = tbar->config;
    int relief = config->relief;
 
-   fprintf( stderr, "name=%s show=%d (cur.desktop=%d/%d) mapped=%d cli.unmapped=%d\n",
-	    xcli->xcl->name,
-	    ( xclicon_showp( xcli, (ipicons_t *)(ar->parent), tbar ) ),
-	    xcli->xcl->desktop, tbar->desktop, 
-	    ((ipicons_t *)(ar->parent))->icon_mapped,
-	    xcli->xcl->unmappedp );
-   
-   if( xclicon_showp( xcli, (ipicons_t *)(ar->parent), tbar ) ) {
+   if (xclicon_showp(xcli, (ipicons_t *)(ar->parent), tbar)) {
       char *name = xcli->xcl->name;
-      int len = strlen( name );
+      int len = strlen(name);
       Pixmap icon = xcli->xcl->icon;
       int text_x, text_y, text_w;
       int image_width = ar->height;
@@ -132,28 +126,28 @@ refresh_xclicon( area_t *ar ) {
       int grey = (0xa0 + step*h) > 255 ? 255 - step*h : 0xa0;
 
       /* the new dimension of the window area */
-      XMoveResizeWindow( xinfo->disp, ar->win, ar->x, 0, ar->width, ar->height );
+      XMoveResizeWindow(xinfo->disp, ar->win, ar->x, 0, ar->width, ar->height);
    
       /* the background */
-      draw_gradient( xinfo, ar->win,
-		     tbar->aborder, relief,
-		     w, h,
-		     mstk_grey_palette, 0,
-		     config->gradient_step, config->gradient_substep );
+      draw_gradient(xinfo, ar->win,
+		    tbar->aborder, relief,
+		    w, h,
+		    mstk_grey_palette, 0,
+		    config->gradient_step, config->gradient_substep);
 
       /* the position of the texts */
       text_w = ar->width;
       text_y = xinfo->xfsb->ascent + ((ar->height - xinfo->xfsb->ascent) / 3);
 
       /* draw the icon and compute the position of the icon name */
-      if( icon &&
-	  (text_w > (image_width+2*XCLICON_IMAGE_PADDING+(2*tbar->aborder))) ) {
+      if (icon &&
+	  (text_w > (image_width+2*XCLICON_IMAGE_PADDING+(2*tbar->aborder)))) {
 	 Pixmap mask = xcli->xcl->mask;
 	 int w = xcli->xcl->icon_width;
 	 int h = xcli->xcl->icon_height;
       
-	 draw_pixmap( xinfo, ar->win, icon, mask,
-		      xcli->icon_x, xcli->icon_y, xcli->icon_w, xcli->icon_h );
+	 draw_pixmap(xinfo, ar->win, icon, mask,
+		     xcli->icon_x, xcli->icon_y, xcli->icon_w, xcli->icon_h);
 
 	 text_x = image_width + 2 * XCLICON_IMAGE_PADDING + tbar->aborder;
 	 text_w = ar->width -
@@ -164,33 +158,39 @@ refresh_xclicon( area_t *ar ) {
       }
 
       /* compute and draw the name of the icon */
-      while( (XTextWidth( xinfo->xfsb, name, len ) >=
-	      (text_w - 2)) && (len > 0) )
+      while ((XTextWidth( xinfo->xfsb, name, len ) >=
+	      (text_w - 2)) && (len > 0))
 	 len--;
 
       /* draw the name of the xclient */
-      if( xcli->xcl->unmappedp ) {
-	 draw_text( xinfo, ar->win, text_x, text_y, name, len, 0,
-		    ar->active ? ACTIVE : BLACK,
-		    tbar->config->color_shadow, tbar->config->shadow_size );
+      if (xcli->xcl->unmappedp) {
+	 draw_text(xinfo, ar->win, text_x, text_y, name, len, 0,
+		   ar->active ? ACTIVE : BLACK,
+		   tbar->config->color_shadow, tbar->config->shadow_size);
       } else {
-	 draw_text( xinfo, ar->win, text_x, text_y, name, len, 0,
-		    GREY9,
-		    tbar->config->color_shadow, tbar->config->shadow_size );
+	 draw_text(xinfo, ar->win, text_x, text_y, name, len, 0,
+		   GREY9,
+		   tbar->config->color_shadow, tbar->config->shadow_size);
       }
    
       /* the icon border */
-      if( relief ) {
-	 draw_relief( xinfo, ar->win,
-		      0, 0,
-		      ar->width - 1, ar->height - 1,
-		      0, WHITE, GREY9, tbar->aborder );
+      if (relief) {
+	 draw_relief(xinfo, ar->win,
+		     0, 0,
+		     ar->width - 1, ar->height - 1,
+		     0, WHITE, GREY9, tbar->aborder);
       } else {
-	 draw_partial_relief( xinfo, ar->win, RELIEF_LEFT | RELIEF_RIGHT,
+	 draw_partial_relief(xinfo, ar->win, RELIEF_LEFT | RELIEF_RIGHT,
 			      0, 0,
 			      ar->width - 1, ar->height + 2,
-			      0, WHITE, GREY9, tbar->aborder );
+			      0, WHITE, GREY9, tbar->aborder);
       }
+   } else {
+      /* debugging */
+#if (DEBUG != 0)
+      fprintf(stderr, "ICON: not showing \"%s\", tbar->desk=%d xdesk=%d\n",
+	      xcli->xcl->name, tbar->desktop, xcli->xcl->desktop);
+#endif      
    }
 }
 

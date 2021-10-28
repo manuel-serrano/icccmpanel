@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Thu Jul 22 14:32:38 2004                          */
-/*    Last change :  Sat Nov 30 10:41:57 2019 (serrano)                */
+/*    Last change :  Thu Oct 28 07:55:43 2021 (serrano)                */
 /*    Copyright   :  2004-21 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    Taskbar management                                               */
@@ -127,12 +127,17 @@ update_xclient_icon( xclient_t *xcl, taskbar_t *tbar, Window win ) {
 /*    update_xclient_state ...                                         */
 /*---------------------------------------------------------------------*/
 static xclient_t *
-update_xclient_state( xclient_t *xcl, taskbar_t *tbar, Window win ) {
+update_xclient_state(xclient_t *xcl, taskbar_t *tbar, Window win) {
    xcl->desktop = window_desktop( tbar->xinfo->disp, win );
    xcl->unmappedp = window_iconifiedp( tbar->xinfo->disp, win );
 
-   if( tbar->config->update_netwmicon ) {
-      if( xcl->unmappedp ) update_xclient_icon( xcl, tbar, win );
+#if (DEBUG != 0)
+   fprintf(stderr, "ICON: refresh \"%s\" desk=%d unmappedp=%d\n",
+	   xcl->name, xcl->desktop, xcl->unmappedp);
+#endif
+   
+   if (tbar->config->update_netwmicon) {
+      if (xcl->unmappedp) update_xclient_icon(xcl, tbar, win);
    }
    
    return xcl;
@@ -475,7 +480,7 @@ taskbar_register_xclients( taskbar_t *tbar ) {
 
 	    xcl = get_xclient( tbar, w );
 
-	    tbar->xclients = tbar->xclients = cons( xcl, tbar->xclients );
+	    tbar->xclients = cons( xcl, tbar->xclients );
 	    
 	    /* notify all the interested areas */
 	    while( PAIRP( lst ) ) {
@@ -621,7 +626,7 @@ taskbar_refresh( taskbar_t *tbar ) {
    draw_relief( tbar->xinfo, tbar->win,
 		0, linesep, width - 1, height - linesep - 1,
 		0,
-#ifdef DEBUG
+#if (DEBUG !=0)
 		GREEN, RED,
 #else
 		WHITE, GREY9,
