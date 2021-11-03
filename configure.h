@@ -18,7 +18,7 @@
 #define ICCCMPANEL_DIR "share/icccmpanel"
 #define ICCCMPANEL_ICON_DIR "icons"
 
-#define HAVE_LIBIW 0
+#define HAVE_LIBIW 1
 
 #define DEBUG 1
 
