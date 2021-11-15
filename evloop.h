@@ -3,8 +3,8 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Fri Jul 23 06:00:03 2004                          */
-/*    Last change :  Sat Oct 10 06:39:37 2015 (serrano)                */
-/*    Copyright   :  2004-15 Manuel Serrano                            */
+/*    Last change :  Mon Nov  8 10:16:31 2021 (serrano)                */
+/*    Copyright   :  2004-21 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    Event loop                                                       */
 /*=====================================================================*/
@@ -14,6 +14,8 @@
 /*---------------------------------------------------------------------*/
 /*    export ...                                                       */
 /*---------------------------------------------------------------------*/
-extern void evloop_timeout( area_t * );
-extern void evloop( taskbar_t * );
+extern void evloop_timeout(area_t *);
+extern void evloop(taskbar_t *);
+char *x_atom_name(Atom at);
+char *x_event_name(XEvent *ev);
 #endif
