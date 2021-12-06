@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Thu Jul 22 14:32:38 2004                          */
-/*    Last change :  Mon Nov  8 10:16:55 2021 (serrano)                */
+/*    Last change :  Tue Nov 23 09:41:07 2021 (serrano)                */
 /*    Copyright   :  2004-21 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    Taskbar management                                               */
@@ -29,16 +29,16 @@
 /*    Retreive a xclient structure from a X window.                    */
 /*---------------------------------------------------------------------*/
 static xclient_t *
-window_xclient( taskbar_t *tbar, Window w ) {
+window_xclient(taskbar_t *tbar, Window w) {
    pair_t *ts = tbar->xclients;
 
-   while( PAIRP( ts ) ) {
-      xclient_t *t = (xclient_t *)CAR( ts );
+   while (PAIRP(ts)) {
+      xclient_t *t = (xclient_t *)CAR(ts);
 
-      if( t->win == w )
+      if (t->win == w)
 	 return t;
 
-      ts = CDR( ts );
+      ts = CDR(ts);
    }
 
    return 0L;
@@ -51,35 +51,35 @@ window_xclient( taskbar_t *tbar, Window w ) {
 /*    Search an icon image according to the xclient class and name.    */
 /*---------------------------------------------------------------------*/
 static char
-find_user_icon( xclient_t *xcl, taskbar_t *tbar ) {
+find_user_icon(xclient_t *xcl, taskbar_t *tbar) {
    char *class = xcl->class;
    char *name = xcl->name;
    pair_t *lst = tbar->iconcache;
 
-   while( PAIRP( lst ) ) {
-      iconentry_t *en = CAR( lst );
+   while (PAIRP(lst)) {
+      iconentry_t *en = CAR(lst);
 
-      if( class && !regexec( &(en->classreg), class, 0, 0, 0 ) ) {
-	 if( !en->icondescr->name ||
-	     (name && !regexec( &(en->namereg), name, 0, 0, 0 )) ) {
-	    if( !en->loaded ) {
+      if (class && !regexec(&(en->classreg), class, 0, 0, 0)) {
+	 if (!en->icondescr->name ||
+	     (name && !regexec(&(en->namereg), name, 0, 0, 0))) {
+	    if (!en->loaded) {
 	       en->loaded = 1;
-	       XpmReadFileToPixmap( tbar->xinfo->disp, tbar->win,
+	       XpmReadFileToPixmap(tbar->xinfo->disp, tbar->win,
 				    en->icondescr->filename,
 				    &(en->icon), &(en->mask),
-				    NULL );
+				    NULL);
  	    }
 
 	    xcl->icon = en->icon;
 	    xcl->mask = en->mask;
 
-	    if( xcl->icon ) {
+	    if (xcl->icon) {
 	          Pixmap pix;
 		  int x, y;
 		  unsigned int w, h, d, bw;
 
-		  XGetGeometry( tbar->xinfo->disp,
-				xcl->icon, &pix, &x, &y, &w, &h, &bw, &d );
+		  XGetGeometry(tbar->xinfo->disp,
+				xcl->icon, &pix, &x, &y, &w, &h, &bw, &d);
 		  xcl->icon_width = w;
 		  xcl->icon_height = h;
 	    }
@@ -88,7 +88,7 @@ find_user_icon( xclient_t *xcl, taskbar_t *tbar ) {
 	 }
       }
 
-      lst = CDR( lst );
+      lst = CDR(lst);
    }
 
    return 0;
@@ -99,25 +99,25 @@ find_user_icon( xclient_t *xcl, taskbar_t *tbar ) {
 /*    update_xclient_icon ...                                          */
 /*---------------------------------------------------------------------*/
 static xclient_t *
-update_xclient_icon( xclient_t *xcl, taskbar_t *tbar, Window win ) {
+update_xclient_icon(xclient_t *xcl, taskbar_t *tbar, Window win) {
    char *in;
    int icon_size = tbar->config->icon_size;
 
-   if( !find_user_icon( xcl, tbar ) ) {
-      if( !window_netwm_icon( tbar->xinfo, xcl->win,
+   if (!find_user_icon(xcl, tbar)) {
+      if (!window_netwm_icon(tbar->xinfo, xcl->win,
 			      &(xcl->icon), &(xcl->mask),
-			      icon_size ) ) {
-	 if( !window_hint_icon( tbar->xinfo, xcl->win,
+			      icon_size)) {
+	 if (!window_hint_icon(tbar->xinfo, xcl->win,
 				&(xcl->icon), &(xcl->mask),
-				icon_size ) ) {
+				icon_size)) {
 	    xcl->icon = xcl->mask = 0;
 	 }
       }
    } else {
-      if( tbar->config->update_netwmicon ) {
-	 window_update_netwm_icon( tbar->xinfo, xcl->win,
+      if (tbar->config->update_netwmicon) {
+	 window_update_netwm_icon(tbar->xinfo, xcl->win,
 				   &(xcl->icon), &(xcl->mask),
-				   icon_size );
+				   icon_size);
       }
    }
 }
@@ -128,8 +128,8 @@ update_xclient_icon( xclient_t *xcl, taskbar_t *tbar, Window win ) {
 /*---------------------------------------------------------------------*/
 static xclient_t *
 update_xclient_state(xclient_t *xcl, taskbar_t *tbar, Window win) {
-   xcl->desktop = window_desktop( tbar->xinfo->disp, win );
-   xcl->unmappedp = window_iconifiedp( tbar->xinfo->disp, win );
+   xcl->desktop = window_desktop(tbar->xinfo->disp, win);
+   xcl->unmappedp = window_iconifiedp(tbar->xinfo->disp, win);
 
 #if (DEBUG != 0)
    fprintf(stderr, "ICON: refresh \"%s\" desk=%d unmappedp=%d\n",
@@ -148,22 +148,22 @@ update_xclient_state(xclient_t *xcl, taskbar_t *tbar, Window win) {
 /*    fill_xclient ...                                                 */
 /*---------------------------------------------------------------------*/
 static xclient_t *
-fill_xclient( xclient_t *xcl, taskbar_t *tbar, Window w ) {
+fill_xclient(xclient_t *xcl, taskbar_t *tbar, Window w) {
    xcl->win = w;
    xcl->live = 1;
-   xcl->class = window_class( tbar->xinfo->disp, w );
-   xcl->name = window_name( tbar->xinfo->disp, w );
+   xcl->class = window_class(tbar->xinfo->disp, w);
+   xcl->name = window_name(tbar->xinfo->disp, w);
    
-   if( !xcl->class || *(xcl->class) == 0 ) {
-      xcl->class = strdup( "???" );
+   if (!xcl->class || *(xcl->class) == 0) {
+      xcl->class = strdup("???");
    }
    
-   if( !xcl->name || *(xcl->name) == 0 ) {
-      xcl->name = strdup( xcl->class );
+   if (!xcl->name || *(xcl->name) == 0) {
+      xcl->name = strdup(xcl->class);
    }
 
-   update_xclient_state( xcl, tbar, w );
-   return update_xclient_icon( xcl, tbar, w );
+   update_xclient_state(xcl, tbar, w);
+   return update_xclient_icon(xcl, tbar, w);
 }
 
 /*---------------------------------------------------------------------*/
@@ -171,12 +171,12 @@ fill_xclient( xclient_t *xcl, taskbar_t *tbar, Window w ) {
 /*    cleanup_xclient ...                                              */
 /*---------------------------------------------------------------------*/
 static xclient_t *
-cleanup_xclient( xclient_t *xcl, taskbar_t *tbar ) {
-   free( xcl->class );
-   free( xcl->name );
+cleanup_xclient(xclient_t *xcl, taskbar_t *tbar) {
+   free(xcl->class);
+   free(xcl->name);
 
-/*    if( xcl->icon != None ) XFreePixmap( tbar->xinfo->disp, xcl->icon ); */
-/*    if( xcl->mask != None ) XFreePixmap( tbar->xinfo->disp, xcl->mask ); */
+/*    if (xcl->icon != None) XFreePixmap(tbar->xinfo->disp, xcl->icon); */
+/*    if (xcl->mask != None) XFreePixmap(tbar->xinfo->disp, xcl->mask); */
 
    return xcl;
 }
@@ -186,17 +186,17 @@ cleanup_xclient( xclient_t *xcl, taskbar_t *tbar ) {
 /*    make_xclient ...                                                 */
 /*---------------------------------------------------------------------*/
 static xclient_t *
-make_xclient( taskbar_t *tbar, Window w ) {
+make_xclient(taskbar_t *tbar, Window w) {
    static int count = 0;
-   xclient_t *xcl = malloc( sizeof( xclient_t ) );
+   xclient_t *xcl = malloc(sizeof(xclient_t));
 
-   if( !xcl ) return 0;
+   if (!xcl) return 0;
 
    /* the xclient identifier */
    xcl->id = count++;
    
    /* general X information */
-   fill_xclient( xcl, tbar, w );
+   fill_xclient(xcl, tbar, w);
    
    return xcl;
 }
@@ -206,18 +206,18 @@ make_xclient( taskbar_t *tbar, Window w ) {
 /*    get_xclient ...                                                  */
 /*---------------------------------------------------------------------*/
 xclient_t *
-get_xclient( taskbar_t *tbar, Window w ) {
-   if( NULLP( tbar->_freexclients ) ) {
-      xclient_t *xcl = make_xclient( tbar, w );
+get_xclient(taskbar_t *tbar, Window w) {
+   if (NULLP(tbar->_freexclients)) {
+      xclient_t *xcl = make_xclient(tbar, w);
       
       return xcl;
    } else {
       pair_t *lst = tbar->_freexclients;
-      xclient_t *xcl = (xclient_t *)CAR( lst );
+      xclient_t *xcl = (xclient_t *)CAR(lst);
 
-      fill_xclient( xcl, tbar, w );
-      tbar->_freexclients = CDR( lst );
-      free( lst );
+      fill_xclient(xcl, tbar, w);
+      tbar->_freexclients = CDR(lst);
+      free(lst);
 
       return xcl;
    }
@@ -228,46 +228,46 @@ get_xclient( taskbar_t *tbar, Window w ) {
 /*    make_iconcache ...                                               */
 /*---------------------------------------------------------------------*/
 pair_t *
-make_iconcache( taskbar_t *tbar ) {
+make_iconcache(taskbar_t *tbar) {
    config_t *config = tbar->config;
    pair_t *lr = config->icondescrs;
    pair_t *lw = NIL;
 
-   while( PAIRP( lr ) ) {
-      icondescr_t *id = (icondescr_t *)CAR( lr );
+   while (PAIRP(lr)) {
+      icondescr_t *id = (icondescr_t *)CAR(lr);
 
-      if( id->filename ) {
-	 iconentry_t *ie = calloc( 1, sizeof( iconentry_t ) );
+      if (id->filename) {
+	 iconentry_t *ie = calloc(1, sizeof(iconentry_t));
 
 	 ie->icondescr = id;
 	 ie->loaded = 0;
 	  
-	 if( !regcomp( &(ie->classreg), id->class, REG_NOSUB | REG_EXTENDED) ) {
-	    if( id->name ) {
-	       if( !regcomp( &(ie->namereg), id->name, REG_NOSUB | REG_EXTENDED) ) {
-		  lw = cons( ie, lw );
+	 if (!regcomp(&(ie->classreg), id->class, REG_NOSUB | REG_EXTENDED)) {
+	    if (id->name) {
+	       if (!regcomp(&(ie->namereg), id->name, REG_NOSUB | REG_EXTENDED)) {
+		  lw = cons(ie, lw);
 	       } else {
-		  fprintf( stderr, "icccmpanel: Illegal regexp name `%s'\n",
-			   id->name );
-		  free( ie );
+		  fprintf(stderr, "icccmpanel: Illegal regexp name `%s'\n",
+			   id->name);
+		  free(ie);
 	       }
 	    } else {
-	       lw = cons( ie, lw );
+	       lw = cons(ie, lw);
 	    }
 	 } else {
-	    fprintf( stderr, "icccmpanel: Illegal regexp class `%s'\n",
-		     id->class );
-	    free( ie );
+	    fprintf(stderr, "icccmpanel: Illegal regexp class `%s'\n",
+		     id->class);
+	    free(ie);
 	 }
       } else {
-	 fprintf( stderr, "icccmpanel: Illegal can't find icon in path `%s'\n",
-		  id->filename );
+	 fprintf(stderr, "icccmpanel: Illegal can't find icon in path `%s'\n",
+		  id->filename);
       }
 
-      lr = CDR( lr );
+      lr = CDR(lr);
    }
 
-   return reverse( lw );
+   return reverse(lw);
 }
    
 /*---------------------------------------------------------------------*/
@@ -275,7 +275,7 @@ make_iconcache( taskbar_t *tbar ) {
 /*    make_taskbar ...                                                 */
 /*---------------------------------------------------------------------*/
 taskbar_t *
-make_taskbar( Xinfo_t *xinfo, config_t *config ) {
+make_taskbar(Xinfo_t *xinfo, config_t *config) {
    Window win;
    MWMHints mwm;
    XSizeHints size_hints;
@@ -286,7 +286,7 @@ make_taskbar( Xinfo_t *xinfo, config_t *config ) {
    taskbar_t *tb;
    int tbar_x, tbar_y, tbar_w, tbar_h;
 
-   if( !(tb = calloc( 1, sizeof( taskbar_t ) )) )
+   if (!(tb = calloc(1, sizeof(taskbar_t))))
       return 0;
 
    /* enable other windows to go above the panel */
@@ -300,18 +300,18 @@ make_taskbar( Xinfo_t *xinfo, config_t *config ) {
       | KeyPressMask;
 
     /* taskbar x and width */
-   if( config->taskbar_x >= 0 ) {
+   if (config->taskbar_x >= 0) {
       tbar_x = config->taskbar_x;
       tbar_w = xinfo->screen_width - config->taskbar_width;
 
-      if( tbar_x >  xinfo->screen_width )
+      if (tbar_x >  xinfo->screen_width)
 	 tbar_x = 0;
       
-      if( (tbar_w + tbar_x) > xinfo->screen_width )
+      if ((tbar_w + tbar_x) > xinfo->screen_width)
 	 tbar_w = xinfo->screen_width - tbar_x;
    } else {
-      if( config->taskbar_width >= 0 ) {
-	 if( config->taskbar_width <= xinfo->screen_width ) {
+      if (config->taskbar_width >= 0) {
+	 if (config->taskbar_width <= xinfo->screen_width) {
 	    tbar_w = config->taskbar_width;
 	    tbar_x = (xinfo->screen_width - tbar_w) / 2;
 	 }
@@ -326,21 +326,21 @@ make_taskbar( Xinfo_t *xinfo, config_t *config ) {
    }
    
    /* taskbar y and heght */
-   if( config->taskbar_y >= 0 ) {
+   if (config->taskbar_y >= 0) {
       /* top of screen */
-      if( xinfo->screen_height <= config->taskbar_height ) {
+      if (xinfo->screen_height <= config->taskbar_height) {
 	 tbar_h = xinfo->screen_height;
       } else {
 	 tbar_h = config->taskbar_height;
       }
-      if( (xinfo->screen_height + tbar_h) <= config->taskbar_y ) {
+      if ((xinfo->screen_height + tbar_h) <= config->taskbar_y) {
 	 tbar_y >= 0;
       } else {
 	 tbar_y = config->taskbar_y;
       }
    } else {
       /* bottom of screen */
-      if( xinfo->screen_height <= config->taskbar_height ) {
+      if (xinfo->screen_height <= config->taskbar_height) {
 	 tbar_h = xinfo->screen_height;
 	 tbar_y = 0;
       } else {
@@ -350,7 +350,7 @@ make_taskbar( Xinfo_t *xinfo, config_t *config ) {
    }
 
    /* the X window */
-   win = XCreateWindow( /* display */ disp,
+   win = XCreateWindow(/* display */ disp,
 			/* parent  */ xinfo->root_win,
 			/* x       */ tbar_x,
 			/* y       */ tbar_y,
@@ -361,56 +361,56 @@ make_taskbar( Xinfo_t *xinfo, config_t *config ) {
 			/* class   */ InputOutput,
 			/* visual  */ CopyFromParent,
 			/* vmask   */ CWBackPixel | CWEventMask | CWOverrideRedirect,
-			/* attribs */ &att );
+			/* attribs */ &att);
 
    /* reserve "WINHEIGHT" pixels at the bottom of the screen */
    strut[ 0 ] = 0;
    strut[ 1 ] = 0;
    strut[ 2 ] = 0;
    strut[ 3 ] = tbar_h;
-   XChangeProperty( disp, win, atom__NET_WM_STRUT, XA_CARDINAL, 32,
-		    PropModeReplace, (unsigned char *) strut, 4 );
+   XChangeProperty(disp, win, atom__NET_WM_STRUT, XA_CARDINAL, 32,
+		    PropModeReplace, (unsigned char *) strut, 4);
 
    /* reside on ALL desktops */
-   set_window_prop( disp, win, atom__NET_WM_DESKTOP, XA_CARDINAL, 0xFFFFFFFF );
-   set_window_prop( disp, win, atom__NET_WM_WINDOW_TYPE, XA_ATOM,
-		    atom__NET_WM_WINDOW_TYPE_DOCK );
-   set_window_prop( disp, win, atom__NET_WM_STATE, XA_ATOM,
-		    atom__NET_WM_STATE_STICKY );
+   set_window_prop(disp, win, atom__NET_WM_DESKTOP, XA_CARDINAL, 0xFFFFFFFF);
+   set_window_prop(disp, win, atom__NET_WM_WINDOW_TYPE, XA_ATOM,
+		    atom__NET_WM_WINDOW_TYPE_DOCK);
+   set_window_prop(disp, win, atom__NET_WM_STATE, XA_ATOM,
+		    atom__NET_WM_STATE_STICKY);
 
    /* use old gnome hint since sawfish doesn't support _NET_WM_STRUT */
-   set_window_prop( disp, win, atom__WIN_HINTS, XA_CARDINAL,
+   set_window_prop(disp, win, atom__WIN_HINTS, XA_CARDINAL,
 		    WIN_HINTS_SKIP_FOCUS | WIN_HINTS_SKIP_WINLIST |
-		    WIN_HINTS_SKIP_TASKBAR | WIN_HINTS_DO_NOT_COVER );
+		    WIN_HINTS_SKIP_TASKBAR | WIN_HINTS_DO_NOT_COVER);
 
    /* borderless motif hint */
-   memset( &mwm, 0, sizeof( mwm ) );
+   memset(&mwm, 0, sizeof(mwm));
    mwm.flags = MWM_HINTS_DECORATIONS;
-   XChangeProperty( disp, win, atom__MOTIF_WM_HINTS, atom__MOTIF_WM_HINTS, 32,
+   XChangeProperty(disp, win, atom__MOTIF_WM_HINTS, atom__MOTIF_WM_HINTS, 32,
 		    PropModeReplace,
-		    (unsigned char *)&mwm, sizeof( MWMHints ) / 4 );
+		    (unsigned char *)&mwm, sizeof(MWMHints) / 4);
 
    /* make sure the WM obays our window position */
    size_hints.flags = PPosition;
 
    /*XSetWMNormalHints (disp, win, &size_hints); */
-   XChangeProperty( disp, win, XA_WM_NORMAL_HINTS, XA_WM_SIZE_HINTS, 32,
+   XChangeProperty(disp, win, XA_WM_NORMAL_HINTS, XA_WM_SIZE_HINTS, 32,
 		    PropModeReplace,
-		    (unsigned char *)&size_hints, sizeof( XSizeHints ) / 4 );
+		    (unsigned char *)&size_hints, sizeof(XSizeHints) / 4);
    
-   XMoveWindow( disp, win, tbar_x, tbar_y );
+   XMoveWindow(disp, win, tbar_x, tbar_y);
 
    /* make our window unfocusable */
    wmhints.flags = InputHint;
    wmhints.input = False;
 
    /*XSetWMHints (disp, win, &wmhints); */
-   XChangeProperty( disp, win, XA_WM_HINTS, XA_WM_HINTS, 32, PropModeReplace,
-		    (unsigned char *)&wmhints, sizeof( XWMHints ) / 4 );
+   XChangeProperty(disp, win, XA_WM_HINTS, XA_WM_HINTS, 32, PropModeReplace,
+		    (unsigned char *)&wmhints, sizeof(XWMHints) / 4);
 
    /* receive the window event */
-   XMapWindow( disp, win );
-   if( !config->taskbar_always_on_top ) XLowerWindow( disp, win );
+   XMapWindow(disp, win);
+   if (!config->taskbar_always_on_top) XLowerWindow(disp, win);
 
    tb->xinfo = xinfo;
    tb->config = config;
@@ -430,7 +430,7 @@ make_taskbar( Xinfo_t *xinfo, config_t *config ) {
    tb->width = tbar_w;
    tb->height = tbar_h;
    
-   tb->desktop = current_desktop( xinfo->disp, xinfo->root_win );
+   tb->desktop = current_desktop(xinfo->disp, xinfo->root_win);
    
    tb->areas = NIL;
    
@@ -439,7 +439,7 @@ make_taskbar( Xinfo_t *xinfo, config_t *config ) {
 
    tb->xclient_manager_number = 0;
 
-   tb->iconcache = make_iconcache( tb );
+   tb->iconcache = make_iconcache(tb);
 
    return tb;
 }
@@ -449,7 +449,7 @@ make_taskbar( Xinfo_t *xinfo, config_t *config ) {
 /*    taskbar_register_xclients ...                                    */
 /*---------------------------------------------------------------------*/
 void
-taskbar_register_xclients( taskbar_t *tbar ) {
+taskbar_register_xclients(taskbar_t *tbar) {
    Xinfo_t *xinfo = tbar->xinfo;
    Display *disp = xinfo->disp;
    Window root_win = xinfo->root_win;
@@ -457,43 +457,43 @@ taskbar_register_xclients( taskbar_t *tbar ) {
    long num, i;
 
    /* store the new desktop value */
-   tbar->desktop = current_desktop( xinfo->disp, xinfo->root_win );
+   tbar->desktop = current_desktop(xinfo->disp, xinfo->root_win);
    
    /* get the window list */
-   wins = get_window_prop_data( disp, root_win,
+   wins = get_window_prop_data(disp, root_win,
 				atom__NET_CLIENT_LIST, XA_WINDOW,
-				&num );
+				&num);
 
    /* check all the windows */
-   for( i = 0; i < num; i++ ) {
+   for(i = 0; i < num; i++) {
       Window w = wins[ i ];
       
-      if( w != tbar->win && !tooltips_windowp( w ) && !find_area( tbar, w ) ) {
-	 xclient_t *xcl = window_xclient( tbar, w );
+      if (w != tbar->win && !tooltips_windowp(w) && !find_area(tbar, w)) {
+	 xclient_t *xcl = window_xclient(tbar, w);
 	 
-	 if( !xcl ) {
+	 if (!xcl) {
 	    pair_t *lst = tbar->areas;
 
-	    XSelectInput( disp, w,
+	    XSelectInput(disp, w,
 			  PropertyChangeMask
-			  | StructureNotifyMask );
+			  | StructureNotifyMask);
 
-	    xcl = get_xclient( tbar, w );
+	    xcl = get_xclient(tbar, w);
 
-	    tbar->xclients = cons( xcl, tbar->xclients );
+	    tbar->xclients = cons(xcl, tbar->xclients);
 	    
 	    /* notify all the interested areas */
-	    while( PAIRP( lst ) ) {
-	       area_t *ar = (area_t *)CAR( lst );
+	    while (PAIRP(lst)) {
+	       area_t *ar = (area_t *)CAR(lst);
 
-	       if( ar->create_notify ) ar->create_notify( ar, xcl );
-	       lst = CDR( lst );
+	       if (ar->create_notify) ar->create_notify(ar, xcl);
+	       lst = CDR(lst);
 	    }
 	 }
       }
    }
 
-   XFree( wins );
+   XFree(wins);
 }
 
 /*---------------------------------------------------------------------*/
@@ -504,7 +504,7 @@ taskbar_register_xclients( taskbar_t *tbar ) {
 /*    to the taskbar.                                                  */
 /*---------------------------------------------------------------------*/
 void
-taskbar_area_do_layout( taskbar_t *tbar ) {
+taskbar_area_do_layout(taskbar_t *tbar) {
    pair_t *lst = tbar->areas;
    int fixed_width = 0;
    int float_width;
@@ -515,29 +515,29 @@ taskbar_area_do_layout( taskbar_t *tbar ) {
    Display *disp = tbar->xinfo->disp;
 
    /* compute the sum of fixed area widths */
-   while( PAIRP( lst ) ) {
-      area_t *ar = (area_t *)CAR( lst );
+   while (PAIRP(lst)) {
+      area_t *ar = (area_t *)CAR(lst);
 
-      if( !ar->ignore_layout ) {
-	 if( ar->uwidth ) {
+      if (!ar->ignore_layout) {
+	 if (ar->uwidth) {
 	    fixed_width += ar->uwidth;
 	 } else {
 	    nfloat++;
 	 }
       }
       
-      lst = CDR( lst );
+      lst = CDR(lst);
    }
 
    /* the float_width */
-   if( nfloat ) float_width = (twidth - fixed_width) / nfloat;
+   if (nfloat) float_width = (twidth - fixed_width) / nfloat;
 
    /* compute the horizontal layout of the area widths */
    lst = tbar->areas;
-   while( PAIRP( lst ) ) {
-      area_t *ar = (area_t *)CAR( lst );
+   while (PAIRP(lst)) {
+      area_t *ar = (area_t *)CAR(lst);
 
-      if( !ar->ignore_layout ) {
+      if (!ar->ignore_layout) {
 	 ar->x = arx;
 	 ar->y = tbar->linesep + tbar->border;
 	 ar->width = (ar->uwidth ? ar->uwidth : float_width);
@@ -545,17 +545,17 @@ taskbar_area_do_layout( taskbar_t *tbar ) {
 
 	 arx = ar->x + ar->width;
 
-	 if( ar->win ) {
-	    XMoveResizeWindow( disp, ar->win,
-			       ar->x, ar->y, ar->width, ar->height );
+	 if (ar->win) {
+	    XMoveResizeWindow(disp, ar->win,
+			       ar->x, ar->y, ar->width, ar->height);
 	 }
       }
 
-      if( ar->layout ) {
-	 ar->layout( ar );
+      if (ar->layout) {
+	 ar->layout(ar);
       }
       
-      lst = CDR( lst );
+      lst = CDR(lst);
    }
 }
 
@@ -564,17 +564,17 @@ taskbar_area_do_layout( taskbar_t *tbar ) {
 /*    taskbar_hide ...                                                 */
 /*---------------------------------------------------------------------*/
 void
-taskbar_hide( taskbar_t *tbar ) {
+taskbar_hide(taskbar_t *tbar) {
    int y = tbar->y;
 
    tooltips_hide();
-   while( y < tbar->y + tbar->height - 1 ) {
+   while (y < tbar->y + tbar->height - 1) {
       y++;
-      XMoveWindow( tbar->xinfo->disp, tbar->win, 0, y );
+      XMoveWindow(tbar->xinfo->disp, tbar->win, 0, y);
 
-      if( !(y % tbar->hidespeed) ) {
-	 usleep( tbar->config->animspeed );
-	 XSync( tbar->xinfo->disp, True );
+      if (!(y % tbar->hidespeed)) {
+	 usleep(tbar->config->animspeed);
+	 XSync(tbar->xinfo->disp, True);
       }
    }
    tbar->hiddenp = 1;
@@ -585,24 +585,24 @@ taskbar_hide( taskbar_t *tbar ) {
 /*    taskbar_unhide ...                                               */
 /*---------------------------------------------------------------------*/
 void
-taskbar_unhide( taskbar_t *tbar ) {
+taskbar_unhide(taskbar_t *tbar) {
    int y = tbar->y + tbar->height - 1;
 
-   taskbar_refresh_all( tbar );
+   taskbar_refresh_all(tbar);
    
-   while( y > tbar->y ) {
+   while (y > tbar->y) {
       y--;
       
-      if( !(y % tbar->unhidespeed) ) {
-	 XMoveWindow( tbar->xinfo->disp, tbar->win, 0, y );
-	 taskbar_refresh_all( tbar );
-	 XSync( tbar->xinfo->disp, True );
-	 usleep( tbar->config->animspeed );
+      if (!(y % tbar->unhidespeed)) {
+	 XMoveWindow(tbar->xinfo->disp, tbar->win, 0, y);
+	 taskbar_refresh_all(tbar);
+	 XSync(tbar->xinfo->disp, True);
+	 usleep(tbar->config->animspeed);
       }
    }
    tbar->hiddenp = 0;
    
-   XSync( tbar->xinfo->disp, True );
+   XSync(tbar->xinfo->disp, True);
 }
 
 /*---------------------------------------------------------------------*/
@@ -610,20 +610,20 @@ taskbar_unhide( taskbar_t *tbar ) {
 /*    taskbar_refresh ...                                              */
 /*---------------------------------------------------------------------*/
 void
-taskbar_refresh( taskbar_t *tbar ) {
+taskbar_refresh(taskbar_t *tbar) {
    int width = tbar->width;
    int height = tbar->height;
    int linesep = tbar->linesep;
    int i;
 
    /* background */
-   draw_gradient( tbar->xinfo, tbar->win,
+   draw_gradient(tbar->xinfo, tbar->win,
 		  1, linesep, width - 1, height - linesep - 1,
 		  0,
-		  GREY12, 0, 0 );
+		  GREY12, 0, 0);
 
    /* refief framing */
-   draw_relief( tbar->xinfo, tbar->win,
+   draw_relief(tbar->xinfo, tbar->win,
 		0, linesep, width - 1, height - linesep - 1,
 		0,
 #if (DEBUG !=0)
@@ -631,13 +631,13 @@ taskbar_refresh( taskbar_t *tbar ) {
 #else
 		WHITE, GREY9,
 #endif
-		tbar->border );
+		tbar->border);
    
    /* separation line */
-   for( i = 0; i < linesep; i++ ) {
-      draw_line( tbar->xinfo, tbar->win,
+   for(i = 0; i < linesep; i++) {
+      draw_line(tbar->xinfo, tbar->win,
 		 0, i, width - 1, 0,
-		 0, 25 );
+		 0, 25);
    }
 }
 
@@ -646,17 +646,17 @@ taskbar_refresh( taskbar_t *tbar ) {
 /*    taskbar_refresh_all ...                                          */
 /*---------------------------------------------------------------------*/
 void
-taskbar_refresh_all( taskbar_t *tbar ) {
+taskbar_refresh_all(taskbar_t *tbar) {
    pair_t *lst = tbar->areas;
    
-   while( PAIRP( lst ) ) {
-      area_t *ar = (area_t *)CAR( lst );
+   while (PAIRP(lst)) {
+      area_t *ar = (area_t *)CAR(lst);
 
-      ar->refresh( ar );
-      lst = CDR( lst );
+      ar->refresh(ar);
+      lst = CDR(lst);
    }
    
-   taskbar_refresh( tbar );
+   taskbar_refresh(tbar);
 }
 
 /*---------------------------------------------------------------------*/
@@ -664,28 +664,30 @@ taskbar_refresh_all( taskbar_t *tbar ) {
 /*    taskbar_info ...                                                 */
 /*---------------------------------------------------------------------*/
 int
-taskbar_info( taskbar_t *tbar, int src ) {
+taskbar_info(taskbar_t *tbar, int src) {
    long num, numi, numid, dt, i;
    Window *wins;
    
-   dt = current_desktop( tbar->xinfo->disp, tbar->xinfo->root_win );
-   wins = get_window_prop_data( tbar->xinfo->disp,
+   dt = current_desktop(tbar->xinfo->disp, tbar->xinfo->root_win);
+   wins = get_window_prop_data(tbar->xinfo->disp,
 				tbar->xinfo->root_win,
 				atom__NET_CLIENT_LIST, XA_WINDOW,
-				&num );
+				&num);
 
-   for( i = 0, numi = 0, numid = 0; i < num; i++ ) {
-      if( window_iconifiedp(tbar->xinfo->disp, wins[ i ] ) ) {
+   for(i = 0, numi = 0, numid = 0; i < num; i++) {
+      if (window_iconifiedp(tbar->xinfo->disp, wins[ i ])) {
 	 numi++;
-	 if( window_desktop( tbar->xinfo->disp, wins[ i ] ) == dt ) numid++;
+	 if (window_desktop(tbar->xinfo->disp, wins[ i ]) == dt) numid++;
       }
    }
 	    
-   fprintf( stderr,
+#if (DEBUG != 0)
+   fprintf(stderr,
 	    "Desktop=%d Window-number=%d Icon=%d Icon-in-desktop=%d\n",
-	    dt, num, numi, numid );
-		     
-   XFree( wins );
+	    dt, num, numi, numid);
+#endif
+   
+   XFree(wins);
 }   
 
 /*---------------------------------------------------------------------*/
@@ -693,75 +695,94 @@ taskbar_info( taskbar_t *tbar, int src ) {
 /*    taskbar_property_notify ...                                      */
 /*---------------------------------------------------------------------*/
 void
-taskbar_property_notify( taskbar_t *tbar, XEvent *ev ) {
+taskbar_property_notify(taskbar_t *tbar, XEvent *ev) {
    Window win = ev->xproperty.window;
    Xinfo_t *xinfo = tbar->xinfo;
    Display *disp = xinfo->disp;
    Atom at = ev->xproperty.atom;
    
    /* store the new desktop value */
-   tbar->desktop = current_desktop( disp, xinfo->root_win );
+   tbar->desktop = current_desktop(disp, xinfo->root_win);
 
-   if( win == tbar->xinfo->root_win ) {
-      if( at == atom__NET_CURRENT_DESKTOP ) {
+   if (win == tbar->xinfo->root_win) {
+#if (DEBUG != 0)
+      fprintf(stderr, "NOTIFY.root_win: win_name=%s atom_name=%s at=%p\n",
+	      window_name(disp, win),
+	      x_atom_name(at),
+	      at);
+#endif      
+      if (at == atom__NET_CURRENT_DESKTOP) {
 	 /* the desktop has changed */
 	 pair_t *lst = tbar->areas;
 
-	 taskbar_refresh( tbar );
+	 taskbar_refresh(tbar);
 
-	 while( PAIRP( lst ) ) {
-	    area_t *ar = (area_t *)CAR( lst );
+#if (DEBUG != 0)
+	 fprintf(stderr, "NOTIFY.destktop_changed...client.len=%d\n",
+		 length(lst));
+#endif	 
+	 while (PAIRP(lst)) {
+	    area_t *ar = (area_t *)CAR(lst);
 	    
-	    if( ar->desktop_notify ) ar->desktop_notify( ar );
-	    lst = CDR( lst );
+	    if (ar->desktop_notify) ar->desktop_notify(ar);
+	    lst = CDR(lst);
 	 }
       } else {
-	 if( at == atom__NET_CLIENT_LIST ) {
+	 if (at == atom__NET_CLIENT_LIST) {
 	    /* a client has been added or destroyed */
-	    taskbar_register_xclients( tbar );
+#if (DEBUG != 0)
+	    fprintf(stderr, "NOTIFY.new_destroyed_client...\n");
+#endif	    
+	    taskbar_register_xclients(tbar);
+	 } else {
+#if (DEBUG != 0)
+	    fprintf(stderr, "NOTIFY.unhandled event...\n");
+#endif	    
 	 }
       }
    } else {
-      area_t *ar = find_area( tbar, win );
+      area_t *ar = find_area(tbar, win);
 
-      if( window_name( disp, win )) {
-	 fprintf( stderr, "NOTIFY: %s %s %p\n",
+#if (DEBUG != 0)
+      if (window_name(disp, win)) {
+	 fprintf(stderr, "NOTIFY: %s %s %p\n",
 		  window_name(disp, win),
 		  x_atom_name(at),
 		  ar);
       }
+#endif
       
-      if( at == XA_WM_NAME ) {
-	 xclient_t *xcl = window_xclient( tbar, win );
-	 xcl->name = window_name( disp, win );
+      if (at == XA_WM_NAME) {
+	 xclient_t *xcl = window_xclient(tbar, win);
+	 xcl->name = window_name(disp, win);
 
-	 update_xclient_icon( xcl, tbar, win );
+	 update_xclient_icon(xcl, tbar, win);
       } else {
-	 if( at == atom_WM_STATE ) {
-	    xclient_t *xcl = window_xclient( tbar, win );
+	 if (at == atom_WM_STATE) {
+	    xclient_t *xcl = window_xclient(tbar, win);
 
-	    if( xcl ) {
+	    if (xcl) {
 	       pair_t *lst = tbar->areas;
 
 	       /* update the xclient in order to get its new state */
-	       update_xclient_state( xcl, tbar, win );
+	       update_xclient_state(xcl, tbar, win);
 	       
 	       /* notify all the interested areas */
-	       while( PAIRP( lst ) ) {
-		  area_t *ar = (area_t *)CAR( lst );
+	       while (PAIRP(lst)) {
+		  area_t *ar = (area_t *)CAR(lst);
 
-		  if( ar->state_notify ) ar->state_notify( ar, xcl );
-		  lst = CDR( lst );
+		  if (ar->state_notify) ar->state_notify(ar, xcl);
+		  lst = CDR(lst);
 	       }
 	    }
 	 } else {
-	    if( at == XA_WM_HINTS ) {
+	    if (at == XA_WM_HINTS) {
 	       ;
 	    }
 	 }
       }
 
-      if( ar ) ar->refresh( ar );
+      if (ar) ar->refresh(ar);
    }
 }
 
@@ -770,48 +791,48 @@ taskbar_property_notify( taskbar_t *tbar, XEvent *ev ) {
 /*    taskbar_destroy_notify ...                                       */
 /*---------------------------------------------------------------------*/
 void
-taskbar_destroy_notify( taskbar_t *tbar, XEvent *ev ) {
+taskbar_destroy_notify(taskbar_t *tbar, XEvent *ev) {
    Window win = ev->xdestroywindow.window;
 
    /* store the new desktop value */
-   tbar->desktop = current_desktop( tbar->xinfo->disp, tbar->xinfo->root_win );
+   tbar->desktop = current_desktop(tbar->xinfo->disp, tbar->xinfo->root_win);
    
-   if( win != tbar->xinfo->root_win
+   if (win != tbar->xinfo->root_win
        && win != tbar->win
-       && !tooltips_windowp( win ) ) {
-      xclient_t *xcl = window_xclient( tbar, win );
+       && !tooltips_windowp(win)) {
+      xclient_t *xcl = window_xclient(tbar, win);
 
-      if( xcl ) {
+      if (xcl) {
 	 pair_t *lst = tbar->areas;
 
 	 /* mark the xclient as dead */
 	 xcl->live = 0;
 
 	 /* notify all the interested areas */
-	 while( PAIRP( lst ) ) {
-	    area_t *ar = (area_t *)CAR( lst );
+	 while (PAIRP(lst)) {
+	    area_t *ar = (area_t *)CAR(lst);
 
-	    if( ar->destroy_notify ) ar->destroy_notify( ar, xcl );
-	    lst = CDR( lst );
+	    if (ar->destroy_notify) ar->destroy_notify(ar, xcl);
+	    lst = CDR(lst);
 	 }
 
 	 /* remove the client from the active list */
-	 tbar->xclients = remq( xcl, tbar->xclients );
-	 cleanup_xclient( xcl, tbar );
-	 tbar->_freexclients = cons( xcl, tbar->_freexclients );
+	 tbar->xclients = remq(xcl, tbar->xclients);
+	 cleanup_xclient(xcl, tbar);
+	 tbar->_freexclients = cons(xcl, tbar->_freexclients);
 	 
       } else {
 	 pair_t *lst = tbar->areas;
 
 	 /* notify all the interested areas */
-	 while( PAIRP( lst ) ) {
-	    area_t *ar = (area_t *)CAR( lst );
+	 while (PAIRP(lst)) {
+	    area_t *ar = (area_t *)CAR(lst);
 
-	    if( ar->win == win ) {
-	       if( ar->destroy_notify ) ar->destroy_notify( ar, 0L );
+	    if (ar->win == win) {
+	       if (ar->destroy_notify) ar->destroy_notify(ar, 0L);
 	       break;
 	    }
-	    lst = CDR( lst );
+	    lst = CDR(lst);
 	 }
       }
    }
@@ -822,7 +843,7 @@ taskbar_destroy_notify( taskbar_t *tbar, XEvent *ev ) {
 /*    taskbar_get_xclient_manager_number ...                           */
 /*---------------------------------------------------------------------*/
 int
-taskbar_get_xclient_manager_number( taskbar_t *tbar ) {
+taskbar_get_xclient_manager_number(taskbar_t *tbar) {
    tbar->xclient_manager_number++;
 
    return tbar->xclient_manager_number;

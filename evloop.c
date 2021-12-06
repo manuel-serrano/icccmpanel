@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Fri Jul 23 05:59:11 2004                          */
-/*    Last change :  Mon Nov  8 10:14:55 2021 (serrano)                */
+/*    Last change :  Tue Nov 23 09:38:44 2021 (serrano)                */
 /*    Copyright   :  2004-21 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    Event loop                                                       */
@@ -28,6 +28,11 @@
 #include "taskbar.h"
 
 /*---------------------------------------------------------------------*/
+/*    debug                                                            */
+/*---------------------------------------------------------------------*/
+static long debug_cnst = 0;
+
+/*---------------------------------------------------------------------*/
 /*    static pair_t *                                                  */
 /*    timeout_areas ...                                                */
 /*---------------------------------------------------------------------*/
@@ -39,8 +44,8 @@ static long timeout_gcd = 10;
 /*    gcd ...                                                          */
 /*---------------------------------------------------------------------*/
 static long
-gcd( long a, long b ) {
-   while( b != 0 ) {
+gcd(long a, long b) {
+   while (b != 0) {
       long t = b;
       b = a % b;
       a = t;
@@ -54,13 +59,13 @@ gcd( long a, long b ) {
 /*    evloop_timeout ...                                               */
 /*---------------------------------------------------------------------*/
 void
-evloop_timeout( area_t *ar ) {
-   timeout_areas = cons( ar, timeout_areas );
+evloop_timeout(area_t *ar) {
+   timeout_areas = cons(ar, timeout_areas);
 
-   if( ar->timeout_delay < timeout_gcd ) {
+   if (ar->timeout_delay < timeout_gcd) {
       timeout_gcd = ar->timeout_delay;
    } else {
-      timeout_gcd = gcd( timeout_gcd, ar->timeout_delay );
+      timeout_gcd = gcd(timeout_gcd, ar->timeout_delay);
    }
 }
 
@@ -69,10 +74,10 @@ evloop_timeout( area_t *ar ) {
 /*    enter_area ...                                                   */
 /*---------------------------------------------------------------------*/
 static area_t *
-enter_area( XEvent *ev, area_t *newa, area_t *olda ) {
-   if( newa != olda ) {
-      if( olda && olda->leave_notify ) olda->leave_notify( ev, olda );
-      if( newa && newa->enter_notify ) newa->enter_notify( ev, newa );
+enter_area(XEvent *ev, area_t *newa, area_t *olda) {
+   if (newa != olda) {
+      if (olda && olda->leave_notify) olda->leave_notify(ev, olda);
+      if (newa && newa->enter_notify) newa->enter_notify(ev, newa);
    }
    return newa;
 }
@@ -82,7 +87,7 @@ enter_area( XEvent *ev, area_t *newa, area_t *olda ) {
 /*    evloop ...                                                       */
 /*---------------------------------------------------------------------*/
 void
-evloop( taskbar_t *tbar ) {
+evloop(taskbar_t *tbar) {
    area_t *iar = 0;
    XEvent ev;
    int evt;
@@ -91,55 +96,55 @@ evloop( taskbar_t *tbar ) {
    int xfd;
    long count = timeout_gcd;
    
-   xfd = ConnectionNumber( tbar->xinfo->disp );
+   xfd = ConnectionNumber(tbar->xinfo->disp);
 
-   while( 1 ) {
+   while (1) {
       area_t *ar;
 
-      if( NULLP( timeout_areas ) ) {
-	 FD_ZERO( &fd );
-	 FD_SET( xfd, &fd );
-	 select( xfd + 1, &fd, 0, 0, 0 );
+      if (NULLP(timeout_areas)) {
+	 FD_ZERO(&fd);
+	 FD_SET(xfd, &fd);
+	 select(xfd + 1, &fd, 0, 0, 0);
       } else {
 	 struct timeval tv;
 
 	 tv.tv_usec = 100000;
 	 tv.tv_sec = 0;
-	 FD_ZERO( &fd );
-	 FD_SET( xfd, &fd );
+	 FD_ZERO(&fd);
+	 FD_SET(xfd, &fd);
 	 
-	 if( select (xfd + 1, &fd, 0, 0, &tv ) == 0 ) {
+	 if (select (xfd + 1, &fd, 0, 0, &tv) == 0) {
 	    pair_t *lst = timeout_areas;
 	    pair_t *prev = 0;
 
-	    if( --count <= 0 ) {
+	    if (--count <= 0) {
 	       count = timeout_gcd;
 	       
-	       while( PAIRP( lst ) ) {
-		  area_t *ar = (area_t *)CAR( lst );
+	       while (PAIRP(lst)) {
+		  area_t *ar = (area_t *)CAR(lst);
 
-		  if( ar->timeout_delay > 0 ) {
-		     if( ar->timeout_count > 0 ) {
+		  if (ar->timeout_delay > 0) {
+		     if (ar->timeout_count > 0) {
 			ar->timeout_count -= timeout_gcd;
 			prev = lst;
-			lst = CDR( lst );
+			lst = CDR(lst);
 			continue;
 		     } else {
 			ar->timeout_count = (ar->timeout_delay - 10);
 		     }
 		  }
 
-		  if( ar->timeout( ar ) ) {
+		  if (ar->timeout(ar)) {
 		     prev = lst;
-		     lst = CDR( lst );
+		     lst = CDR(lst);
 		  } else {
-		     lst = CDR( lst );
-		     if( !prev ) {
+		     lst = CDR(lst);
+		     if (!prev) {
 			timeout_areas = lst;
 		     } else {
-			CDR( prev ) = lst;
+			CDR(prev) = lst;
 		     }
-		     free( lst );
+		     free(lst);
 		  }
 	       }
 	    }
@@ -150,8 +155,8 @@ evloop( taskbar_t *tbar ) {
       // no pending events are to be processed
       evt = 0;
 
-      while( XPending( tbar->xinfo->disp ) ) {
-	 XNextEvent( tbar->xinfo->disp, &ev );
+      while (XPending(tbar->xinfo->disp)) {
+	 XNextEvent(tbar->xinfo->disp, &ev);
 
 #if (DEBUG != 0)
 	 {
@@ -160,47 +165,48 @@ evloop( taskbar_t *tbar ) {
 	       Display *disp = xinfo->disp;
 	       area_t *ar = find_area(tbar, win);
 	       
-	       fprintf(stderr, "XEV: %s (%s)\n",
+	       fprintf(stderr, "XEV.%d: %s (%s)\n",
+		       debug_cnst++,
 		       x_event_name(&ev),
 		       window_name(disp, win));
 	 }
 #endif	       
-	 switch( ev.type ) {
+	 switch(ev.type) {
 	    case ButtonPress:
 	       // reset the possible timeout
-	       ar = find_area( tbar, ev.xbutton.window );
-	       if( ar ) {
-		  if( ar->timeout_delay > 0 ) {
+	       ar = find_area(tbar, ev.xbutton.window);
+	       if (ar) {
+		  if (ar->timeout_delay > 0) {
 		     ar->timeout_count = (ar->timeout_delay - 10);
 		  }
-		  if( ar->button_press ) ar->button_press( &ev, ar );
+		  if (ar->button_press) ar->button_press(&ev, ar);
 	       }
 	       break;
 
 	    case KeyPress:
-	       ar = find_area( tbar, ev.xkey.window );
-	       if( ar && ar->key_press ) ar->key_press( &ev, ar );
+	       ar = find_area(tbar, ev.xkey.window);
+	       if (ar && ar->key_press) ar->key_press(&ev, ar);
 	       break;
 
 	    case DestroyNotify:
-	       taskbar_destroy_notify( tbar, &ev );
+	       taskbar_destroy_notify(tbar, &ev);
 	       break;
 
 	    case Expose:
-	       if( tbar->win == ev.xexpose.window ) {
-		  taskbar_refresh( tbar );
+	       if (tbar->win == ev.xexpose.window) {
+		  taskbar_refresh(tbar);
 	       } else {
-		  if( tooltips_windowp( ev.xexpose.window ) ) {
+		  if (tooltips_windowp(ev.xexpose.window)) {
 		     tooltips_refresh();
 		  } else {
-		     ar = find_area( tbar, ev.xexpose.window );
-		     if( ar ) ar->refresh( ar );
+		     ar = find_area(tbar, ev.xexpose.window);
+		     if (ar) ar->refresh(ar);
 		  }
 	       }
 	       break;
 	       
 	    case PropertyNotify:
-	       taskbar_property_notify( tbar, &ev );
+	       taskbar_property_notify(tbar, &ev);
 	       break;
 
 	    case EnterNotify:
@@ -214,13 +220,13 @@ evloop( taskbar_t *tbar ) {
 	       break;
 
 	    case MotionNotify:
-	       ar = find_area( tbar, ev.xmotion.window );
-	       iar = enter_area( &ev, ar, iar );
+	       ar = find_area(tbar, ev.xmotion.window);
+	       iar = enter_area(&ev, ar, iar);
 	       break;
 
 	    case ClientMessage:
-	       ar = find_area( tbar, ev.xclient.window );
-	       if( ar && ar->client_message ) ar->client_message( &ev, ar );
+	       ar = find_area(tbar, ev.xclient.window);
+	       if (ar && ar->client_message) ar->client_message(&ev, ar);
 	       break;
 
 	    default:
@@ -230,22 +236,22 @@ evloop( taskbar_t *tbar ) {
 
       // once all pending events have been handled, we process
       // the last leave/enter event for the tbar window
-      switch( evt ) {
+      switch(evt) {
 	 case EnterNotify:
-	    if( tbar->hiddenp ) {
-	       taskbar_unhide( tbar );
+	    if (tbar->hiddenp) {
+	       taskbar_unhide(tbar);
 	    } else {
-	       ar = find_area( tbar, ev.xcrossing.window );
-	       iar = enter_area( &elev, ar, iar );
+	       ar = find_area(tbar, ev.xcrossing.window);
+	       iar = enter_area(&elev, ar, iar);
 	    }
 	    
 	    break;
 
 	 case LeaveNotify: 
-	    iar = enter_area( &elev, 0, iar );
+	    iar = enter_area(&elev, 0, iar);
 	    
 	    tooltips_hide();
-	    if( tbar->autohide ) taskbar_hide( tbar );
+	    if (tbar->autohide) taskbar_hide(tbar);
 	    break;
       }
    }
@@ -257,7 +263,7 @@ evloop( taskbar_t *tbar ) {
 /*---------------------------------------------------------------------*/
 char *
 x_atom_name(Atom at) {
-   static char buf[10];
+   static char buf[20];
    
    switch((long)at) {
       case XA_PRIMARY: return "XA_PRIMARY";
@@ -328,7 +334,7 @@ x_atom_name(Atom at) {
       case XA_CAP_HEIGHT: return "XA_CAP_HEIGHT";
       case XA_WM_CLASS: return "XA_WM_CLASS";
       case XA_WM_TRANSIENT_FOR: return "XA_WM_TRANSIENT_FOR";
-      default: sprintf(buf, "%d", (long)at); return buf;
+      default: sprintf(buf, "XA_UNKNOWN (%d)", (long)at); return buf;
    }
 }
 
@@ -338,7 +344,7 @@ x_atom_name(Atom at) {
 /*---------------------------------------------------------------------*/
 char *
 x_event_name(XEvent *ev) {
-   static char buf[10];
+   static char buf[30];
    
    switch(ev->type) {
       case KeyPress: return "KeyPress";
@@ -376,6 +382,6 @@ x_event_name(XEvent *ev) {
       case MappingNotify: return "MappingNotify";
       case GenericEvent: return "GenericEvent";
       case LASTEvent: return "LASTEvent";
-      default: sprintf(buf, "%d", (long)ev->type); return buf;
+      default: sprintf(buf, "UNKNOWNevent (%d)", (long)ev->type); return buf;
    }
 }
