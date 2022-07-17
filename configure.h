@@ -20,7 +20,7 @@
 
 #define HAVE_LIBIW 1
 
-#define DEBUG 1
+#define DEBUG 0
 
 #endif
 

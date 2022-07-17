@@ -3,8 +3,8 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Sat Jul 24 14:05:58 2004                          */
-/*    Last change :  Sat Oct 10 06:38:50 2015 (serrano)                */
-/*    Copyright   :  2004-15 Manuel Serrano                            */
+/*    Last change :  Sun Jul 17 19:12:49 2022 (serrano)                */
+/*    Copyright   :  2004-22 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    The generic ICCMPPANEL include file                              */
 /*=====================================================================*/
@@ -19,6 +19,7 @@
 #include "area.h"
 #include "evloop.h"
 #include "tooltips.h"
+#include "cursor.h"
 #include "systray.h"
 
 #endif

@@ -3,8 +3,8 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Sat Oct 11 05:45:32 2003                          */
-/*    Last change :  Sat Nov 30 09:39:20 2019 (serrano)                */
-/*    Copyright   :  2003-19 Manuel Serrano                            */
+/*    Last change :  Sun Jul 17 16:19:14 2022 (serrano)                */
+/*    Copyright   :  2003-22 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    ICCCMPANEL (from fspanel)                                        */
 /*=====================================================================*/
@@ -42,7 +42,7 @@ int
 #ifdef NOSTDLIB
 _start(void) {
 #else
-main( int argc, char *argv[] ) {
+main(int argc, char *argv[]) {
 #endif
    Xinfo_t *xinfo;
    taskbar_t *tbar;
@@ -50,40 +50,40 @@ main( int argc, char *argv[] ) {
    pair_t *lst;
    
    /* configure ICCCMPANEL */
-   if( !(config = make_config( argc, argv )) )
-      exit( 10 );
+   if(!(config = make_config(argc, argv)))
+      exit(10);
 
    /* initialize our simple X toolkit */
-   xinfo = init_mstk( config );
+   xinfo = init_mstk(config);
 
    /* allocate the taskbar */
-   tbar = make_taskbar( xinfo, config );
+   tbar = make_taskbar(xinfo, config);
 
-   if( !tbar ) exit( 11 );
+   if(!tbar) exit(11);
 
    /* start all the plugin */
    lst = config->plugins;
-   while( PAIRP( lst ) ) {
-      plugin_t *p = (plugin_t *)CAR( lst );
+   while(PAIRP(lst)) {
+      plugin_t *p = (plugin_t *)CAR(lst);
 
-      p->start( tbar, p->args );
+      p->start(tbar, p->args);
       
-      lst = CDR( lst );
+      lst = CDR(lst);
    }
 
    /* build the taskbar */
-   taskbar_area_do_layout( tbar );
-   taskbar_register_xclients( tbar );
-   taskbar_refresh_all( tbar );
+   taskbar_area_do_layout(tbar);
+   taskbar_register_xclients(tbar);
+   taskbar_refresh_all(tbar);
    
    /* refresh the taskbar */
-   XSync( xinfo->disp, True );
+   XSync(xinfo->disp, True);
    
    /* the event loop */
-   evloop( tbar );
+   evloop(tbar);
    
    /* close up out simple X toolkit */
-   closeup_mstk( xinfo );
+   closeup_mstk(xinfo);
 
    /* we are done */
    return 0;

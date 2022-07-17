@@ -3,8 +3,8 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Thu Jul 22 14:32:38 2004                          */
-/*    Last change :  Tue Nov 23 09:41:07 2021 (serrano)                */
-/*    Copyright   :  2004-21 Manuel Serrano                            */
+/*    Last change :  Sun Jul 17 16:38:35 2022 (serrano)                */
+/*    Copyright   :  2004-22 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    Taskbar management                                               */
 /*=====================================================================*/
@@ -351,17 +351,17 @@ make_taskbar(Xinfo_t *xinfo, config_t *config) {
 
    /* the X window */
    win = XCreateWindow(/* display */ disp,
-			/* parent  */ xinfo->root_win,
-			/* x       */ tbar_x,
-			/* y       */ tbar_y,
-			/* width   */ tbar_w,
-			/* height  */ tbar_h,
-			/* border  */ 0,
-			/* depth   */ CopyFromParent,
-			/* class   */ InputOutput,
-			/* visual  */ CopyFromParent,
-			/* vmask   */ CWBackPixel | CWEventMask | CWOverrideRedirect,
-			/* attribs */ &att);
+		       /* parent  */ xinfo->root_win,
+		       /* x       */ tbar_x,
+		       /* y       */ tbar_y,
+		       /* width   */ tbar_w,
+		       /* height  */ tbar_h,
+		       /* border  */ 0,
+		       /* depth   */ CopyFromParent,
+		       /* class   */ InputOutput,
+		       /* visual  */ CopyFromParent,
+		       /* vmask   */ CWBackPixel | CWEventMask | CWOverrideRedirect,
+		       /* attribs */ &att);
 
    /* reserve "WINHEIGHT" pixels at the bottom of the screen */
    strut[ 0 ] = 0;

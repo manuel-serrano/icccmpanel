@@ -3,8 +3,8 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Fri Jul 23 05:59:11 2004                          */
-/*    Last change :  Tue Nov 23 09:38:44 2021 (serrano)                */
-/*    Copyright   :  2004-21 Manuel Serrano                            */
+/*    Last change :  Sun Jul 17 16:18:20 2022 (serrano)                */
+/*    Copyright   :  2004-22 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    Event loop                                                       */
 /*=====================================================================*/
@@ -97,7 +97,8 @@ evloop(taskbar_t *tbar) {
    long count = timeout_gcd;
    
    xfd = ConnectionNumber(tbar->xinfo->disp);
-
+   XSelectInput(tbar->xinfo->disp, tbar->xinfo->root_win, PointerMotionMask);
+   
    while (1) {
       area_t *ar;
 
@@ -222,6 +223,7 @@ evloop(taskbar_t *tbar) {
 	    case MotionNotify:
 	       ar = find_area(tbar, ev.xmotion.window);
 	       iar = enter_area(&ev, ar, iar);
+	       show_cursor(tbar);
 	       break;
 
 	    case ClientMessage:
