@@ -3,8 +3,8 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Mon Aug 11 10:37:34 2014                          */
-/*    Last change :  Sat Nov 30 10:37:10 2019 (serrano)                */
-/*    Copyright   :  2014-19 Manuel Serrano                            */
+/*    Last change :  Wed Jul 20 07:46:31 2022 (serrano)                */
+/*    Copyright   :  2014-22 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    battery applet                                                   */
 /*=====================================================================*/
@@ -50,10 +50,7 @@ typedef struct ipbattery {
    Pixmap *icons, *masks;
    Pixmap online_img, online_mask;
    Pixmap current_img, current_mask;
-/*    void (*refresh)( struct area * );                                */
-/*    Pixmap *icons, *masks;                                           */
 } ipbattery_t;
-
 
 /*---------------------------------------------------------------------*/
 /*    statics                                                          */

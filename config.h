@@ -3,8 +3,8 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Mon Oct 13 13:35:06 2003                          */
-/*    Last change :  Sat Nov 30 10:17:31 2019 (serrano)                */
-/*    Copyright   :  2003-19 Manuel Serrano                            */
+/*    Last change :  Wed Jul 20 10:18:26 2022 (serrano)                */
+/*    Copyright   :  2003-22 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    MSpanel config parsing                                           */
 /*=====================================================================*/
@@ -63,6 +63,7 @@ typedef struct config {
    int app_width;
    char *tooltips_fontname;
    pair_t *plugins;
+   char *bigcursor_path;
 } config_t;
 
 /*---------------------------------------------------------------------*/

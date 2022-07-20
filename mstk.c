@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Sat Oct 11 05:33:42 2003                          */
-/*    Last change :  Sun Jul 17 17:18:30 2022 (serrano)                */
+/*    Last change :  Tue Jul 19 15:26:09 2022 (serrano)                */
 /*    Copyright   :  2003-22 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    Small X toolkit                                                  */
@@ -223,7 +223,9 @@ init_mstk(config_t *config) {
    init_tooltips(xinfo);
    
    /* initialize the big cursor */
-   init_cursor(xinfo);
+   if (config->bigcursor_path) {
+      init_cursor(xinfo, config->bigcursor_path);
+   }
    
    return xinfo;
 }
@@ -339,9 +341,6 @@ static unsigned long *pixmap_to_rgba(Display *disp, Pixmap icon, Pixmap mask, in
        }
    }
 
-   //XDestroyImage(icon_img);
-   //XDestroyImage(mask_img);
-   
    return data;
 }
 
@@ -529,6 +528,8 @@ window_name(Display *disp, Window win) {
       XFree(data);
       return res;
    }
+
+   return 0;
 }
 
 /*---------------------------------------------------------------------*/

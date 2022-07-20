@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Thu Jul 22 14:32:38 2004                          */
-/*    Last change :  Sun Jul 17 16:38:35 2022 (serrano)                */
+/*    Last change :  Tue Jul 19 15:08:57 2022 (serrano)                */
 /*    Copyright   :  2004-22 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    Taskbar management                                               */
@@ -467,16 +467,14 @@ taskbar_register_xclients(taskbar_t *tbar) {
    /* check all the windows */
    for(i = 0; i < num; i++) {
       Window w = wins[ i ];
-      
+
       if (w != tbar->win && !tooltips_windowp(w) && !find_area(tbar, w)) {
 	 xclient_t *xcl = window_xclient(tbar, w);
 	 
 	 if (!xcl) {
 	    pair_t *lst = tbar->areas;
 
-	    XSelectInput(disp, w,
-			  PropertyChangeMask
-			  | StructureNotifyMask);
+	    XSelectInput(disp, w, PropertyChangeMask | StructureNotifyMask);
 
 	    xcl = get_xclient(tbar, w);
 
@@ -700,7 +698,6 @@ taskbar_property_notify(taskbar_t *tbar, XEvent *ev) {
    Xinfo_t *xinfo = tbar->xinfo;
    Display *disp = xinfo->disp;
    Atom at = ev->xproperty.atom;
-   
    /* store the new desktop value */
    tbar->desktop = current_desktop(disp, xinfo->root_win);
 

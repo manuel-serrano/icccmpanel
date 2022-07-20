@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Sat Oct 11 05:45:32 2003                          */
-/*    Last change :  Sun Jul 17 16:19:14 2022 (serrano)                */
+/*    Last change :  Wed Jul 20 09:21:19 2022 (serrano)                */
 /*    Copyright   :  2003-22 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    ICCCMPANEL (from fspanel)                                        */
@@ -67,7 +67,7 @@ main(int argc, char *argv[]) {
       plugin_t *p = (plugin_t *)CAR(lst);
 
       p->start(tbar, p->args);
-      
+
       lst = CDR(lst);
    }
 
@@ -81,6 +81,8 @@ main(int argc, char *argv[]) {
    
    /* the event loop */
    evloop(tbar);
+
+   sleep(2);
    
    /* close up out simple X toolkit */
    closeup_mstk(xinfo);

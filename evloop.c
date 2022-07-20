@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Fri Jul 23 05:59:11 2004                          */
-/*    Last change :  Sun Jul 17 16:18:20 2022 (serrano)                */
+/*    Last change :  Tue Jul 19 14:42:36 2022 (serrano)                */
 /*    Copyright   :  2004-22 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    Event loop                                                       */
@@ -97,7 +97,12 @@ evloop(taskbar_t *tbar) {
    long count = timeout_gcd;
    
    xfd = ConnectionNumber(tbar->xinfo->disp);
-   XSelectInput(tbar->xinfo->disp, tbar->xinfo->root_win, PointerMotionMask);
+   XSelectInput(tbar->xinfo->disp, tbar->xinfo->root_win,
+		//ButtonPressMask
+		KeyPressMask
+		| ExposureMask | PropertyChangeMask
+		| EnterWindowMask | LeaveWindowMask | PointerMotionMask
+		| StructureNotifyMask);
    
    while (1) {
       area_t *ar;
@@ -171,7 +176,7 @@ evloop(taskbar_t *tbar) {
 		       x_event_name(&ev),
 		       window_name(disp, win));
 	 }
-#endif	       
+#endif
 	 switch(ev.type) {
 	    case ButtonPress:
 	       // reset the possible timeout

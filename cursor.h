@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Mon Oct 13 13:35:06 2003                          */
-/*    Last change :  Sun Jul 17 20:20:06 2022 (serrano)                */
+/*    Last change :  Wed Jul 20 10:29:48 2022 (serrano)                */
 /*    Copyright   :  2003-22 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    MSpanel cursor                                                   */
@@ -14,7 +14,7 @@
 /*---------------------------------------------------------------------*/
 /*    extern declarations                                              */
 /*---------------------------------------------------------------------*/
-extern void init_cursor(Xinfo_t *);
+extern void init_cursor(Xinfo_t *, char *);
 extern int cursor_windowp(Window); 
 extern void cursor_refresh();
 extern void cursor_hide();

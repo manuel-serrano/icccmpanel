@@ -4,7 +4,7 @@
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Sat Jul 24 14:20:57 2004                          */
 /*    Last change :  Mon Aug 11 18:32:11 2014 (serrano)                */
-/*    Copyright   :  2004-14 Manuel Serrano                            */
+/*    Copyright   :  2004-22 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    Area management                                                  */
 /*=====================================================================*/
