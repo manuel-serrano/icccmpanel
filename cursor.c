@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Sun Jul 17 17:15:49 2022                          */
-/*    Last change :  Fri Jul 22 08:06:38 2022 (serrano)                */
+/*    Last change :  Fri Jul 22 11:23:45 2022 (serrano)                */
 /*    Copyright   :  2022 Manuel Serrano                               */
 /*    -------------------------------------------------------------    */
 /*    ICCCMPanel big cursor (on mouse motion)                          */
@@ -214,20 +214,21 @@ show_cursor(taskbar_t *tbar) {
 #define POINTER_COUNT 50
 #define POINTER_ZONE 300   
 
-      //fprintf(stderr, "cnt=%d %ld/%ld\n", count, cur_time - last_time, POINTER_SENSITIVITY);
+      //fprintf(stderr, "cnt=%d %ld/%ld\n  ctime=%ld\n  ltime=%ld\n", count, cur_time - last_time, POINTER_SENSITIVITY, cur_time, last_time);
 
       if (cur_time - last_time < POINTER_SENSITIVITY) {
 	 int retval = XQueryPointer(disp, root_window, &root, &child,
 				    &root_x, &root_y,
 				    &win_x, &win_y,
 				    &mask);
-	 //fprintf(stderr, "   root=%d/%d %d\n", root_x, cursor_x, (root_x - cursor_x));
+	 //fprintf(stderr, "   root=%d/%d last=%d %d\n", root_x, cursor_x, (root_x - cursor_x));
 
 	 if (((root_x - cursor_x) < POINTER_ZONE)
 	     && ((root_x - cursor_x) > -POINTER_ZONE)
 	     && ((root_y - cursor_y) < POINTER_ZONE)
 	     && ((root_y - cursor_y) > -POINTER_ZONE)) {
 	    count++;
+	    
 	    if (count > POINTER_COUNT) {
 	       //printf("ct:%lld, it:%lld d:%ld count:%d x: %d,  y:%d\n", cur_time, init_time , cur_time - init_time, count, root_x, root_y);
 	       cursor_setup(root_x, root_y);
