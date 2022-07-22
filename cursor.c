@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Sun Jul 17 17:15:49 2022                          */
-/*    Last change :  Tue Jul 19 14:29:42 2022 (serrano)                */
+/*    Last change :  Fri Jul 22 08:06:38 2022 (serrano)                */
 /*    Copyright   :  2022 Manuel Serrano                               */
 /*    -------------------------------------------------------------    */
 /*    ICCCMPanel big cursor (on mouse motion)                          */
@@ -73,7 +73,7 @@ init_cursor(Xinfo_t *xinfo, char *xpm_path) {
 		       /* depth   */ CopyFromParent,
 		       /* class   */ InputOutput,
 		       /* visual  */ CopyFromParent,
-		       /* vmask   */ CWOverrideRedirect | CWColormap | CWCursor,
+		       /* vmask   */ CWOverrideRedirect | CWCursor,
 		       /* attribs */ &att);
 
    if (!win) return;
@@ -129,7 +129,7 @@ init_cursor(Xinfo_t *xinfo, char *xpm_path) {
    init_cursor_xpm(cursor_xinfo, win, xpm_path);
 
    cursor_hide();
-   cursor_setup(500, 500);
+   //cursor_setup(500, 500);
 }
 
 /*---------------------------------------------------------------------*/
@@ -212,7 +212,7 @@ show_cursor(taskbar_t *tbar) {
 
 #define POINTER_SENSITIVITY 30000
 #define POINTER_COUNT 50
-#define POINTER_ZONE 200   
+#define POINTER_ZONE 300   
 
       //fprintf(stderr, "cnt=%d %ld/%ld\n", count, cur_time - last_time, POINTER_SENSITIVITY);
 
