@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Sun Jul 17 17:15:49 2022                          */
-/*    Last change :  Fri Jul 22 11:23:45 2022 (serrano)                */
+/*    Last change :  Sun Aug  7 06:56:46 2022 (serrano)                */
 /*    Copyright   :  2022 Manuel Serrano                               */
 /*    -------------------------------------------------------------    */
 /*    ICCCMPanel big cursor (on mouse motion)                          */
@@ -20,6 +20,7 @@
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 #include <X11/Xatom.h>
+#include <X11/cursorfont.h>
 
 #ifdef HAVE_XPM
 #  include <X11/xpm.h>
@@ -31,7 +32,8 @@
 /*    static Window                                                    */
 /*    cursor_window ...                                                */
 /*---------------------------------------------------------------------*/
-Window cursor_window = 0;
+static Window cursor_window = 0;
+
 static Xinfo_t *cursor_xinfo = 0;
 static Pixmap cursor_xpm, cursor_mask;
 static int cursor_xpm_w, cursor_xpm_h;
@@ -129,7 +131,7 @@ init_cursor(Xinfo_t *xinfo, char *xpm_path) {
    init_cursor_xpm(cursor_xinfo, win, xpm_path);
 
    cursor_hide();
-   //cursor_setup(500, 500);
+   // cursor_setup(500, 500);
 }
 
 /*---------------------------------------------------------------------*/
@@ -143,6 +145,7 @@ init_cursor_xpm(Xinfo_t *xinfo, Window win, char *xpm_path) {
    unsigned int d, bw;
    XpmImage image;
    XpmInfo info;
+   Cursor cursor;
 
    int res = XpmReadFileToPixmap(xinfo->disp, win, xpm_path,
 				 &cursor_xpm, &cursor_mask,
@@ -154,6 +157,10 @@ init_cursor_xpm(Xinfo_t *xinfo, Window win, char *xpm_path) {
    cursor_xpm_h = image.height;
    
    XMoveResizeWindow(xinfo->disp, cursor_window, x, y, cursor_xpm_w, cursor_xpm_h);
+
+   if (cursor = XCreateFontCursor(xinfo->disp, XC_dot)) {
+      XDefineCursor(xinfo->disp, win, cursor);
+   }
 }
    
 /*---------------------------------------------------------------------*/
@@ -211,7 +218,7 @@ show_cursor(taskbar_t *tbar) {
       }
 
 #define POINTER_SENSITIVITY 30000
-#define POINTER_COUNT 50
+#define POINTER_COUNT 100
 #define POINTER_ZONE 300   
 
       //fprintf(stderr, "cnt=%d %ld/%ld\n  ctime=%ld\n  ltime=%ld\n", count, cur_time - last_time, POINTER_SENSITIVITY, cur_time, last_time);
