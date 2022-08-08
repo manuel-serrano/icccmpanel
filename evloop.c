@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Fri Jul 23 05:59:11 2004                          */
-/*    Last change :  Tue Jul 19 14:42:36 2022 (serrano)                */
+/*    Last change :  Mon Aug  8 08:43:30 2022 (serrano)                */
 /*    Copyright   :  2004-22 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    Event loop                                                       */
@@ -180,6 +180,7 @@ evloop(taskbar_t *tbar) {
 	 switch(ev.type) {
 	    case ButtonPress:
 	       // reset the possible timeout
+	       cursor_hide();
 	       ar = find_area(tbar, ev.xbutton.window);
 	       if (ar) {
 		  if (ar->timeout_delay > 0) {

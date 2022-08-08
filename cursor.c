@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Sun Jul 17 17:15:49 2022                          */
-/*    Last change :  Sun Aug  7 06:56:46 2022 (serrano)                */
+/*    Last change :  Mon Aug  8 08:49:31 2022 (serrano)                */
 /*    Copyright   :  2022 Manuel Serrano                               */
 /*    -------------------------------------------------------------    */
 /*    ICCCMPanel big cursor (on mouse motion)                          */
@@ -64,6 +64,7 @@ init_cursor(Xinfo_t *xinfo, char *xpm_path) {
    att.override_redirect = 1;
    att.background_pixel = 0xffffffff;
    att.cursor = None;
+   att.event_mask = ButtonPressMask;
    
    win = XCreateWindow(/* display */ disp,
 		       /* parent  */ xinfo->root_win,
@@ -131,6 +132,10 @@ init_cursor(Xinfo_t *xinfo, char *xpm_path) {
    init_cursor_xpm(cursor_xinfo, win, xpm_path);
 
    cursor_hide();
+
+   /* cursor window events */
+   XSelectInput(disp, cursor_window, ButtonPressMask);
+
    // cursor_setup(500, 500);
 }
 
