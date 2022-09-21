@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Fri Jul 23 05:59:11 2004                          */
-/*    Last change :  Mon Aug  8 08:43:30 2022 (serrano)                */
+/*    Last change :  Wed Sep 21 10:20:53 2022 (serrano)                */
 /*    Copyright   :  2004-22 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    Event loop                                                       */
@@ -96,13 +96,28 @@ evloop(taskbar_t *tbar) {
    int xfd;
    long count = timeout_gcd;
    
+   KeyCode altr_keycode = XKeysymToKeycode(tbar->xinfo->disp,XK_Alt_R);
+   KeyCode altl_keycode = XKeysymToKeycode(tbar->xinfo->disp,XK_Alt_L);
+   unsigned int ignored_modmask = 0; // stub
+    
    xfd = ConnectionNumber(tbar->xinfo->disp);
    XSelectInput(tbar->xinfo->disp, tbar->xinfo->root_win,
 		//ButtonPressMask
-		KeyPressMask
+		KeyPressMask | KeyReleaseMask
 		| ExposureMask | PropertyChangeMask
 		| EnterWindowMask | LeaveWindowMask | PointerMotionMask
 		| StructureNotifyMask);
+   
+   XGrabKey(tbar->xinfo->disp,
+            altr_keycode,
+            Mod1Mask,
+	    tbar->xinfo->root_win, True,
+	    GrabModeAsync, GrabModeAsync);
+   XGrabKey(tbar->xinfo->disp,
+            altl_keycode,
+            Mod1Mask,
+	    tbar->xinfo->root_win, True,
+	    GrabModeAsync, GrabModeAsync);
    
    while (1) {
       area_t *ar;
@@ -192,9 +207,22 @@ evloop(taskbar_t *tbar) {
 
 	    case KeyPress:
 	       ar = find_area(tbar, ev.xkey.window);
-	       if (ar && ar->key_press) ar->key_press(&ev, ar);
+	       if (ar && ar->key_press) {
+		  ar->key_press(&ev, ar);
+	       } else {
+		  KeySym ks;
+		  char keychar[1];
+		  XLookupString( (XKeyEvent *)&ev, keychar, 1, &ks, 0 );
+		  if (IsModifierKey(ks)) {
+		     show_cursor(tbar, 1);
+		  }
+	       }
 	       break;
 
+	    case KeyRelease:
+	       cursor_hide();
+	       break;
+	       
 	    case DestroyNotify:
 	       taskbar_destroy_notify(tbar, &ev);
 	       break;
@@ -229,7 +257,7 @@ evloop(taskbar_t *tbar) {
 	    case MotionNotify:
 	       ar = find_area(tbar, ev.xmotion.window);
 	       iar = enter_area(&ev, ar, iar);
-	       show_cursor(tbar);
+	       show_cursor(tbar, 0);
 	       break;
 
 	    case ClientMessage:
