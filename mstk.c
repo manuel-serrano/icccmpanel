@@ -3,8 +3,8 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Sat Oct 11 05:33:42 2003                          */
-/*    Last change :  Tue Jul 19 15:26:09 2022 (serrano)                */
-/*    Copyright   :  2003-22 Manuel Serrano                            */
+/*    Last change :  Mon Jan  1 07:30:36 2024 (serrano)                */
+/*    Copyright   :  2003-24 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    Small X toolkit                                                  */
 /*=====================================================================*/
@@ -727,7 +727,7 @@ switch_desktop(Display *disp, Window win, int desk) {
    xev.message_type = atom__NET_CURRENT_DESKTOP;
    xev.format = 32;
    xev.data.l[ 0 ] = desk;
-   XSendEvent(disp, win, False, SubstructureNotifyMask, (XEvent *)&xev);
+   XSendEvent(disp, win, False, SubstructureNotifyMask | SubstructureRedirectMask, (XEvent *)&xev);
 }
 
 /*---------------------------------------------------------------------*/
