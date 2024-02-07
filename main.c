@@ -3,8 +3,8 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Sat Oct 11 05:45:32 2003                          */
-/*    Last change :  Wed Jul 20 09:21:19 2022 (serrano)                */
-/*    Copyright   :  2003-22 Manuel Serrano                            */
+/*    Last change :  Wed Jan 31 07:36:30 2024 (serrano)                */
+/*    Copyright   :  2003-24 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    ICCCMPANEL (from fspanel)                                        */
 /*=====================================================================*/
@@ -50,7 +50,7 @@ main(int argc, char *argv[]) {
    pair_t *lst;
    
    /* configure ICCCMPANEL */
-   if(!(config = make_config(argc, argv)))
+   if (!(config = make_config(argc, argv)))
       exit(10);
 
    /* initialize our simple X toolkit */
@@ -59,11 +59,11 @@ main(int argc, char *argv[]) {
    /* allocate the taskbar */
    tbar = make_taskbar(xinfo, config);
 
-   if(!tbar) exit(11);
+   if (!tbar) exit(11);
 
    /* start all the plugin */
    lst = config->plugins;
-   while(PAIRP(lst)) {
+   while (PAIRP(lst)) {
       plugin_t *p = (plugin_t *)CAR(lst);
 
       p->start(tbar, p->args);

@@ -3,8 +3,8 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Thu Jul 22 14:32:38 2004                          */
-/*    Last change :  Tue Jul 19 15:08:57 2022 (serrano)                */
-/*    Copyright   :  2004-22 Manuel Serrano                            */
+/*    Last change :  Wed Jan 31 07:37:53 2024 (serrano)                */
+/*    Copyright   :  2004-24 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    Taskbar management                                               */
 /*=====================================================================*/
@@ -461,9 +461,11 @@ taskbar_register_xclients(taskbar_t *tbar) {
    
    /* get the window list */
    wins = get_window_prop_data(disp, root_win,
-				atom__NET_CLIENT_LIST, XA_WINDOW,
-				&num);
+			       atom__NET_CLIENT_LIST, XA_WINDOW,
+			       &num);
 
+   fprintf(stderr, "---------------------------------------\n");
+   fprintf(stderr, "register num=%d\n", num);
    /* check all the windows */
    for(i = 0; i < num; i++) {
       Window w = wins[ i ];
@@ -487,7 +489,13 @@ taskbar_register_xclients(taskbar_t *tbar) {
 	       if (ar->create_notify) ar->create_notify(ar, xcl);
 	       lst = CDR(lst);
 	    }
+	 } else {
+	    fprintf(stderr, "skip window.2 %d %s live=%d\n",
+		    i, window_name(tbar->xinfo->disp, w), xcl->live);
 	 }
+      } else {
+	    fprintf(stderr, "skip window.1 %d %s\n",
+		    i, window_name(tbar->xinfo->disp, w));
       }
    }
 
@@ -802,7 +810,7 @@ taskbar_destroy_notify(taskbar_t *tbar, XEvent *ev) {
       if (xcl) {
 	 pair_t *lst = tbar->areas;
 
-	 /* mark the xclient as dead */
+	 /* mark the xclient is now dead */
 	 xcl->live = 0;
 
 	 /* notify all the interested areas */
