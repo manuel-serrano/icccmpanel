@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Fri Jul 23 22:15:38 2004                          */
-/*    Last change :  Tue Dec 26 06:14:25 2023 (serrano)                */
+/*    Last change :  Wed Mar 20 08:40:50 2024 (serrano)                */
 /*    Copyright   :  2004-24 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    The desktop                                                      */
@@ -55,11 +55,6 @@ refresh_desktop(area_t *ar) {
    int i;
    int desktop = current_desktop(xinfo->disp, xinfo->root_win);
 
-   // DEBUG
-#if (DEBUG !=0)   
-   fprintf(stderr, "DESKTOP: refresh %d **************************\n", desktop);
-#endif
-   
    /* compute the desktop info */
    if (desktop > DESKTOPNAMES_COUNT) {
       dname = "???";

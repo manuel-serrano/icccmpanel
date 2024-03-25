@@ -3,8 +3,8 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Fri Jul 23 05:59:11 2004                          */
-/*    Last change :  Wed Sep 21 10:20:53 2022 (serrano)                */
-/*    Copyright   :  2004-22 Manuel Serrano                            */
+/*    Last change :  Thu Feb 15 10:08:56 2024 (serrano)                */
+/*    Copyright   :  2004-24 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    Event loop                                                       */
 /*=====================================================================*/
@@ -179,19 +179,19 @@ evloop(taskbar_t *tbar) {
       while (XPending(tbar->xinfo->disp)) {
 	 XNextEvent(tbar->xinfo->disp, &ev);
 
-#if (DEBUG != 0)
-	 {
-	       Window win = ev.xproperty.window;
-	       Xinfo_t *xinfo = tbar->xinfo;
-	       Display *disp = xinfo->disp;
-	       area_t *ar = find_area(tbar, win);
-	       
-	       fprintf(stderr, "XEV.%d: %s (%s)\n",
-		       debug_cnst++,
-		       x_event_name(&ev),
-		       window_name(disp, win));
-	 }
-#endif
+/* #if (DEBUG != 0)                                                    */
+/* 	 {                                                             */
+/* 	       Window win = ev.xproperty.window;                       */
+/* 	       Xinfo_t *xinfo = tbar->xinfo;                           */
+/* 	       Display *disp = xinfo->disp;                            */
+/* 	       area_t *ar = find_area(tbar, win);                      */
+/* 	                                                               */
+/* 	       fprintf(stderr, "XEV.%d: %s (%s)\n",                    */
+/* 		       debug_cnst++,                                   */
+/* 		       x_event_name(&ev),                              */
+/* 		       window_name(disp, win));                        */
+/* 	 }                                                             */
+/* #endif                                                              */
 	 switch(ev.type) {
 	    case ButtonPress:
 	       // reset the possible timeout
@@ -228,18 +228,26 @@ evloop(taskbar_t *tbar) {
 	       break;
 
 	    case Expose:
-	       if (tbar->win == ev.xexpose.window) {
+	    case UnmapNotify: {
+	       Window win =
+		  ev.type == Expose ? ev.xexpose.window : ev.xunmap.window;
+	       char *wname = win ? window_name(tbar->xinfo->disp, win) : 0L;
+	       fprintf(stderr, "%s %s...", x_event_name(&ev), wname ? wname : "");
+	       if (tbar->win == win) {
 		  taskbar_refresh(tbar);
 	       } else {
-		  if (tooltips_windowp(ev.xexpose.window)) {
+		  if (tooltips_windowp(win)) {
 		     tooltips_refresh();
 		  } else {
-		     ar = find_area(tbar, ev.xexpose.window);
+		     ar = find_area(tbar, win);
 		     if (ar) ar->refresh(ar);
+		     if (ar) fprintf(stderr, " area %s", ar->name);
 		  }
+		  fprintf(stderr, "\n");
 	       }
 	       break;
-	       
+	    }
+
 	    case PropertyNotify:
 	       taskbar_property_notify(tbar, &ev);
 	       break;

@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Thu Jul 22 14:32:38 2004                          */
-/*    Last change :  Wed Jan 31 07:37:53 2024 (serrano)                */
+/*    Last change :  Tue Feb 20 18:31:20 2024 (serrano)                */
 /*    Copyright   :  2004-24 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    Taskbar management                                               */
@@ -131,11 +131,6 @@ update_xclient_state(xclient_t *xcl, taskbar_t *tbar, Window win) {
    xcl->desktop = window_desktop(tbar->xinfo->disp, win);
    xcl->unmappedp = window_iconifiedp(tbar->xinfo->disp, win);
 
-#if (DEBUG != 0)
-   fprintf(stderr, "ICON: refresh \"%s\" desk=%d unmappedp=%d\n",
-	   xcl->name, xcl->desktop, xcl->unmappedp);
-#endif
-   
    if (tbar->config->update_netwmicon) {
       if (xcl->unmappedp) update_xclient_icon(xcl, tbar, win);
    }
@@ -172,6 +167,7 @@ fill_xclient(xclient_t *xcl, taskbar_t *tbar, Window w) {
 /*---------------------------------------------------------------------*/
 static xclient_t *
 cleanup_xclient(xclient_t *xcl, taskbar_t *tbar) {
+   fprintf(stderr, "**** cleanup_xclient %s %s\n", xcl->class, xcl->name);
    free(xcl->class);
    free(xcl->name);
 
@@ -464,8 +460,6 @@ taskbar_register_xclients(taskbar_t *tbar) {
 			       atom__NET_CLIENT_LIST, XA_WINDOW,
 			       &num);
 
-   fprintf(stderr, "---------------------------------------\n");
-   fprintf(stderr, "register num=%d\n", num);
    /* check all the windows */
    for(i = 0; i < num; i++) {
       Window w = wins[ i ];
@@ -489,13 +483,7 @@ taskbar_register_xclients(taskbar_t *tbar) {
 	       if (ar->create_notify) ar->create_notify(ar, xcl);
 	       lst = CDR(lst);
 	    }
-	 } else {
-	    fprintf(stderr, "skip window.2 %d %s live=%d\n",
-		    i, window_name(tbar->xinfo->disp, w), xcl->live);
 	 }
-      } else {
-	    fprintf(stderr, "skip window.1 %d %s\n",
-		    i, window_name(tbar->xinfo->disp, w));
       }
    }
 
@@ -687,12 +675,6 @@ taskbar_info(taskbar_t *tbar, int src) {
       }
    }
 	    
-#if (DEBUG != 0)
-   fprintf(stderr,
-	    "Desktop=%d Window-number=%d Icon=%d Icon-in-desktop=%d\n",
-	    dt, num, numi, numid);
-#endif
-   
    XFree(wins);
 }   
 
@@ -710,22 +692,12 @@ taskbar_property_notify(taskbar_t *tbar, XEvent *ev) {
    tbar->desktop = current_desktop(disp, xinfo->root_win);
 
    if (win == tbar->xinfo->root_win) {
-#if (DEBUG != 0)
-      fprintf(stderr, "NOTIFY.root_win: win_name=%s atom_name=%s at=%p\n",
-	      window_name(disp, win),
-	      x_atom_name(at),
-	      at);
-#endif      
       if (at == atom__NET_CURRENT_DESKTOP) {
 	 /* the desktop has changed */
 	 pair_t *lst = tbar->areas;
 
 	 taskbar_refresh(tbar);
 
-#if (DEBUG != 0)
-	 fprintf(stderr, "NOTIFY.destktop_changed...client.len=%d\n",
-		 length(lst));
-#endif	 
 	 while (PAIRP(lst)) {
 	    area_t *ar = (area_t *)CAR(lst);
 	    
@@ -735,33 +707,20 @@ taskbar_property_notify(taskbar_t *tbar, XEvent *ev) {
       } else {
 	 if (at == atom__NET_CLIENT_LIST) {
 	    /* a client has been added or destroyed */
-#if (DEBUG != 0)
-	    fprintf(stderr, "NOTIFY.new_destroyed_client...\n");
-#endif	    
 	    taskbar_register_xclients(tbar);
-	 } else {
-#if (DEBUG != 0)
-	    fprintf(stderr, "NOTIFY.unhandled event...\n");
-#endif	    
 	 }
       }
    } else {
       area_t *ar = find_area(tbar, win);
 
-#if (DEBUG != 0)
-      if (window_name(disp, win)) {
-	 fprintf(stderr, "NOTIFY: %s %s %p\n",
-		  window_name(disp, win),
-		  x_atom_name(at),
-		  ar);
-      }
-#endif
-      
       if (at == XA_WM_NAME) {
 	 xclient_t *xcl = window_xclient(tbar, win);
-	 xcl->name = window_name(disp, win);
 
-	 update_xclient_icon(xcl, tbar, win);
+	 if (xcl) {
+	    xcl->name = window_name(disp, win);
+
+	    update_xclient_icon(xcl, tbar, win);
+	 }
       } else {
 	 if (at == atom_WM_STATE) {
 	    xclient_t *xcl = window_xclient(tbar, win);

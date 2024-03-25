@@ -3,8 +3,8 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Wed Oct 15 07:04:35 2003                          */
-/*    Last change :  Tue Aug 12 19:45:27 2014 (serrano)                */
-/*    Copyright   :  2003-14 Manuel Serrano                            */
+/*    Last change :  Tue Aug 12 19:45:27 2014(serrano)                */
+/*    Copyright   :  2003-24 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    List toolkit                                                     */
 /*=====================================================================*/
@@ -18,8 +18,8 @@
 /*    type_name ...                                                    */
 /*---------------------------------------------------------------------*/
 char *
-type_name( obj_t * o ) {
-   switch( o->type ) {
+type_name(obj_t * o) {
+   switch(o->type) {
       case TYPE_PAIR: return "pair";
       case TYPE_SYMBOL: return "symbol";
       case TYPE_STRING: return "string";
@@ -33,20 +33,20 @@ type_name( obj_t * o ) {
 /*    display_list ...                                                 */
 /*---------------------------------------------------------------------*/
 void
-display_list( FILE *fout, pair_t *o ) {
-   fprintf( fout, "(" );
+display_list(FILE *fout, pair_t *o) {
+   fprintf(fout, "(");
 
    do {
-      display( fout, (obj_t *)(CAR( o ) ) );
-      if( PAIRP( CDR( o ) ) ) {
-	 fprintf( fout, " " );
-	 o = CDR( o );
+      display(fout,(obj_t *)(CAR(o)));
+      if (PAIRP(CDR(o))) {
+	 fprintf(fout, " ");
+	 o = CDR(o);
       } else {
 	 o = NIL;
       }
-   } while( PAIRP( o ) );
+   } while (PAIRP(o));
    
-   fprintf( fout, ")" );
+   fprintf(fout, ")");
 }
 
 /*---------------------------------------------------------------------*/
@@ -54,30 +54,30 @@ display_list( FILE *fout, pair_t *o ) {
 /*    display ...                                                      */
 /*---------------------------------------------------------------------*/
 void
-display( void *fout, obj_t *o ) {
-   if( !o ) {
-      fprintf( (FILE *)fout, "()" );
+display(void *fout, obj_t *o) {
+   if (!o) {
+      fprintf((FILE *)fout, "()");
       return;
    } else {
-      switch( o->type ) {
+      switch(o->type) {
 	 case TYPE_PAIR:
-	    display_list( (FILE *)fout, (pair_t *)o );
+	    display_list((FILE *)fout,(pair_t *)o);
 	    return;
 	 
 	 case TYPE_SYMBOL:
-	    fprintf( (FILE *)fout, "%s", SYMBOL_CHARS( o ) );
+	    fprintf((FILE *)fout, "%s", SYMBOL_CHARS(o));
 	    return;
 	 
 	 case TYPE_STRING:
-	    fprintf( (FILE *)fout, "\"%s\"", STRING_CHARS( o ) );
+	    fprintf((FILE *)fout, "\"%s\"", STRING_CHARS(o));
 	    return;
 	 
 	 case TYPE_INTEGER:
-	    fprintf( (FILE *)fout, "%ld", INTEGER_VAL( o ) );
+	    fprintf((FILE *)fout, "%ld", INTEGER_VAL(o));
 	    return;
 	 
 	 default:
-	    fprintf( (FILE *)fout, "<???:%p>", o );
+	    fprintf((FILE *)fout, "<???:%p>", o);
 	    return;
       }
    }
@@ -88,12 +88,12 @@ display( void *fout, obj_t *o ) {
 /*    cons ...                                                         */
 /*---------------------------------------------------------------------*/
 pair_t *
-cons( void *a, pair_t *d ) {
-   pair_t *res = (pair_t *)malloc( sizeof( pair_t ) );
+cons(void *a, pair_t *d) {
+   pair_t *res = (pair_t *)malloc(sizeof(pair_t));
    
    res->type = TYPE_PAIR;
-   SET_CAR( res, a );
-   SET_CDR( res, d );
+   SET_CAR(res, a);
+   SET_CDR(res, d);
 
    return res;
 }
@@ -103,11 +103,11 @@ cons( void *a, pair_t *d ) {
 /*    memq ...                                                         */
 /*---------------------------------------------------------------------*/
 pair_t *
-memq( void *o, pair_t *l ) {
-   while( PAIRP( l ) ) {
-      if( CAR( l ) == o )
+memq(void *o, pair_t *l) {
+   while (PAIRP(l)) {
+      if (CAR(l) == o)
 	 return l;
-      l = CDR( l );
+      l = CDR(l);
    }
    return NIL;
 }
@@ -117,28 +117,28 @@ memq( void *o, pair_t *l ) {
 /*    remq ...                                                         */
 /*---------------------------------------------------------------------*/
 pair_t *
-remq( void *o, pair_t *l ) {
-   if( NULLP( l ) )
+remq(void *o, pair_t *l) {
+   if (NULLP(l))
       return l;
 	 
-   if( CAR( l ) == o ) {
-      pair_t *res = CDR( l );
-      free( l );
+   if (CAR(l) == o) {
+      pair_t *res = CDR(l);
+      free(l);
       return res;
    } else {
       pair_t *s = l;
       
-      while( PAIRP( CDR( l ) ) ) {
-	 if( CAR( CDR( l ) ) == o ) {
-	    pair_t *f = CDR( l );
+      while (PAIRP(CDR(l))) {
+	 if (CAR(CDR(l)) == o) {
+	    pair_t *f = CDR(l);
 	    
-	    SET_CDR( l, CDR( CDR( l ) ) );
-	    free( f );
+	    SET_CDR(l, CDR(CDR(l)));
+	    free(f);
 	    
 	    break;
 	 }
 
-	 l = CDR( l );
+	 l = CDR(l);
       }
 	    
       return s;
@@ -150,20 +150,20 @@ remq( void *o, pair_t *l ) {
 /*    reverse ...                                                      */
 /*---------------------------------------------------------------------*/
 pair_t *
-reverse( pair_t *l ) {
-   if( !PAIRP( l ) ) {
+reverse(pair_t *l) {
+   if (!PAIRP(l)) {
       return l;
    } else {
       pair_t *r = NIL;
 
-      while( !NULLP( CDR( l ) ) ) {
-	 pair_t *cdrl = CDR( l );
+      while (!NULLP(CDR(l))) {
+	 pair_t *cdrl = CDR(l);
 	 
-	 SET_CDR( l, r );
+	 SET_CDR(l, r);
 	 r = l;
 	 l = cdrl;
       }
-      SET_CDR( l, r );
+      SET_CDR(l, r);
       return l;
    }
 }
@@ -173,11 +173,11 @@ reverse( pair_t *l ) {
 /*    last_pair ...                                                    */
 /*---------------------------------------------------------------------*/
 pair_t *
-last_pair( pair_t *lst ) {
-   if( PAIRP( lst ) ) {
+last_pair(pair_t *lst) {
+   if (PAIRP(lst)) {
       pair_t *lst2;
       
-      while( PAIRP( lst2 = (pair_t *)CDR( lst ) ) ) lst = lst2;
+      while (PAIRP(lst2 = (pair_t *)CDR(lst))) lst = lst2;
       
       return lst;
    } else {
@@ -190,12 +190,12 @@ last_pair( pair_t *lst ) {
 /*    length ...                                                       */
 /*---------------------------------------------------------------------*/
 int 
-length( pair_t *lst ) {
+length(pair_t *lst) {
    int len = 0;
 
-   while( PAIRP( lst ) ) {
+   while (PAIRP(lst)) {
       len++;
-      lst = CDR( lst );
+      lst = CDR(lst);
    }
    
    return len;
@@ -206,25 +206,25 @@ length( pair_t *lst ) {
 /*    make_symbol ...                                                  */
 /*---------------------------------------------------------------------*/
 symbol_t *
-make_symbol( char *s ) {
+make_symbol(char *s) {
    static pair_t *symlist = NIL;
    pair_t *lst = symlist;
    symbol_t *res;
 
-   while( PAIRP( lst ) ) {
-      symbol_t *car = (symbol_t *)CAR( lst );
-      if( !strcmp( s, car->chars ) ) {
+   while (PAIRP(lst)) {
+      symbol_t *car = (symbol_t *)CAR(lst);
+      if (!strcmp(s, car->chars)) {
 	 return car;
       } else {
-	 lst = CDR( lst );
+	 lst = CDR(lst);
       }
    }
    
-   res = (symbol_t *)malloc( sizeof( symbol_t ) + strlen( s ) );
+   res = (symbol_t *)malloc(sizeof(symbol_t) + strlen(s));
    res->type = TYPE_SYMBOL;
-   strcpy( &(res->chars[ 0 ]), s );
+   strcpy(&(res->chars[ 0 ]), s);
 
-   symlist = cons( res, symlist );
+   symlist = cons(res, symlist);
 
    return res;
 }
@@ -234,11 +234,11 @@ make_symbol( char *s ) {
 /*    make_string ...                                                  */
 /*---------------------------------------------------------------------*/
 string_t *
-make_string( char *s ) {
-   string_t *res = (string_t *)malloc( sizeof( string_t ) + strlen( s ) );
+make_string(char *s) {
+   string_t *res = (string_t *)malloc(sizeof(string_t) + strlen(s));
 
    res->type = TYPE_STRING;
-   strcpy( &(res->chars[ 0 ]), s );
+   strcpy(&(res->chars[ 0 ]), s);
 
    return res;
 }
@@ -248,8 +248,8 @@ make_string( char *s ) {
 /*    make_integer ...                                                 */
 /*---------------------------------------------------------------------*/
 integer_t *
-make_integer( long v ) {
-   integer_t *res = (integer_t *)malloc( sizeof( integer_t ) );
+make_integer(long v) {
+   integer_t *res = (integer_t *)malloc(sizeof(integer_t));
 
    res->type = TYPE_INTEGER;
    res->val = v;

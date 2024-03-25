@@ -3,8 +3,8 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Thu Jul 22 15:21:17 2004                          */
-/*    Last change :  Thu Oct 28 07:58:55 2021 (serrano)                */
-/*    Copyright   :  2004-21 Manuel Serrano                            */
+/*    Last change :  Tue Feb 13 15:53:46 2024 (serrano)                */
+/*    Copyright   :  2004-24 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    The icons.                                                       */
 /*=====================================================================*/
@@ -71,10 +71,10 @@ typedef struct ipicons {
 /*    xcli_map_window ...                                              */
 /*---------------------------------------------------------------------*/
 void
-xcli_map_window( taskbar_t *tbar, xclicon_t *xcli ) {
-   if( !xcli->mappedp ) {
+xcli_map_window(taskbar_t *tbar, xclicon_t *xcli) {
+   if (!xcli->mappedp) {
       xcli->mappedp = 1;
-      XMapWindow( tbar->xinfo->disp, ((area_t *)xcli)->win );
+      XMapWindow(tbar->xinfo->disp, ((area_t *)xcli)->win);
    }
 }
 
@@ -83,10 +83,10 @@ xcli_map_window( taskbar_t *tbar, xclicon_t *xcli ) {
 /*    xcli_unmap_window ...                                            */
 /*---------------------------------------------------------------------*/
 void
-xcli_unmap_window( taskbar_t *tbar, xclicon_t *xcli ) {
-   if( xcli->mappedp ) {
+xcli_unmap_window(taskbar_t *tbar, xclicon_t *xcli) {
+   if (xcli->mappedp) {
       xcli->mappedp = 0;
-      XUnmapWindow( tbar->xinfo->disp, ((area_t *)xcli)->win );
+      XUnmapWindow(tbar->xinfo->disp, ((area_t *)xcli)->win);
    }
 }
 
@@ -158,7 +158,7 @@ refresh_xclicon(area_t *ar) {
       }
 
       /* compute and draw the name of the icon */
-      while ((XTextWidth( xinfo->xfsb, name, len ) >=
+      while ((XTextWidth(xinfo->xfsb, name, len) >=
 	      (text_w - 2)) && (len > 0))
 	 len--;
 
@@ -188,8 +188,8 @@ refresh_xclicon(area_t *ar) {
    } else {
       /* debugging */
 #if (DEBUG != 0)
-      fprintf(stderr, "ICON: not showing \"%s\", tbar->desk=%d xdesk=%d\n",
-	      xcli->xcl->name, tbar->desktop, xcli->xcl->desktop);
+      fprintf(stderr, "ICON: not showing \"%s\", tbar->desk=%d xdesk=%d icon_mapped=%d unmappedp=%d\n",
+	      xcli->xcl->name, tbar->desktop, xcli->xcl->desktop, ((ipicons_t *)(ar->parent))->icon_mapped, xcli->xcl->unmappedp);
 #endif      
    }
 }
@@ -199,7 +199,7 @@ refresh_xclicon(area_t *ar) {
 /*    state_notify_xclicon ...                                         */
 /*---------------------------------------------------------------------*/
 static void
-state_notify_xclicon( area_t *ar, xclient_t *xcl ) {
+state_notify_xclicon(area_t *ar, xclient_t *xcl) {
 }
 
 /*---------------------------------------------------------------------*/
@@ -207,16 +207,16 @@ state_notify_xclicon( area_t *ar, xclient_t *xcl ) {
 /*    button_press_xclicon ...                                         */
 /*---------------------------------------------------------------------*/
 static void
-button_press_xclicon( XEvent *ev, area_t *ar ) {
+button_press_xclicon(XEvent *ev, area_t *ar) {
    taskbar_t *tbar = ar->taskbar;
    xclicon_t *xcli = (xclicon_t *)ar;
    Window win = xcli->xcl->win;
    Display *disp = tbar->xinfo->disp;
 
-   if( xcli->xcl->unmappedp )
-      window_deiconify( disp, win );
+   if (xcli->xcl->unmappedp)
+      window_deiconify(disp, win);
    else
-      XIconifyWindow( disp, win, tbar->xinfo->screen );
+      XIconifyWindow(disp, win, tbar->xinfo->screen);
 }
 
 /*---------------------------------------------------------------------*/
@@ -224,16 +224,16 @@ button_press_xclicon( XEvent *ev, area_t *ar ) {
 /*    enter_notify_xclicon ...                                         */
 /*---------------------------------------------------------------------*/
 static void
-enter_notify_xclicon( XEvent *ev, area_t *ar ) {
+enter_notify_xclicon(XEvent *ev, area_t *ar) {
    taskbar_t *tbar = ar->taskbar;
    xclicon_t *xcli = (xclicon_t *)ar;
    ar->active = 1;
-   refresh_xclicon( ar );
+   refresh_xclicon(ar);
    
-   tooltips_setup( xcli->xcl->name,
+   tooltips_setup(xcli->xcl->name,
 		   ar->x + ar->parent->x, 
 		   tbar->top ? tbar->y + tbar->height : tbar->y - tbar->height,
-		   TOOLTIPS );
+		   TOOLTIPS);
 }
 
 /*---------------------------------------------------------------------*/
@@ -241,10 +241,10 @@ enter_notify_xclicon( XEvent *ev, area_t *ar ) {
 /*    leave_notify_xclicon ...                                         */
 /*---------------------------------------------------------------------*/
 static void
-leave_notify_xclicon( XEvent *ev, area_t *ar ) {
+leave_notify_xclicon(XEvent *ev, area_t *ar) {
    xclicon_t *xcli = (xclicon_t *)ar;
    ar->active = 0;
-   refresh_xclicon( ar );
+   refresh_xclicon(ar);
    tooltips_hide();
 }
 
@@ -253,7 +253,7 @@ leave_notify_xclicon( XEvent *ev, area_t *ar ) {
 /*    fill_xclicon ...                                                 */
 /*---------------------------------------------------------------------*/
 static xclicon_t *
-fill_xclicon( xclicon_t *xcli, area_t *parent, xclient_t *xcl ) {
+fill_xclicon(xclicon_t *xcli, area_t *parent, xclient_t *xcl) {
    area_t *ar = (area_t *)xcli;
    taskbar_t *tbar = parent->taskbar;
    Pixmap icon = xcl->icon;
@@ -271,7 +271,7 @@ fill_xclicon( xclicon_t *xcli, area_t *parent, xclient_t *xcl ) {
 
    /* bind the area in the taskbar */
    ar->taskbar = tbar;
-   tbar->areas = cons( ar, tbar->areas );
+   tbar->areas = cons(ar, tbar->areas);
 
    ar->refresh = &refresh_xclicon;
    ar->state_notify = &state_notify_xclicon;
@@ -279,12 +279,12 @@ fill_xclicon( xclicon_t *xcli, area_t *parent, xclient_t *xcl ) {
    ar->enter_notify = &enter_notify_xclicon;
    ar->leave_notify = &leave_notify_xclicon;
 
-   if( icon ) {
+   if (icon) {
       Pixmap pix;
       int x, y;
       unsigned int w, h, d, bw;
       
-      XGetGeometry( tbar->xinfo->disp, icon, &pix, &x, &y, &w, &h, &bw, &d );
+      XGetGeometry(tbar->xinfo->disp, icon, &pix, &x, &y, &w, &h, &bw, &d);
 
       xcli->icon_x = tbar->aborder + XCLICON_IMAGE_PADDING;
       xcli->icon_y = parent->height <= h ? 0 : (parent->height - h) / 2;
@@ -300,19 +300,19 @@ fill_xclicon( xclicon_t *xcli, area_t *parent, xclient_t *xcl ) {
 /*    make_xclicon ...                                                 */
 /*---------------------------------------------------------------------*/
 static xclicon_t *
-make_xclicon( area_t *parent, xclient_t *xcl ) {
-   area_t *ar = calloc( 1, sizeof( xclicon_t ) );
+make_xclicon(area_t *parent, xclient_t *xcl) {
+   area_t *ar = calloc(1, sizeof(xclicon_t));
    xclicon_t *xcli = ((xclicon_t *)ar);
    taskbar_t *tbar = parent->taskbar;
    
-   ar->win = make_area_window_parent( tbar, parent->win );
+   ar->win = make_area_window_parent(tbar, parent->win);
    ar->name = "xclicon";
    
-   xcli_map_window( tbar, xcli );
+   xcli_map_window(tbar, xcli);
 
-   if( !xcli ) exit( 10 );
+   if (!xcli) exit(10);
 
-   return fill_xclicon( xcli, parent, xcl );
+   return fill_xclicon(xcli, parent, xcl);
 }
 
 /*---------------------------------------------------------------------*/
@@ -320,23 +320,23 @@ make_xclicon( area_t *parent, xclient_t *xcl ) {
 /*    bind_xclicon ...                                                 */
 /*---------------------------------------------------------------------*/
 static xclicon_t *
-bind_xclicon( ipicons_t *ip, xclient_t *xcl ) {
-   if( NULLP( ip->_freexclicons ) ) {
-      xclicon_t *xcli = make_xclicon( (area_t *)ip, xcl );
+bind_xclicon(ipicons_t *ip, xclient_t *xcl) {
+   if (NULLP(ip->_freexclicons)) {
+      xclicon_t *xcli = make_xclicon((area_t *)ip, xcl);
 
-      ip->xclicons = cons( xcli, ip->xclicons );
+      ip->xclicons = cons(xcli, ip->xclicons);
 
       return xcli;
    } else {
       pair_t *lst = ip->_freexclicons;
-      xclicon_t *xcli = (xclicon_t *)CAR( ip->_freexclicons );
+      xclicon_t *xcli = (xclicon_t *)CAR(ip->_freexclicons);
       taskbar_t *tbar = ((area_t *)ip)->taskbar;
    
-      fill_xclicon( xcli, (area_t *)ip, xcl );
-      xcli_map_window( tbar, xcli );
+      fill_xclicon(xcli, (area_t *)ip, xcl);
+      xcli_map_window(tbar, xcli);
       
-      ip->_freexclicons = CDR( lst );
-      SET_CDR( lst, ip->xclicons );
+      ip->_freexclicons = CDR(lst);
+      SET_CDR(lst, ip->xclicons);
       ip->xclicons = lst;
 
       return xcli;
@@ -348,14 +348,14 @@ bind_xclicon( ipicons_t *ip, xclient_t *xcl ) {
 /*    refresh_icons ...                                                */
 /*---------------------------------------------------------------------*/
 static void
-refresh_icons( area_t *ar ) {
+refresh_icons(area_t *ar) {
    taskbar_t *tbar = ar->taskbar;
 
    /* empty space gradient */
-   draw_gradient( tbar->xinfo, ar->win,
+   draw_gradient(tbar->xinfo, ar->win,
 		  0, 0, ar->width - 1, ar->height,
 		  0,
-		  GREY12, 0, 1 );
+		  GREY12, 0, 1);
 }
 
 /*---------------------------------------------------------------------*/
@@ -363,47 +363,50 @@ refresh_icons( area_t *ar ) {
 /*    refresh_xclients ...                                             */
 /*---------------------------------------------------------------------*/
 static void
-refresh_xclients( area_t *ar ) {
+refresh_xclients(area_t *ar) {
    ipicons_t *ip = (ipicons_t *)ar;
    taskbar_t *tbar = ar->taskbar;
    config_t *config = tbar->config;
-   pair_t *lst;
    int xclwidth;
    int x;
    int xclnum = 0;
-
-   lst = ip->xclicons;
-
+   pair_t *lst = ip->xclicons;
 	    
-   while( PAIRP( lst ) ) {
-      xclicon_t *xcli = (xclicon_t *)CAR( lst );
-      
-      if( xclicon_showp( xcli, ip, tbar ) ) {
+   while(PAIRP(lst)) {
+      xclicon_t *xcli = (xclicon_t *)CAR(lst);
+
+      fprintf(stderr, "  icon: %s show=%d\n",
+	      xcli->xcl ? xcli->xcl->name : "NO XCL",
+	      xclicon_showp(xcli, ip, tbar));
+      if (!xcli->xcl || ! xcli->xcl->name) {
+	 fprintf(stderr, "== ERROR, stopping... ====================\n");
+      }
+      if (xclicon_showp(xcli, ip, tbar)) {
 	 xclnum++;
-	 if( !xcli->mappedp ) {
-	    xcli_map_window( tbar, xcli );
+	 if (!xcli->mappedp) {
+	    xcli_map_window(tbar, xcli);
 	 }
       } else {
-	 if( xcli->mappedp ) {
-	    xcli_unmap_window( tbar, xcli );
+	 if (xcli->mappedp) {
+	    xcli_unmap_window(tbar, xcli);
 	 }
       }
-      lst = CDR( lst );
+      lst = CDR(lst);
    }
 
-   if( xclnum ) {
+   if (xclnum) {
       int maxwidth = tbar->width / 10;
       xclwidth = ar->width / xclnum;
 
-      if( xclwidth > maxwidth ) xclwidth = maxwidth;
+      if (xclwidth > maxwidth) xclwidth = maxwidth;
       x = (xclwidth * xclnum);
 
       lst = (ip->icon_mapped ? ip->xclicons : ip->xclistack);
       
-      while( PAIRP( lst ) ) {
-	 area_t *xcli = (area_t *)CAR( lst );
+      while(PAIRP(lst)) {
+	 area_t *xcli = (area_t *)CAR(lst);
       
-	 if( xclicon_showp( (xclicon_t *)CAR( lst ), ip, tbar ) ) {
+	 if (xclicon_showp((xclicon_t *)CAR(lst), ip, tbar)) {
 	    x -= xclwidth;
 
 	    xcli->width = xclwidth;
@@ -411,10 +414,10 @@ refresh_xclients( area_t *ar ) {
 	    xcli->x = x;
 	    xcli->y = 0;
 
-	    xcli->refresh( xcli );
+	    xcli->refresh(xcli);
 	 }
       
-	 lst = CDR( lst );
+	 lst = CDR(lst);
       }
    }
 }
@@ -424,17 +427,19 @@ refresh_xclients( area_t *ar ) {
 /*    create_notify_icons ...                                          */
 /*---------------------------------------------------------------------*/
 static void
-create_notify_icons( area_t *ar, xclient_t *xcl ) {
+create_notify_icons(area_t *ar, xclient_t *xcl) {
    ipicons_t *ip = (ipicons_t *)ar;
    taskbar_t *tbar = ar->taskbar;
    Window win = xcl->win;
-   xclicon_t *xcli = bind_xclicon( ip, xcl );
+   xclicon_t *xcli = bind_xclicon(ip, xcl);
 
-   if( xcl->unmappedp ) {
-      ip->xclistack = cons( xcli, ip->xclistack );
+   fprintf(stderr, "**** create_notify_icons %s %s\n", xcl->class, xcl->name);
+   
+   if (xcl->unmappedp) {
+      ip->xclistack = cons(xcli, ip->xclistack);
    }
    
-   refresh_xclients( ar );
+   refresh_xclients(ar);
 }   
 
 /*---------------------------------------------------------------------*/
@@ -442,22 +447,25 @@ create_notify_icons( area_t *ar, xclient_t *xcl ) {
 /*    destroy_notify_icons ...                                         */
 /*---------------------------------------------------------------------*/
 static void
-destroy_notify_icons( area_t *ar, xclient_t *xcl ) {
+destroy_notify_icons(area_t *ar, xclient_t *xcl) {
    taskbar_t *tbar = ar->taskbar;
    ipicons_t *ip = (ipicons_t *)ar;
-   xclicon_t *xcli =  xcl->user[ ip->id ];
+   xclicon_t *xcli =  xcl->user[ip->id];
 
-   xcli_unmap_window( tbar, xcli );
+   xcli_unmap_window(tbar, xcli);
+   
+   fprintf(stderr, "**** destroy_notify_icons %s %s\n", xcl->class, xcl->name);
    
    /* remove the client from the active list */
-   ip->xclicons = remq( xcli, ip->xclicons );
-   ip->_freexclicons = cons( xcli, ip->_freexclicons );
+   ip->xclicons = remq(xcli, ip->xclicons);
+   ip->_freexclicons = cons(xcli, ip->_freexclicons);
 
-   if( xcl->unmappedp ) 
-      ip->xclistack = remq( xcli, ip->xclistack );
+   if (xcl->unmappedp) {
+      ip->xclistack = remq(xcli, ip->xclistack);
+   }
 
    /* refresh the icon area */
-   refresh_xclients( ar );
+   refresh_xclients(ar);
 }
 
 /*---------------------------------------------------------------------*/
@@ -465,32 +473,32 @@ destroy_notify_icons( area_t *ar, xclient_t *xcl ) {
 /*    state_notify_icons ...                                           */
 /*---------------------------------------------------------------------*/
 static void
-state_notify_icons( area_t *ar, xclient_t *xcl ) {
+state_notify_icons(area_t *ar, xclient_t *xcl) {
    ipicons_t *ip = (ipicons_t *)ar;
    pair_t *lst = ip->xclicons;
    taskbar_t *tbar = ar->taskbar;
    xclicon_t *xcli =  xcl->user[ ip->id ];
 
-   if( xcl->unmappedp ) {
-      if( !memq( xcli, ip->xclistack ) ) {
-	 ip->xclistack = cons( xcli, ip->xclistack );
+   if (xcl->unmappedp) {
+      if (!memq(xcli, ip->xclistack)) {
+	 ip->xclistack = cons(xcli, ip->xclistack);
       }
    }
    else
-      ip->xclistack = remq( xcli, ip->xclistack );
+      ip->xclistack = remq(xcli, ip->xclistack);
    
-   if( ip->icon_mapped ) {
-      while( PAIRP( lst ) ) {
-	 area_t *xcli = (area_t *)CAR( lst );
+   if (ip->icon_mapped) {
+      while(PAIRP(lst)) {
+	 area_t *xcli = (area_t *)CAR(lst);
       
-	 if( ((xclicon_t *)xcli)->xcl == xcl ) {
-	    xcli->refresh( xcli );
+	 if (((xclicon_t *)xcli)->xcl == xcl) {
+	    xcli->refresh(xcli);
 	    break;
 	 }
-	 lst = CDR( lst );
+	 lst = CDR(lst);
       }
    } else {
-      refresh_xclients( ar );
+      refresh_xclients(ar);
    }
 }
 
@@ -499,15 +507,15 @@ state_notify_icons( area_t *ar, xclient_t *xcl ) {
 /*    make_icons ...                                                   */
 /*---------------------------------------------------------------------*/
 area_t *
-make_icons( taskbar_t *tbar, int width, int height, char im, char iad ) {
-   area_t *ar = calloc( 1, sizeof( ipicons_t ) );
+make_icons(taskbar_t *tbar, int width, int height, char im, char iad) {
+   area_t *ar = calloc(1, sizeof(ipicons_t));
    ipicons_t *ip = (ipicons_t *)ar;
 
-   if( !ar ) exit( 10 );
+   if (!ar) exit(10);
 
    /* initialize the icons */
-   ar->win = make_area_window( tbar );
-   XMapWindow( tbar->xinfo->disp, ar->win );
+   ar->win = make_area_window(tbar);
+   XMapWindow(tbar->xinfo->disp, ar->win);
    
    ar->name = "icons";
 
@@ -516,7 +524,7 @@ make_icons( taskbar_t *tbar, int width, int height, char im, char iad ) {
 
    /* bind the area in the taskbar */
    ar->taskbar = tbar;
-   tbar->areas = cons( ar, tbar->areas );
+   tbar->areas = cons(ar, tbar->areas);
 
    ar->refresh = &refresh_icons;
    ar->desktop_notify = &refresh_xclients;
@@ -524,7 +532,7 @@ make_icons( taskbar_t *tbar, int width, int height, char im, char iad ) {
    ar->destroy_notify = &destroy_notify_icons;
    ar->state_notify = &state_notify_icons;
 
-   ip->id = taskbar_get_xclient_manager_number( tbar );
+   ip->id = taskbar_get_xclient_manager_number(tbar);
 
    ip->xclicons = NIL;
    ip->_freexclicons = NIL;
@@ -541,14 +549,14 @@ make_icons( taskbar_t *tbar, int width, int height, char im, char iad ) {
 /*    start_icons ...                                                  */
 /*---------------------------------------------------------------------*/
 void *
-start_icons( void *tb, pair_t *args ) {
+start_icons(void *tb, pair_t *args) {
    taskbar_t *tbar = (taskbar_t *)tb;
    config_t *config = tbar->config;
-   int width = INTEGER_VAL( CAR( args ) );
-   char im =  !SYMBOL_EQ( CADR( args ), sym_false );
-   char iad =  !SYMBOL_EQ( CAR( CDDR( args ) ), sym_false );
+   int width = INTEGER_VAL(CAR(args));
+   char im =  !SYMBOL_EQ(CADR(args), sym_false);
+   char iad =  !SYMBOL_EQ(CAR(CDDR(args)), sym_false);
 
-   return make_icons( tbar, width, config->taskbar_height - 1, im, iad );
+   return make_icons(tbar, width, config->taskbar_height - 1, im, iad);
 }
 
 /*---------------------------------------------------------------------*/
@@ -556,48 +564,48 @@ start_icons( void *tb, pair_t *args ) {
 /*    parse_icons ...                                                  */
 /*---------------------------------------------------------------------*/
 void
-parse_icons( config_t *config, pair_t *lst ) {
-   pair_t *l = CDR( lst );
-   integer_t *width = make_integer( 40 );
+parse_icons(config_t *config, pair_t *lst) {
+   pair_t *l = CDR(lst);
+   integer_t *width = make_integer(40);
    pair_t *args;
-   symbol_t *sym_mapped = make_symbol( ":mapped" );
-   symbol_t *sym_all_desktop = make_symbol( ":all-desktop" );
+   symbol_t *sym_mapped = make_symbol(":mapped");
+   symbol_t *sym_all_desktop = make_symbol(":all-desktop");
    symbol_t *im = sym_false, *iad = sym_false;
 
    /* search of a command */
-   while( PAIRP( l ) ) {
-      obj_t *car = CAR( l );
-      if( SYMBOLP( car ) ) {
-	 if( SYMBOL_EQ( (symbol_t *)car, sym_width ) ) {
-	    width = parse_cadr_integer( l );
+   while(PAIRP(l)) {
+      obj_t *car = CAR(l);
+      if (SYMBOLP(car)) {
+	 if (SYMBOL_EQ((symbol_t *)car, sym_width)) {
+	    width = parse_cadr_integer(l);
 
-	    if( !width ) {
-	       parse_error( "Illegal :width", (obj_t *)lst );
+	    if (!width) {
+	       parse_error("Illegal :width", (obj_t *)lst);
 	    } else {
-	       l = CDR( l );
+	       l = CDR(l);
 	    }
 	 } else {
-	    if( SYMBOL_EQ( (symbol_t *)car, sym_mapped ) ) {
-	       im = parse_cadr_symbol( l );
-	       l = CDR( l );
+	    if (SYMBOL_EQ((symbol_t *)car, sym_mapped)) {
+	       im = parse_cadr_symbol(l);
+	       l = CDR(l);
 	    } else {
-	       if( SYMBOL_EQ( (symbol_t *)car, sym_all_desktop ) ) {
-		  iad = parse_cadr_symbol( l );
-		  l = CDR( l );
+	       if (SYMBOL_EQ((symbol_t *)car, sym_all_desktop)) {
+		  iad = parse_cadr_symbol(l);
+		  l = CDR(l);
 	       } else {
-		  parse_error( "Illegal icons", (obj_t *)lst );
+		  parse_error("Illegal icons", (obj_t *)lst);
 	       }
 	    }
 	 }
-	 l = CDR( l );
+	 l = CDR(l);
       } else {
-	 parse_error( "Illegal icons", (obj_t *)lst );
+	 parse_error("Illegal icons", (obj_t *)lst);
       }
    }
 
-   args = cons( iad, NIL );
-   args = cons( im, args );
-   args = cons( width, args );
+   args = cons(iad, NIL);
+   args = cons(im, args);
+   args = cons(width, args);
 			     
-   register_plugin( config, make_plugin( start_icons, args ) );
+   register_plugin(config, make_plugin(start_icons, args));
 }
