@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Thu Jul 22 15:21:17 2004                          */
-/*    Last change :  Tue Feb 13 15:53:46 2024 (serrano)                */
+/*    Last change :  Fri May  3 15:00:47 2024 (serrano)                */
 /*    Copyright   :  2004-24 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    The icons.                                                       */
@@ -185,12 +185,6 @@ refresh_xclicon(area_t *ar) {
 			      ar->width - 1, ar->height + 2,
 			      0, WHITE, GREY9, tbar->aborder);
       }
-   } else {
-      /* debugging */
-#if (DEBUG != 0)
-      fprintf(stderr, "ICON: not showing \"%s\", tbar->desk=%d xdesk=%d icon_mapped=%d unmappedp=%d\n",
-	      xcli->xcl->name, tbar->desktop, xcli->xcl->desktop, ((ipicons_t *)(ar->parent))->icon_mapped, xcli->xcl->unmappedp);
-#endif      
    }
 }
 
@@ -375,12 +369,6 @@ refresh_xclients(area_t *ar) {
    while(PAIRP(lst)) {
       xclicon_t *xcli = (xclicon_t *)CAR(lst);
 
-      fprintf(stderr, "  icon: %s show=%d\n",
-	      xcli->xcl ? xcli->xcl->name : "NO XCL",
-	      xclicon_showp(xcli, ip, tbar));
-      if (!xcli->xcl || ! xcli->xcl->name) {
-	 fprintf(stderr, "== ERROR, stopping... ====================\n");
-      }
       if (xclicon_showp(xcli, ip, tbar)) {
 	 xclnum++;
 	 if (!xcli->mappedp) {
@@ -433,8 +421,6 @@ create_notify_icons(area_t *ar, xclient_t *xcl) {
    Window win = xcl->win;
    xclicon_t *xcli = bind_xclicon(ip, xcl);
 
-   fprintf(stderr, "**** create_notify_icons %s %s\n", xcl->class, xcl->name);
-   
    if (xcl->unmappedp) {
       ip->xclistack = cons(xcli, ip->xclistack);
    }
@@ -453,8 +439,6 @@ destroy_notify_icons(area_t *ar, xclient_t *xcl) {
    xclicon_t *xcli =  xcl->user[ip->id];
 
    xcli_unmap_window(tbar, xcli);
-   
-   fprintf(stderr, "**** destroy_notify_icons %s %s\n", xcl->class, xcl->name);
    
    /* remove the client from the active list */
    ip->xclicons = remq(xcli, ip->xclicons);

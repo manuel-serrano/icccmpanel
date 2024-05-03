@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Sat Oct 11 05:45:32 2003                          */
-/*    Last change :  Wed Jan 31 07:36:30 2024 (serrano)                */
+/*    Last change :  Fri May  3 14:52:41 2024 (serrano)                */
 /*    Copyright   :  2003-24 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    ICCCMPANEL (from fspanel)                                        */
@@ -84,7 +84,7 @@ main(int argc, char *argv[]) {
 
    sleep(2);
    
-   /* close up out simple X toolkit */
+   /* close before exit */
    closeup_mstk(xinfo);
 
    /* we are done */
