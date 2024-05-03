@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Thu Jul 22 14:32:38 2004                          */
-/*    Last change :  Tue Feb 20 18:31:20 2024 (serrano)                */
+/*    Last change :  Fri May  3 15:04:38 2024 (serrano)                */
 /*    Copyright   :  2004-24 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    Taskbar management                                               */
@@ -167,7 +167,6 @@ fill_xclient(xclient_t *xcl, taskbar_t *tbar, Window w) {
 /*---------------------------------------------------------------------*/
 static xclient_t *
 cleanup_xclient(xclient_t *xcl, taskbar_t *tbar) {
-   fprintf(stderr, "**** cleanup_xclient %s %s\n", xcl->class, xcl->name);
    free(xcl->class);
    free(xcl->name);
 
