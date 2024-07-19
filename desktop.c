@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Fri Jul 23 22:15:38 2004                          */
-/*    Last change :  Fri May  3 14:59:40 2024 (serrano)                */
+/*    Last change :  Fri Jul 19 08:48:40 2024 (serrano)                */
 /*    Copyright   :  2004-24 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    The desktop                                                      */
@@ -31,10 +31,11 @@
 /*---------------------------------------------------------------------*/
 /*    Global controls and parameters                                   */
 /*---------------------------------------------------------------------*/
-static char *desktop_names[] = { "one", "two", "three",
-				 "four", "five", "six",
-				 "seven", "eight", "nine",
-				 "then", "eleven", "twelve"
+static char *desktop_names[] = {
+   "one", "two", "three",
+   "four", "five", "six",
+   "seven", "eight", "nine",
+   "then", "eleven", "twelve"
 };
 
 #define DESKTOPNAMES_COUNT \

@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Thu Jul 22 15:21:17 2004                          */
-/*    Last change :  Fri May  3 15:00:47 2024 (serrano)                */
+/*    Last change :  Fri Jul 19 09:24:29 2024 (serrano)                */
 /*    Copyright   :  2004-24 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    The icons.                                                       */
@@ -32,39 +32,6 @@
 /*    XCLICON_IMAGE_PADDING ...                                        */
 /*---------------------------------------------------------------------*/
 #define XCLICON_IMAGE_PADDING 2
-
-/*---------------------------------------------------------------------*/
-/*    xclicon_t ...                                                    */
-/*---------------------------------------------------------------------*/
-typedef struct xclicon {
-   /* the area associated with this task */
-   area_t area;
-   /* is the area window mapped */
-   char mappedp;
-   /* The X client associated with this task */
-   xclient_t *xcl;
-   /* the position of the task */
-   int x, w;
-   /* the position of the icon */
-   int icon_x, icon_y, icon_w, icon_h;
-} xclicon_t;
-   
-/*---------------------------------------------------------------------*/
-/*    ipicons_t                                                        */
-/*---------------------------------------------------------------------*/
-typedef struct ipicons {
-   /* the area */
-   area_t area;
-   /* the identifier of this ipicons */
-   int id;
-   /* property of the icon bar  */
-   char icon_mapped;
-   char icon_all_desktop;
-   /* the list of xclient icons */
-   pair_t *xclicons;
-   pair_t *_freexclicons;
-   pair_t *xclistack;
- } ipicons_t;
 
 /*---------------------------------------------------------------------*/
 /*    void                                                             */
@@ -592,4 +559,13 @@ parse_icons(config_t *config, pair_t *lst) {
    args = cons(width, args);
 			     
    register_plugin(config, make_plugin(start_icons, args));
+}
+
+/*---------------------------------------------------------------------*/
+/*    char                                                             */
+/*    iconp ...                                                        */
+/*---------------------------------------------------------------------*/
+char
+iconp(area_t *ar) {
+   return ar->refresh == refresh_xclicon;
 }

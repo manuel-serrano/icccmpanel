@@ -3,8 +3,8 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Fri Oct 17 22:18:02 2003                          */
-/*    Last change :  Wed Jul 20 10:17:58 2022 (serrano)                */
-/*    Copyright   :  2003-22 Manuel Serrano                            */
+/*    Last change :  Tue Jul  9 14:39:51 2024 (serrano)                */
+/*    Copyright   :  2003-24 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    The parsing of the MSpanel config file.                          */
 /*=====================================================================*/
@@ -282,7 +282,7 @@ register_parser(symbol_t *sym, void (*parser)(config_t *, pair_t *)) {
 }
 
 /*---------------------------------------------------------------------*/
-/*    static (void (*)(config_t *, pair_t *))                        */
+/*    static (void (*)(config_t *, pair_t *))                          */
 /*    find_parser ...                                                  */
 /*---------------------------------------------------------------------*/
 static void (*find_parser(symbol_t *sym))(config_t *, pair_t *) {
