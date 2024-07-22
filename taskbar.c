@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Thu Jul 22 14:32:38 2004                          */
-/*    Last change :  Fri May  3 15:04:38 2024 (serrano)                */
+/*    Last change :  Mon Jul 22 10:14:58 2024 (serrano)                */
 /*    Copyright   :  2004-24 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    Taskbar management                                               */
@@ -768,7 +768,7 @@ taskbar_destroy_notify(taskbar_t *tbar, XEvent *ev) {
       if (xcl) {
 	 pair_t *lst = tbar->areas;
 
-	 /* mark the xclient is now dead */
+	 /* mark that the xclient is now dead */
 	 xcl->live = 0;
 
 	 /* notify all the interested areas */

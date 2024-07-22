@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Fri Jul 23 22:15:38 2004                          */
-/*    Last change :  Fri Jul 19 08:48:40 2024 (serrano)                */
+/*    Last change :  Mon Jul 22 10:59:12 2024 (serrano)                */
 /*    Copyright   :  2004-24 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    The desktop                                                      */
@@ -57,7 +57,8 @@ refresh_desktop(area_t *ar) {
    int desktop = current_desktop(xinfo->disp, xinfo->root_win);
 
    /* force a client refresh */
-   taskbar_register_xclients(tbar);
+   // 22ju2024, don't think this is required
+   // taskbar_register_xclients(tbar);
    
    /* compute the desktop info */
    if (desktop > DESKTOPNAMES_COUNT) {

@@ -3,8 +3,8 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Thu Jul 22 14:32:38 2004                          */
-/*    Last change :  Sat Oct 10 06:36:02 2015 (serrano)                */
-/*    Copyright   :  2004-15 Manuel Serrano                            */
+/*    Last change :  Mon Jul 22 10:18:28 2024 (serrano)                */
+/*    Copyright   :  2004-24 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    Taskbar management                                               */
 /*=====================================================================*/
@@ -50,7 +50,7 @@ typedef struct xclient {
    /* is it iconified */
    int unmappedp;
    /* user pointer */
-   void *user[ XCLIENT_MAX_NUMBER ];
+   void *user[XCLIENT_MAX_NUMBER];
    /* the icon associated with the xclient */
    Pixmap icon, mask;
    /* the dimension of the icon */

@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Thu Jul 22 15:21:17 2004                          */
-/*    Last change :  Fri Jul 19 09:24:29 2024 (serrano)                */
+/*    Last change :  Mon Jul 22 10:06:39 2024 (serrano)                */
 /*    Copyright   :  2004-24 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    The icons.                                                       */
@@ -224,7 +224,13 @@ fill_xclicon(xclicon_t *xcli, area_t *parent, xclient_t *xcl) {
    
    /* connect the xclicon and xcl */
    ((xclicon_t *)ar)->xcl = xcl;
-   xcl->user[ ((ipicons_t *)parent)->id ] = xcli;
+   if (((ipicons_t *)parent)->id >= XCLIENT_MAX_NUMBER) {
+      fprintf(stderr, "%s:%d too many clients: %d\n",
+	      __FILE__, __LINE__,
+	      ((ipicons_t *)parent)->id);
+      exit (1);
+   }
+   xcl->user[((ipicons_t *)parent)->id] = xcli;
    
    ar->ignore_layout = 1;
    ar->uwidth = 0;
@@ -271,7 +277,10 @@ make_xclicon(area_t *parent, xclient_t *xcl) {
    
    xcli_map_window(tbar, xcli);
 
-   if (!xcli) exit(10);
+   if (!xcli) {
+      fprintf(stderr, "%s:%d Cannot allocate area\n", __FILE__, __LINE__);
+      exit(11);
+   }
 
    return fill_xclicon(xcli, parent, xcl);
 }
@@ -292,6 +301,7 @@ bind_xclicon(ipicons_t *ip, xclient_t *xcl) {
       pair_t *lst = ip->_freexclicons;
       xclicon_t *xcli = (xclicon_t *)CAR(ip->_freexclicons);
       taskbar_t *tbar = ((area_t *)ip)->taskbar;
+      fprintf(stderr, "REUSE   %p %p\n", xcli, xcl);
    
       fill_xclicon(xcli, (area_t *)ip, xcl);
       xcli_map_window(tbar, xcli);
@@ -407,10 +417,11 @@ destroy_notify_icons(area_t *ar, xclient_t *xcl) {
 
    xcli_unmap_window(tbar, xcli);
    
-   /* remove the client from the active list */
+   /* remove the client from the active list and from the taskbar */
    ip->xclicons = remq(xcli, ip->xclicons);
    ip->_freexclicons = cons(xcli, ip->_freexclicons);
-
+   tbar->areas = remq(xcli, tbar->areas);
+   
    if (xcl->unmappedp) {
       ip->xclistack = remq(xcli, ip->xclistack);
    }
@@ -428,7 +439,7 @@ state_notify_icons(area_t *ar, xclient_t *xcl) {
    ipicons_t *ip = (ipicons_t *)ar;
    pair_t *lst = ip->xclicons;
    taskbar_t *tbar = ar->taskbar;
-   xclicon_t *xcli =  xcl->user[ ip->id ];
+   xclicon_t *xcli =  xcl->user[ip->id];
 
    if (xcl->unmappedp) {
       if (!memq(xcli, ip->xclistack)) {
@@ -462,7 +473,10 @@ make_icons(taskbar_t *tbar, int width, int height, char im, char iad) {
    area_t *ar = calloc(1, sizeof(ipicons_t));
    ipicons_t *ip = (ipicons_t *)ar;
 
-   if (!ar) exit(10);
+   if (!ar) {
+      fprintf(stderr, "%s:%d Cannot allocate area\n", __FILE__, __LINE__);
+      exit(10);
+   }
 
    /* initialize the icons */
    ar->win = make_area_window(tbar);
