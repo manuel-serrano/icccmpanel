@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Thu Jul 22 15:21:17 2004                          */
-/*    Last change :  Mon Jul 22 10:06:39 2024 (serrano)                */
+/*    Last change :  Mon Jul 22 15:44:54 2024 (serrano)                */
 /*    Copyright   :  2004-24 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    The icons.                                                       */
@@ -301,7 +301,6 @@ bind_xclicon(ipicons_t *ip, xclient_t *xcl) {
       pair_t *lst = ip->_freexclicons;
       xclicon_t *xcli = (xclicon_t *)CAR(ip->_freexclicons);
       taskbar_t *tbar = ((area_t *)ip)->taskbar;
-      fprintf(stderr, "REUSE   %p %p\n", xcli, xcl);
    
       fill_xclicon(xcli, (area_t *)ip, xcl);
       xcli_map_window(tbar, xcli);
