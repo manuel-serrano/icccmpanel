@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Thu Jul 22 14:32:38 2004                          */
-/*    Last change :  Mon Jul 22 10:14:58 2024 (serrano)                */
+/*    Last change :  Tue Aug 27 09:06:00 2024 (serrano)                */
 /*    Copyright   :  2004-24 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    Taskbar management                                               */
@@ -169,6 +169,7 @@ static xclient_t *
 cleanup_xclient(xclient_t *xcl, taskbar_t *tbar) {
    free(xcl->class);
    free(xcl->name);
+   xcl->live = 0;
 
 /*    if (xcl->icon != None) XFreePixmap(tbar->xinfo->disp, xcl->icon); */
 /*    if (xcl->mask != None) XFreePixmap(tbar->xinfo->disp, xcl->mask); */

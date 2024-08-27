@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Fri Jul 19 08:43:57 2024                          */
-/*    Last change :  Fri Jul 19 09:35:37 2024 (serrano)                */
+/*    Last change :  Tue Aug 27 08:54:13 2024 (serrano)                */
 /*    Copyright   :  2024 Manuel Serrano                               */
 /*    -------------------------------------------------------------    */
 /*    Icccmap debug                                                    */
@@ -67,11 +67,11 @@ debug(area_t *ar) {
 	 xclicon_t *xcli = (xclicon_t *)ar;
 	 ipicons_t *ip = (ipicons_t *)(ar->parent);
 	 
-	 fprintf(fd, "%3d: %s desktop: %d [%s] mapped: %d parent-mapped: %d\n",
-		 i++, ar->name,
+	 fprintf(fd, "%3d: %s %s desktop: %d [%s %p] live: %d mapped: %d parent-mapped: %d\n",
+		 i++, ar->name, xcli->xcl->class, 
 		 xcli->xcl->desktop,
-		 xcli->xcl->name,
-		 xcli->mappedp,
+		 xcli->xcl->name, xcli->xcl->name,
+		 xcli->xcl->live, xcli->mappedp,
 		 ip->icon_mapped);
 		 
       }
