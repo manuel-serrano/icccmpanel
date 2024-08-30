@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Thu Jul 22 14:32:38 2004                          */
-/*    Last change :  Mon Jul 22 10:18:28 2024 (serrano)                */
+/*    Last change :  Fri Aug 30 06:55:10 2024 (serrano)                */
 /*    Copyright   :  2004-24 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    Taskbar management                                               */
@@ -37,7 +37,7 @@ typedef struct iconentry {
 /*    in the taskbar.                                                  */
 /*---------------------------------------------------------------------*/
 typedef struct xclient {
-   /* The unique X client identifier */
+   /* The unique icccmpanel client identifier */
    int id;
    /* is this xclient still live */
    char live;

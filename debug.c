@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Fri Jul 19 08:43:57 2024                          */
-/*    Last change :  Tue Aug 27 08:54:13 2024 (serrano)                */
+/*    Last change :  Fri Aug 30 06:52:31 2024 (serrano)                */
 /*    Copyright   :  2024 Manuel Serrano                               */
 /*    -------------------------------------------------------------    */
 /*    Icccmap debug                                                    */
@@ -53,7 +53,7 @@ debug(area_t *ar) {
    for (int i = 0; PAIRP(areas); areas = CDR(areas), i++) {
       area_t *ar = (area_t *)CAR(areas);
 
-      fprintf(fd, "%3d: %s win: %p ignore: %d\n",
+      fprintf(fd, "%3d: %s win: %8x ignore: %d\n",
 	      i, ar->name, ar->win, ar->ignore_layout);
    }
 
@@ -67,13 +67,11 @@ debug(area_t *ar) {
 	 xclicon_t *xcli = (xclicon_t *)ar;
 	 ipicons_t *ip = (ipicons_t *)(ar->parent);
 	 
-	 fprintf(fd, "%3d: %s %s desktop: %d [%s %p] live: %d mapped: %d parent-mapped: %d\n",
-		 i++, ar->name, xcli->xcl->class, 
-		 xcli->xcl->desktop,
-		 xcli->xcl->name, xcli->xcl->name,
+	 fprintf(fd, "%3d: desktop: %2d id: %8x %s:%s [%p] live: %d mapped: %d parent-mapped: %d\n",
+		 i++, xcli->xcl->desktop, xcli->xcl->win,
+		 xcli->xcl->name, xcli->xcl->class, xcli->xcl->name, 
 		 xcli->xcl->live, xcli->mappedp,
 		 ip->icon_mapped);
-		 
       }
    }
 

@@ -3,12 +3,12 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Sat Oct 11 05:44:23 2003                          */
-/*    Last change :  Sat Nov 30 09:52:30 2019 (serrano)                */
-/*    Copyright   :  2003-19 Manuel Serrano                            */
+/*    Last change :  Fri Aug 30 06:58:24 2024 (serrano)                */
+/*    Copyright   :  2003-24 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    MS X toolkit                                                     */
 /*=====================================================================*/
-#if( !defined( _MSTK_H ) )
+#if(!defined(_MSTK_H))
 #define _MSTK_H
 
 /*---------------------------------------------------------------------*/
@@ -40,7 +40,7 @@ typedef struct color {
 
 extern color_t palette[];
 
-#define MSTK_PALETTE_COUNT (sizeof( palette ) / sizeof (palette[ 0 ].red) / 3)
+#define MSTK_PALETTE_COUNT (sizeof(palette) / sizeof (palette[ 0 ].red) / 3)
 
 /*---------------------------------------------------------------------*/
 /*    Import/export                                                    */
@@ -48,47 +48,47 @@ extern color_t palette[];
 extern unsigned long mstk_palette[];
 extern unsigned long mstk_grey_palette[];
 
-extern Xinfo_t *init_mstk( config_t * );
-extern Xinfo_t *copy_xinfo( Xinfo_t * );
-extern void closeup_mstk( Xinfo_t * );
+extern Xinfo_t *init_mstk(config_t *);
+extern Xinfo_t *copy_xinfo(Xinfo_t *);
+extern void closeup_mstk(Xinfo_t *);
 
-extern void *get_window_prop_data( Display *, Window, Atom, Atom, long * );
-extern void set_window_prop( Display *,  Window, Atom, Atom, long );
+extern void *get_window_prop_data(Display *, Window, Atom, Atom, long *);
+extern void set_window_prop(Display *,  Window, Atom, Atom, long);
 
-extern char *window_name( Display *, Window );
-extern int window_desktop( Display *, Window );
-extern char *window_class( Display *, Window );
-extern char window_hint_icon( Xinfo_t *, Window, Pixmap *, Pixmap *, int );
-extern char window_netwm_icon( Xinfo_t *, Window, Pixmap *, Pixmap *, int );
-extern void window_update_netwm_icon( Xinfo_t *, Window, Pixmap *, Pixmap *, int );
+extern char *window_name(Display *, Window);
+extern int window_desktop(Display *, Window);
+extern char *window_class(Display *, Window);
+extern char window_hint_icon(Xinfo_t *, Window, Pixmap *, Pixmap *, int);
+extern char window_netwm_icon(Xinfo_t *, Window, Pixmap *, Pixmap *, int);
+extern void window_update_netwm_icon(Xinfo_t *, Window, Pixmap *, Pixmap *, int);
 
-extern Window *desktop_windows( Xinfo_t *, long * );
-extern int current_desktop( Display *, Window );
-extern int number_of_desktops( Display *, Window );
-extern void switch_desktop( Display *, Window, int );
+extern Window *desktop_windows(Xinfo_t *, long *);
+extern int current_desktop(Display *, Window);
+extern int number_of_desktops(Display *, Window);
+extern void switch_desktop(Display *, Window, int);
 
-extern int window_iconifiedp( Display *, Window );
-extern int window_hiddenp( Display *, Window );
-extern void window_deiconify( Display *, Window );
+extern int window_iconifiedp(Display *, Window);
+extern int window_hiddenp(Display *, Window);
+extern void window_deiconify(Display *, Window);
 
-extern void scale_icon( Xinfo_t *, Window, Pixmap, Pixmap,
-			Pixmap *, Pixmap *, int, int );
-extern void draw_text( Xinfo_t *, Window, int, int, char *, int,
-		       unsigned long[], int c, int r, int s );
-extern void draw_text_plain( Xinfo_t *, Window, int, int, char *, int,
-			     unsigned long[], int c, int r, int s );
-extern void draw_line( Xinfo_t *, Window, int, int, int, int,
-			 unsigned long [], int );
-extern void draw_gradient( Xinfo_t *, Window, int, int, int, int,
-			   unsigned long [], int, int, int );
-extern void draw_relief( Xinfo_t *, Window, int, int, int, int,
-			 unsigned long [], int, int, int );
-extern void draw_partial_relief( Xinfo_t *, Window, int,
+extern void scale_icon(Xinfo_t *, Window, Pixmap, Pixmap,
+			Pixmap *, Pixmap *, int, int);
+extern void draw_text(Xinfo_t *, Window, int, int, char *, int,
+		       unsigned long[], int c, int r, int s);
+extern void draw_text_plain(Xinfo_t *, Window, int, int, char *, int,
+			     unsigned long[], int c, int r, int s);
+extern void draw_line(Xinfo_t *, Window, int, int, int, int,
+			 unsigned long [], int);
+extern void draw_gradient(Xinfo_t *, Window, int, int, int, int,
+			   unsigned long [], int, int, int);
+extern void draw_relief(Xinfo_t *, Window, int, int, int, int,
+			 unsigned long [], int, int, int);
+extern void draw_partial_relief(Xinfo_t *, Window, int,
 				 int, int, int, int,
-				 unsigned long [], int, int, int );
-extern void draw_pixmap( Xinfo_t *, Window, Pixmap, Pixmap,
-			 int, int, int, int );
-extern void draw_grill( Xinfo_t *, Window, int, int, int, int );
+				 unsigned long [], int, int, int);
+extern void draw_pixmap(Xinfo_t *, Window, Pixmap, Pixmap,
+			 int, int, int, int);
+extern void draw_grill(Xinfo_t *, Window, int, int, int, int);
 
 extern Atom atoms[];
 
