@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Fri Jul 23 05:59:11 2004                          */
-/*    Last change :  Fri May  3 14:58:01 2024 (serrano)                */
+/*    Last change :  Sun Nov 24 06:44:48 2024 (serrano)                */
 /*    Copyright   :  2004-24 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    Event loop                                                       */
@@ -95,6 +95,7 @@ evloop(taskbar_t *tbar) {
    fd_set fd;
    int xfd;
    long count = timeout_gcd;
+   struct timeval tv;
    
    KeyCode altr_keycode = XKeysymToKeycode(tbar->xinfo->disp,XK_Alt_R);
    KeyCode altl_keycode = XKeysymToKeycode(tbar->xinfo->disp,XK_Alt_L);
@@ -182,7 +183,6 @@ evloop(taskbar_t *tbar) {
 	 switch(ev.type) {
 	    case ButtonPress:
 	       // reset the possible timeout
-	       cursor_hide();
 	       ar = find_area(tbar, ev.xbutton.window);
 	       if (ar) {
 		  if (ar->timeout_delay > 0) {
@@ -196,18 +196,10 @@ evloop(taskbar_t *tbar) {
 	       ar = find_area(tbar, ev.xkey.window);
 	       if (ar && ar->key_press) {
 		  ar->key_press(&ev, ar);
-	       } else {
-		  KeySym ks;
-		  char keychar[1];
-		  XLookupString( (XKeyEvent *)&ev, keychar, 1, &ks, 0 );
-		  if (IsModifierKey(ks)) {
-		     show_cursor(tbar, 1);
-		  }
 	       }
 	       break;
 
 	    case KeyRelease:
-	       cursor_hide();
 	       break;
 	       
 	    case DestroyNotify:
@@ -249,7 +241,7 @@ evloop(taskbar_t *tbar) {
 	    case MotionNotify:
 	       ar = find_area(tbar, ev.xmotion.window);
 	       iar = enter_area(&ev, ar, iar);
-	       show_cursor(tbar, 0);
+	       show_cursor(((XMotionEvent *)&ev)->time, tbar);
 	       break;
 
 	    case ClientMessage:
