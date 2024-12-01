@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Sun Jul 17 17:15:49 2022                          */
-/*    Last change :  Sat Nov 23 14:54:20 2024 (serrano)                */
+/*    Last change :  Sun Dec  1 10:16:42 2024 (serrano)                */
 /*    Copyright   :  2022-24 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    ICCCMPanel big cursor (on mouse motion)                          */
@@ -21,7 +21,6 @@
 #include <X11/Xutil.h>
 #include <X11/Xatom.h>
 #include <X11/cursorfont.h>
-#include <X11/Intrinsic.h>
 
 #ifdef HAVE_XPM
 #  include <X11/xpm.h>
@@ -59,10 +58,6 @@ init_cursor(Xinfo_t *xinfo, char *xpm_path) {
    XWMHints wmhints;
    unsigned long strut[4];
    XGCValues gcv;
-   GC gc;
-   XVisualInfo vinfo;
-   Widget top_level;
-   int argc = 1;
    
    att.override_redirect = 1;
    att.background_pixel = 0xffffffff;
