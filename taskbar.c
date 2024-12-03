@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Thu Jul 22 14:32:38 2004                          */
-/*    Last change :  Tue Aug 27 09:06:00 2024 (serrano)                */
+/*    Last change :  Tue Dec  3 07:46:19 2024 (serrano)                */
 /*    Copyright   :  2004-24 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    Taskbar management                                               */
@@ -163,22 +163,6 @@ fill_xclient(xclient_t *xcl, taskbar_t *tbar, Window w) {
 
 /*---------------------------------------------------------------------*/
 /*    static xclient_t *                                               */
-/*    cleanup_xclient ...                                              */
-/*---------------------------------------------------------------------*/
-static xclient_t *
-cleanup_xclient(xclient_t *xcl, taskbar_t *tbar) {
-   free(xcl->class);
-   free(xcl->name);
-   xcl->live = 0;
-
-/*    if (xcl->icon != None) XFreePixmap(tbar->xinfo->disp, xcl->icon); */
-/*    if (xcl->mask != None) XFreePixmap(tbar->xinfo->disp, xcl->mask); */
-
-   return xcl;
-}
-
-/*---------------------------------------------------------------------*/
-/*    static xclient_t *                                               */
 /*    make_xclient ...                                                 */
 /*---------------------------------------------------------------------*/
 static xclient_t *
@@ -195,6 +179,27 @@ make_xclient(taskbar_t *tbar, Window w) {
    fill_xclient(xcl, tbar, w);
    
    return xcl;
+}
+
+/*---------------------------------------------------------------------*/
+/*    void                                                             */
+/*    free_xclient ...                                                 */
+/*---------------------------------------------------------------------*/
+void
+free_xclient(xclient_t *xcl, taskbar_t *tbar) {
+   if (xcl->class) free(xcl->class);
+   if (xcl->name) free(xcl->name);
+
+   if (xcl->icon != None) XFreePixmap(tbar->xinfo->disp, xcl->icon);
+   if (xcl->mask != None) XFreePixmap(tbar->xinfo->disp, xcl->mask);
+   
+   xcl->live = 0;
+   
+#if ICCCMPANEL_FREE_LIST
+   tbar->_freexclients = cons(xcl, tbar->_freexclients);
+#else
+   free(xcl);
+#endif
 }
 
 /*---------------------------------------------------------------------*/
@@ -782,8 +787,7 @@ taskbar_destroy_notify(taskbar_t *tbar, XEvent *ev) {
 
 	 /* remove the client from the active list */
 	 tbar->xclients = remq(xcl, tbar->xclients);
-	 cleanup_xclient(xcl, tbar);
-	 tbar->_freexclients = cons(xcl, tbar->_freexclients);
+	 free_xclient(xcl, tbar);
 	 
       } else {
 	 pair_t *lst = tbar->areas;

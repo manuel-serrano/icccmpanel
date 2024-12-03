@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Thu Jul 22 15:21:17 2004                          */
-/*    Last change :  Mon Jul 22 15:44:54 2024 (serrano)                */
+/*    Last change :  Tue Dec  3 07:55:32 2024 (serrano)                */
 /*    Copyright   :  2004-24 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    The icons.                                                       */
@@ -274,6 +274,7 @@ make_xclicon(area_t *parent, xclient_t *xcl) {
    
    ar->win = make_area_window_parent(tbar, parent->win);
    ar->name = "xclicon";
+   ar->taskbar = tbar;
    
    xcli_map_window(tbar, xcli);
 
@@ -283,6 +284,26 @@ make_xclicon(area_t *parent, xclient_t *xcl) {
    }
 
    return fill_xclicon(xcli, parent, xcl);
+}
+
+/*---------------------------------------------------------------------*/
+/*    void                                                             */
+/*    free_xclicon ...                                                 */
+/*---------------------------------------------------------------------*/
+void
+free_xclicon(xclicon_t *xcli, ipicons_t *ip) {
+   area_t *ar = (area_t *)ip;
+   taskbar_t *tbar = ar->taskbar;
+   
+   ip->xclicons = remq(xcli, ip->xclicons);
+   
+#if ICCCMPANEL_FREE_LIST
+   ip->_freexclicons = cons(xcli, ip->_freexclicons);
+#else
+   XDestroyWindow(tbar->xinfo->disp, ((area_t *)xcli)->win);
+
+   free(xcli);
+#endif
 }
 
 /*---------------------------------------------------------------------*/
@@ -412,19 +433,19 @@ static void
 destroy_notify_icons(area_t *ar, xclient_t *xcl) {
    taskbar_t *tbar = ar->taskbar;
    ipicons_t *ip = (ipicons_t *)ar;
-   xclicon_t *xcli =  xcl->user[ip->id];
+   xclicon_t *xcli = xcl->user[ip->id];
 
    xcli_unmap_window(tbar, xcli);
    
    /* remove the client from the active list and from the taskbar */
-   ip->xclicons = remq(xcli, ip->xclicons);
-   ip->_freexclicons = cons(xcli, ip->_freexclicons);
    tbar->areas = remq(xcli, tbar->areas);
    
    if (xcl->unmappedp) {
       ip->xclistack = remq(xcli, ip->xclistack);
    }
 
+   free_xclicon(xcli, ip);
+   
    /* refresh the icon area */
    refresh_xclients(ar);
 }

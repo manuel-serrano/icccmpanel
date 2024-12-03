@@ -3,8 +3,8 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Sat Jul 24 14:20:57 2004                          */
-/*    Last change :  Mon Aug 11 18:32:11 2014 (serrano)                */
-/*    Copyright   :  2004-22 Manuel Serrano                            */
+/*    Last change :  Tue Dec  3 07:58:47 2024 (serrano)                */
+/*    Copyright   :  2004-24 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    Area management                                                  */
 /*=====================================================================*/
@@ -25,16 +25,16 @@
 /*    find_area_list ...                                               */
 /*---------------------------------------------------------------------*/
 static area_t *
-find_area_list( pair_t *lst, Window win ) {
-   while( PAIRP( lst ) ) {
-      area_t *ar = CAR( lst );
-      if( ar->win == win ) return ar;
-      lst = CDR( lst );
+find_area_list(pair_t *lst, Window win) {
+   while (PAIRP(lst)) {
+      area_t *ar = CAR(lst);
+      if (ar->win == win) return ar;
+      lst = CDR(lst);
 
-      if( ar->subareas ) {
-	 area_t *res = find_area_list( ar->subareas, win );
+      if (ar->subareas) {
+	 area_t *res = find_area_list(ar->subareas, win);
 
-	 if( res ) {
+	 if (res) {
 	    return res;
 	 }
       }
@@ -50,8 +50,8 @@ find_area_list( pair_t *lst, Window win ) {
 /*    Find an area given an Xwindow.                                   */
 /*---------------------------------------------------------------------*/
 area_t *
-find_area( taskbar_t *tbar, Window win ) {
-   return find_area_list( tbar->areas, win );
+find_area(taskbar_t *tbar, Window win) {
+   return find_area_list(tbar->areas, win);
 }
 
 /*---------------------------------------------------------------------*/
@@ -59,17 +59,13 @@ find_area( taskbar_t *tbar, Window win ) {
 /*    make_area_window_parent ...                                      */
 /*---------------------------------------------------------------------*/
 Window
-make_area_window_parent( taskbar_t *tbar, Window parent ) {
+make_area_window_parent(taskbar_t *tbar, Window parent) {
    Display *disp = tbar->xinfo->disp;
    Window win;
    MWMHints mwm;
    XSizeHints size_hints;
    XWMHints wmhints;
    XSetWindowAttributes att;
-   taskbar_t *tb;
-
-   if( !(tb = calloc( 1, sizeof( taskbar_t ) )) )
-      return 0;
 
    /* enable other windows to go above the panel */
    att.override_redirect = 1;
@@ -80,7 +76,7 @@ make_area_window_parent( taskbar_t *tbar, Window parent ) {
       | EnterWindowMask
       | PointerMotionMask;
 
-   win = XCreateWindow( /* display */ disp,
+   win = XCreateWindow(/* display */ disp,
 			/* parent  */ parent,
 			/* x       */ 0,
 			/* y       */ 0,
@@ -91,38 +87,38 @@ make_area_window_parent( taskbar_t *tbar, Window parent ) {
 			/* class   */ InputOutput,
 			/* visual  */ CopyFromParent,
 			/* vmask   */ CWBackPixel | CWEventMask | CWOverrideRedirect,
-			/* attribs */ &att );
+			/* attribs */ &att);
 
    /* use old gnome hint since sawfish doesn't support _NET_WM_STRUT */
-   set_window_prop( disp, win, atom__WIN_HINTS, XA_CARDINAL,
+   set_window_prop(disp, win, atom__WIN_HINTS, XA_CARDINAL,
 		    WIN_HINTS_SKIP_FOCUS | WIN_HINTS_SKIP_WINLIST |
-		    WIN_HINTS_SKIP_TASKBAR | WIN_HINTS_DO_NOT_COVER );
+		    WIN_HINTS_SKIP_TASKBAR | WIN_HINTS_DO_NOT_COVER);
 
    /* borderless motif hint */
-   memset( &mwm, 0, sizeof( mwm ) );
+   memset(&mwm, 0, sizeof(mwm));
    mwm.flags = MWM_HINTS_DECORATIONS;
-   XChangeProperty( disp, win, atom__MOTIF_WM_HINTS, atom__MOTIF_WM_HINTS, 32,
+   XChangeProperty(disp, win, atom__MOTIF_WM_HINTS, atom__MOTIF_WM_HINTS, 32,
 		    PropModeReplace,
-		    (unsigned char *)&mwm, sizeof( MWMHints ) / 4 );
+		    (unsigned char *)&mwm, sizeof(MWMHints) / 4);
 
    /* make sure the WM obays our window position */
    size_hints.flags = PPosition;
 
    /*XSetWMNormalHints (disp, win, &size_hints); */
-   XChangeProperty( disp, win, XA_WM_NORMAL_HINTS, XA_WM_SIZE_HINTS, 32,
+   XChangeProperty(disp, win, XA_WM_NORMAL_HINTS, XA_WM_SIZE_HINTS, 32,
 		    PropModeReplace,
-		    (unsigned char *)&size_hints, sizeof( XSizeHints ) / 4 );
+		    (unsigned char *)&size_hints, sizeof(XSizeHints) / 4);
    
    /* make our window unfocusable */
    wmhints.flags = InputHint;
    wmhints.input = False;
 
    /*XSetWMHints (disp, win, &wmhints); */
-   XChangeProperty( disp, win, XA_WM_HINTS, XA_WM_HINTS, 32, PropModeReplace,
-		    (unsigned char *)&wmhints, sizeof(XWMHints) / 4 );
+   XChangeProperty(disp, win, XA_WM_HINTS, XA_WM_HINTS, 32, PropModeReplace,
+		    (unsigned char *)&wmhints, sizeof(XWMHints) / 4);
 
    /* receive the window event */
-   XMapWindow( disp, win );
+   XMapWindow(disp, win);
 
    return win;
 }
@@ -132,7 +128,7 @@ make_area_window_parent( taskbar_t *tbar, Window parent ) {
 /*    make_area_window ...                                             */
 /*---------------------------------------------------------------------*/
 Window
-make_area_window( taskbar_t *tbar ) {
-   return make_area_window_parent( tbar, tbar->win );
+make_area_window(taskbar_t *tbar) {
+   return make_area_window_parent(tbar, tbar->win);
 }
 

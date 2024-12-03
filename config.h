@@ -3,14 +3,17 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Mon Oct 13 13:35:06 2003                          */
-/*    Last change :  Wed Jul 20 10:18:26 2022 (serrano)                */
-/*    Copyright   :  2003-22 Manuel Serrano                            */
+/*    Last change :  Tue Dec  3 07:50:54 2024 (serrano)                */
+/*    Copyright   :  2003-24 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
-/*    MSpanel config parsing                                           */
+/*    Icccmpanel config parsing                                        */
 /*=====================================================================*/
-#if( !defined( MSPANEL_CONFIG_H ) )
-#define MSPANEL_CONFIG_H
+#if (!defined(ICCCMPANEL_CONFIG_H))
+
+#define ICCCMPANEL_CONFIG_H
 #include "list.h"
+
+#define ICCCMPANEL_FREE_LIST 0
 
 /*---------------------------------------------------------------------*/
 /*    icondescr_t ...                                                  */
@@ -25,7 +28,7 @@ typedef struct icondescr {
 /*    plugin_t ...                                                     */
 /*---------------------------------------------------------------------*/
 typedef struct plugin {
-   void *(*start)( void *, pair_t * );
+   void *(*start)(void *, pair_t *);
    pair_t *args;
 } plugin_t;
 
@@ -70,18 +73,18 @@ typedef struct config {
 /*    extern declarations                                              */
 /*---------------------------------------------------------------------*/
 extern config_t *make_config();
-extern plugin_t *make_plugin( void *(*)( void *, pair_t * ), pair_t * );
-extern char *find_icon( config_t *, char * );
+extern plugin_t *make_plugin(void *(*)(void *, pair_t *), pair_t *);
+extern char *find_icon(config_t *, char *);
 extern char *find_rc_file();
-extern char *expand_env( char * );
+extern char *expand_env(char *);
 
-extern void parse_error( char *, obj_t * );
-extern void parse_pair( config_t *, pair_t * );
-extern string_t *parse_cadr_string( pair_t * );
-extern symbol_t *parse_cadr_symbol( pair_t * );
-extern integer_t *parse_cadr_integer( pair_t * );
+extern void parse_error(char *, obj_t *);
+extern void parse_pair(config_t *, pair_t *);
+extern string_t *parse_cadr_string(pair_t *);
+extern symbol_t *parse_cadr_symbol(pair_t *);
+extern integer_t *parse_cadr_integer(pair_t *);
 
-extern void register_plugin( config_t *, plugin_t * );
+extern void register_plugin(config_t *, plugin_t *);
 
 /* cached symbols */
 extern symbol_t *sym_true, *sym_false;
