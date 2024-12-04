@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Sun Jul 17 17:15:49 2022                          */
-/*    Last change :  Sun Dec  1 10:16:42 2024 (serrano)                */
+/*    Last change :  Wed Dec  4 09:55:33 2024 (serrano)                */
 /*    Copyright   :  2022-24 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    ICCCMPanel big cursor (on mouse motion)                          */
@@ -62,8 +62,8 @@ init_cursor(Xinfo_t *xinfo, char *xpm_path) {
    att.override_redirect = 1;
    att.background_pixel = 0xffffffff;
    att.cursor = None;
-   att.event_mask = ButtonPressMask;
-   
+   att.background_pixel = 0;
+
    win = XCreateWindow(/* display */ disp,
 		       /* parent  */ xinfo->root_win,
 		       /* x       */ 10,
@@ -130,11 +130,6 @@ init_cursor(Xinfo_t *xinfo, char *xpm_path) {
    init_cursor_xpm(cursor_xinfo, win, xpm_path);
 
    cursor_hide();
-
-   /* cursor window events */
-   XSelectInput(disp, cursor_window, ButtonPressMask);
-
-   // cursor_setup(500, 500);
 }
 
 /*---------------------------------------------------------------------*/
@@ -177,10 +172,10 @@ cursor_setup(int x, int y) {
    XMoveResizeWindow(disp, cursor_window, x, y, cursor_xpm_w, cursor_xpm_h);
 
    if (cursor_state == 0) {
+      cursor_state = 1;
       XMapWindow(disp, cursor_window);
       draw_pixmap(cursor_xinfo, cursor_window,
 		  cursor_xpm, cursor_mask, 0, 0, cursor_xpm_w, cursor_xpm_h);
-      cursor_state = 1;
    }
 }
 
@@ -199,7 +194,7 @@ cursor_hide() {
 /*---------------------------------------------------------------------*/
 /*    Pointer sensitivity                                              */
 /*---------------------------------------------------------------------*/
-#define CURSOR_TIME_LAPSE 9000
+#define CURSOR_TIME_LAPSE 20000
 #define CURSOR_SENSITIVITY 80
 
 /*---------------------------------------------------------------------*/
@@ -216,7 +211,7 @@ show_cursor(long etime, taskbar_t *tbar) {
    if (gettimeofday(&tv, 0) == 0) {
       cur_time = ((unsigned long long)(tv.tv_sec * 1000000) + (long long)tv.tv_usec);
 
-      // fprintf(stderr, "cur=%ld last=%ld diff=%ld cnt=%d\n", cur_time, last_time, cur_time - last_time, cnt);
+      //fprintf(stderr, "cur=%ld last=%ld diff=%ld cnt=%d\n", cur_time, last_time, cur_time - last_time, cnt);
       if ((cur_time - last_time) < CURSOR_TIME_LAPSE) {
 	 // fast move detection
 	 cnt++;
@@ -231,7 +226,6 @@ show_cursor(long etime, taskbar_t *tbar) {
 			  &root_x, &root_y,
 			  &win_x, &win_y,
 			  &mask);
-
 	    cursor_setup(root_x, root_y);
 	 }
       } else {
@@ -244,72 +238,3 @@ show_cursor(long etime, taskbar_t *tbar) {
       cnt = 0;
    }
 }
-/*                                                                     */
-/*    if (cursor_window) {                                             */
-/*                                                                     */
-/*                                                                     */
-/*       static long count = 0;                                        */
-/*       static long long last_time = 0;                               */
-/*       static int cursor_x = 0, cursor_y = 0;                        */
-/*       static long long mouse_events[POINTER_COUNT];                 */
-/* 	                                                               */
-/*                                                                     */
-/*       Display *disp = tbar->xinfo->disp;                            */
-/*       Window root_window = tbar->xinfo->root_win;                   */
-/*       Window root, child;                                           */
-/*       int root_x, root_y;                                           */
-/*       int win_x, win_y;                                             */
-/*       unsigned int mask;                                            */
-/*       long long cur_time;                                           */
-/*       struct timeval tv;                                            */
-/*                                                                     */
-/*       if (!force && gettimeofday(&tv, 0) == 0) {                    */
-/* 	 cur_time = ((long long)(tv.tv_sec * 1000000) + (long long)tv.tv_usec); */
-/* 	 cursor_setup(root_x, root_y);                                 */
-/*       } else {                                                      */
-/* 	 cusor_hide();                                                 */
-/*       }                                                             */
-/*    }                                                                */
-/* }                                                                   */
-/*                                                                     */
-/* {* #define POINTER_SENSITIVITY 30000                                   *} */
-/* #define POINTER_COUNT 100                                           */
-/* #define POINTER_ZONE 300                                            */
-/*                                                                     */
-/*       //fprintf(stderr, "cnt=%d %ld/%ld\n  ctime=%ld\n  ltime=%ld\n", count, cur_time - last_time, POINTER_SENSITIVITY, cur_time, last_time); */
-/*                                                                     */
-/*       if (force || cur_time - last_time < POINTER_SENSITIVITY) {    */
-/* 	 int retval = XQueryPointer(disp, root_window, &root, &child,  */
-/* 				    &root_x, &root_y,                  */
-/* 				    &win_x, &win_y,                    */
-/* 				    &mask);                            */
-/* 	 //fprintf(stderr, "   root=%d/%d last=%d %d\n", root_x, cursor_x, (root_x - cursor_x)); */
-/*                                                                     */
-/* 	 if (force) {                                                  */
-/* 	    cursor_setup(root_x, root_y);                              */
-/* 	 } else {                                                      */
-/* 	    if (((root_x - cursor_x) < POINTER_ZONE)                   */
-/* 		&& ((root_x - cursor_x) > -POINTER_ZONE)               */
-/* 		&& ((root_y - cursor_y) < POINTER_ZONE)                */
-/* 		&& ((root_y - cursor_y) > -POINTER_ZONE)) {            */
-/* 	       count++;                                                */
-/* 	                                                               */
-/* 	       if (count > POINTER_COUNT) {                            */
-/* 		  //printf("ct:%lld, it:%lld d:%ld count:%d x: %d,  y:%d\n", cur_time, init_time , cur_time - init_time, count, root_x, root_y); */
-/* 		  cursor_setup(root_x, root_y);                        */
-/* 	       }                                                       */
-/* 	    } else {                                                   */
-/* 	       cursor_hide();                                          */
-/* 	       count = 0;                                              */
-/* 	       cursor_x = root_x;                                      */
-/* 	       cursor_y = root_y;                                      */
-/* 	    }                                                          */
-/* 	 }                                                             */
-/*       } else {                                                      */
-/* 	 cursor_hide();                                                */
-/* 	 count = 0;                                                    */
-/*       }                                                             */
-/*       last_time = cur_time;                                         */
-/*    }                                                                */
-/* }                                                                   */
-/*                                                                     */
