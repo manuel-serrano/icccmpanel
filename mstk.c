@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Sat Oct 11 05:33:42 2003                          */
-/*    Last change :  Mon Jan  1 07:30:36 2024 (serrano)                */
+/*    Last change :  Mon Dec 16 09:47:08 2024 (serrano)                */
 /*    Copyright   :  2003-24 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    Small X toolkit                                                  */
@@ -195,7 +195,7 @@ init_mstk(config_t *config) {
       return 0L;
 
    /* initialize colors */
-   for(i = 0; i < MSTK_PALETTE_COUNT; i++) {
+   for (i = 0; i < MSTK_PALETTE_COUNT; i++) {
       xcl.red = palette[ i ].red;
       xcl.blue = palette[ i ].blue;
       xcl.green = palette[ i ].green;
@@ -207,7 +207,7 @@ init_mstk(config_t *config) {
 
 
    /* initialize the grey colors */
-   for(i = 0, g = config->gradient_grey_min;
+   for (i = 0, g = config->gradient_grey_min;
 	i < greylen;
 	i++, g += greystep) {
       xcl.red = xcl.blue = xcl.green = g | (g<<8);
@@ -270,7 +270,12 @@ scale_icon(Xinfo_t *xinfo, Window win,
    XGCValues gcv;
    GC mgc;
 
-   XGetGeometry(disp, icon, &pix, &x, &y, &w, &h, &bw, &d);
+   if (!XGetGeometry(disp, icon, &pix, &x, &y, &w, &h, &bw, &d)) {
+      fprintf(stderr, "*** ERROR(%s:%d): cannot get geometry\n", 
+	      __FILE__, __LINE__);
+      return;
+   }
+
    pix = XCreatePixmap(disp, win, nw, nh, depth);
 
    if (mask != None) {
@@ -281,9 +286,9 @@ scale_icon(Xinfo_t *xinfo, Window win,
    }
 
    /* this is my simple & dirty scaling routine */
-   for(y = nh - 1; y >= 0; y--) {
+   for (y = nh - 1; y >= 0; y--) {
       yy = (y * h) / nh;
-      for(x = nw - 1; x >= 0; x--) {
+      for (x = nw - 1; x >= 0; x--) {
 	 xx = (x * w) / nw;
 	 if (d != depth)
 	    XCopyPlane(disp, icon, pix, gc, xx, yy, 1, 1, x, y, 1);
@@ -313,8 +318,12 @@ static unsigned long *pixmap_to_rgba(Display *disp, Pixmap icon, Pixmap mask, in
    int x, y, i;
    unsigned int width, height, border_width, depth;
    
-   XGetGeometry(disp, icon, &root, &x, &y,
-		 &width, &height, &border_width, &depth);
+   if (!XGetGeometry(disp, icon, &root, &x, &y,
+		     &width, &height, &border_width, &depth)) {
+      fprintf(stderr, "*** ERROR(%s:%d): cannot get geometry\n", 
+	      __FILE__, __LINE__);
+      return 0;
+   }
 
    icon_img =
       XGetImage(disp, icon, 0, 0, width, height, 0xFFFFFFFF, ZPixmap);
@@ -327,15 +336,21 @@ static unsigned long *pixmap_to_rgba(Display *disp, Pixmap icon, Pixmap mask, in
    *rlen = (2 + width * height);
    unsigned long *data = malloc(*rlen * sizeof(long));
 
-   data[ 0 ] = width;
-   data[ 1 ] = height;
+   if (!data) {
+      fprintf(stderr, "*** ERROR(%s:%d): cannot allocate %d width=%d height=%d\n",
+	      __FILE__, __LINE__, *rlen * sizeof(long), width, height);
+      return 0;
+   }
+   
+   data[0] = width;
+   data[1] = height;
 
-   for(i = 2, y = 0; y < height; y++) {
-      for(x = 0; x < width; x++, i++) {
-	 data[ i ] = XGetPixel(icon_img, x, y);
+   for (i = 2, y = 0; y < height; y++) {
+      for (x = 0; x < width; x++, i++) {
+	 data[i] = XGetPixel(icon_img, x, y);
 	 if (mask_img) {
 	    if (XGetPixel(mask_img, x, y)) {
-	       data[ i ] += ((unsigned long)255 << 24);
+	       data[i] += ((unsigned long)255 << 24);
 	    }
 	 }
        }
@@ -376,8 +391,8 @@ rgba_to_pixmap(Xinfo_t *xinfo, Window win, unsigned long *buf, int width, int he
    img->data = malloc(img->bytes_per_line * height);
    mask->data = malloc(mask->bytes_per_line * height);
 
-   for(y = 0; y < height; y++) {
-       for(x = 0; x < width; x++, buf++) {
+   for (y = 0; y < height; y++) {
+       for (x = 0; x < width; x++, buf++) {
 
 	  rgba = *buf; // use only 32bit
 
@@ -664,15 +679,23 @@ set_window_prop(Display *disp,  Window win, Atom at, Atom type, long val) {
 /*    window_update_netwm_icon ...                                     */
 /*---------------------------------------------------------------------*/
 void
-window_update_netwm_icon(Xinfo_t *xinfo, Window win, Pixmap *icon, Pixmap *mask, int icon_size) {
+window_update_netwm_icon(Xinfo_t *xinfo, Window win, char *name, Pixmap *icon, Pixmap *mask, int icon_size) {
    int length;
    unsigned long *buffer = pixmap_to_rgba(xinfo->disp, *icon, *mask, &length);
 
    if (buffer) {
-      XChangeProperty(xinfo->disp, win, atom__NET_WM_ICON, atom__CARDINAL,
+      if (!XChangeProperty(xinfo->disp, win, atom__NET_WM_ICON, atom__CARDINAL,
 		       32, PropModeReplace,
-		       (unsigned char *)buffer, length);
+			   (unsigned char *)buffer, length)) {
+	 fprintf(stderr, "*** ERROR(%s:%d): XChangeProperty failed %s\n",
+		 __FILE__, __LINE__, name);
+	 fprintf(stderr, "%d\n", 1/0);
+      }
       free(buffer);
+   } else {
+      fprintf(stderr, "*** ERROR(%s:%d): cannot update icon %s\n",
+	      __FILE__, __LINE__, name);
+      fprintf(stderr, "%d\n", 1/0);
    }
 }
 
@@ -803,7 +826,7 @@ draw_text(Xinfo_t *xinfo, Window win, int x, int y,
 	 XDrawString(disp, win, gc, x + 2, y + 2, text, len);
 	 if (shadow_size >= 3) {
 	    int i;
-	    for(i = 3; i < shadow_size; i++) {
+	    for (i = 3; i < shadow_size; i++) {
 	       XDrawString(disp, win, gc, x + i, y + i, text, len);
 	    }
 	 }
@@ -833,7 +856,7 @@ draw_text_plain(Xinfo_t *xinfo, Window win, int x, int y,
 	 XDrawString(disp, win, gc, x + 2, y + 2, text, len);
 	 if (shadow_size >= 3) {
 	    int i;
-	    for(i = 3; i < shadow_size; i++) {
+	    for (i = 3; i < shadow_size; i++) {
 	       XDrawString(disp, win, gc, x + i, y + i, text, len);
 	    }
 	 }
@@ -876,7 +899,7 @@ draw_gradient(Xinfo_t *xinfo, Window win,
    unsigned long *color = palette ? palette : mstk_palette;
 
    if (step || sw) {
-      for(i = 0, c = cf, j = sw; i < h; i++) {
+      for (i = 0, c = cf, j = sw; i < h; i++) {
 	 XSetForeground(disp, gc, color[ c ]);
 	 XDrawLine(disp, win, gc, x, y + i, x + w, y + i);
 
@@ -886,7 +909,7 @@ draw_gradient(Xinfo_t *xinfo, Window win,
 	 }
       }
    } else {
-      for(i = 0; i < h; i++) {
+      for (i = 0; i < h; i++) {
 	 XSetForeground(disp, gc, color[ cf ]);
 	 XDrawLine(disp, win, gc, x, y + i, x + w, y + i);
       }
@@ -908,7 +931,7 @@ draw_relief(Xinfo_t *xinfo, Window win,
    unsigned long *color = palette ? palette : mstk_palette;
    int i;
    
-   for(i = 0; i < border; i++) {
+   for (i = 0; i < border; i++) {
       XSetForeground(disp, gc, color[ c0 ]);
       XDrawLine(disp, win, gc, x + i, y + i, x + i, y + h - i);
       XDrawLine(disp, win, gc, x + i, y + i, x + w - i, y + i);
@@ -932,7 +955,7 @@ draw_partial_relief(Xinfo_t *xinfo, Window win, int mask,
    unsigned long *color = palette ? palette : mstk_palette;
    int i;
    
-   for(i = 0; i < border; i++) {
+   for (i = 0; i < border; i++) {
       XSetForeground(disp, gc, color[ c0 ]);
       if (mask & RELIEF_LEFT)
 	 XDrawLine(disp, win, gc, x + i, y + i, x + i, y + h - i);
@@ -987,7 +1010,7 @@ draw_grill(Xinfo_t *xinfo, Window win, int x, int y, int w, int h) {
    GC gc = (xinfo)->gcb;
    int xx;
 
-   for(xx = 2; xx < w; xx += 3) {
+   for (xx = 2; xx < w; xx += 3) {
       int yy = y + 1;
 
       while (yy <= h) {

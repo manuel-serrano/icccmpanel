@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Thu Jul 22 14:32:38 2004                          */
-/*    Last change :  Tue Dec  3 07:46:19 2024 (serrano)                */
+/*    Last change :  Tue Dec 17 08:34:43 2024 (serrano)                */
 /*    Copyright   :  2004-24 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    Taskbar management                                               */
@@ -65,23 +65,24 @@ find_user_icon(xclient_t *xcl, taskbar_t *tbar) {
 	    if (!en->loaded) {
 	       en->loaded = 1;
 	       XpmReadFileToPixmap(tbar->xinfo->disp, tbar->win,
-				    en->icondescr->filename,
-				    &(en->icon), &(en->mask),
-				    NULL);
+				   en->icondescr->filename,
+				   &(en->icon), &(en->mask),
+				   NULL);
  	    }
 
 	    xcl->icon = en->icon;
 	    xcl->mask = en->mask;
 
 	    if (xcl->icon) {
-	          Pixmap pix;
-		  int x, y;
-		  unsigned int w, h, d, bw;
+	       Pixmap pix;
+	       int x, y;
+	       unsigned int w, h, d, bw;
 
-		  XGetGeometry(tbar->xinfo->disp,
-				xcl->icon, &pix, &x, &y, &w, &h, &bw, &d);
-		  xcl->icon_width = w;
-		  xcl->icon_height = h;
+	       XGetGeometry(tbar->xinfo->disp,
+			    xcl->icon, &pix, &x, &y, &w, &h, &bw, &d);
+	       xcl->icon_width = w;
+	       xcl->icon_height = h;
+	       xcl->icon_shared = 1;
 	    }
 
 	    return 1;
@@ -103,23 +104,33 @@ update_xclient_icon(xclient_t *xcl, taskbar_t *tbar, Window win) {
    char *in;
    int icon_size = tbar->config->icon_size;
 
-   if (!find_user_icon(xcl, tbar)) {
-      if (!window_netwm_icon(tbar->xinfo, xcl->win,
-			      &(xcl->icon), &(xcl->mask),
-			      icon_size)) {
-	 if (!window_hint_icon(tbar->xinfo, xcl->win,
+   fprintf(stderr, "update_xcliient_icon (%s:%d) %s %p\n",
+	   __FILE__, __LINE__, 
+	   xcl->name, xcl->icon);
+
+   if (xcl->icon == 0) {
+      if (!find_user_icon(xcl, tbar)) {
+	 fprintf(stderr, "!find_user_icon\n");
+	 if (!window_netwm_icon(tbar->xinfo, xcl->win,
 				&(xcl->icon), &(xcl->mask),
 				icon_size)) {
-	    xcl->icon = xcl->mask = 0;
+	    fprintf(stderr, "!window_netwm_icon\n");
+	    if (!window_hint_icon(tbar->xinfo, xcl->win,
+				  &(xcl->icon), &(xcl->mask),
+				  icon_size)) {
+	       fprintf(stderr, "!window_hint_icon\n");
+	       xcl->icon = xcl->mask = 0;
+	    }
+	 }
+      } else {
+	 if (tbar->config->update_netwmicon) {
+	    window_update_netwm_icon(tbar->xinfo, xcl->win, xcl->name, 
+				     &(xcl->icon), &(xcl->mask),
+				     icon_size);
 	 }
       }
-   } else {
-      if (tbar->config->update_netwmicon) {
-	 window_update_netwm_icon(tbar->xinfo, xcl->win,
-				   &(xcl->icon), &(xcl->mask),
-				   icon_size);
-      }
    }
+   return xcl;
 }
 
 /*---------------------------------------------------------------------*/
@@ -148,6 +159,8 @@ fill_xclient(xclient_t *xcl, taskbar_t *tbar, Window w) {
    xcl->live = 1;
    xcl->class = window_class(tbar->xinfo->disp, w);
    xcl->name = window_name(tbar->xinfo->disp, w);
+   xcl->desktop = window_desktop(tbar->xinfo->disp, w);
+   xcl->unmappedp = window_iconifiedp(tbar->xinfo->disp, w);
    
    if (!xcl->class || *(xcl->class) == 0) {
       xcl->class = strdup("???");
@@ -157,7 +170,6 @@ fill_xclient(xclient_t *xcl, taskbar_t *tbar, Window w) {
       xcl->name = strdup(xcl->class);
    }
 
-   update_xclient_state(xcl, tbar, w);
    return update_xclient_icon(xcl, tbar, w);
 }
 
@@ -169,8 +181,14 @@ static xclient_t *
 make_xclient(taskbar_t *tbar, Window w) {
    static int count = 0;
    xclient_t *xcl = malloc(sizeof(xclient_t));
+   memset(xcl, 0, sizeof(xclient_t));
 
-   if (!xcl) return 0;
+   if (!xcl) {
+      fprintf(stderr, "*** ERROR(%s:%d): cannot allocation client\n", 
+	      __FILE__, __LINE__);
+      fprintf(stderr, "%d\n", 1/0);
+      return 0;
+   }
 
    /* the xclient identifier */
    xcl->id = count++;
@@ -187,11 +205,20 @@ make_xclient(taskbar_t *tbar, Window w) {
 /*---------------------------------------------------------------------*/
 void
 free_xclient(xclient_t *xcl, taskbar_t *tbar) {
+   fprintf(stderr, "free_xclient %s %p %p\n", xcl->name, xcl->icon, xcl->mask);
+   
    if (xcl->class) free(xcl->class);
    if (xcl->name) free(xcl->name);
 
-   if (xcl->icon != None) XFreePixmap(tbar->xinfo->disp, xcl->icon);
-   if (xcl->mask != None) XFreePixmap(tbar->xinfo->disp, xcl->mask);
+   if (!xcl->icon_shared) {
+      if (xcl->icon != None) XFreePixmap(tbar->xinfo->disp, xcl->icon);
+      if (xcl->mask != None) XFreePixmap(tbar->xinfo->disp, xcl->mask);
+   }
+
+   xcl->class = 0;
+   xcl->name = 0;
+   xcl->icon = None;
+   xcl->mask = None;
    
    xcl->live = 0;
    

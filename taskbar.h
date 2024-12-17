@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Thu Jul 22 14:32:38 2004                          */
-/*    Last change :  Fri Aug 30 06:55:10 2024 (serrano)                */
+/*    Last change :  Tue Dec 17 08:48:22 2024 (serrano)                */
 /*    Copyright   :  2004-24 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    Taskbar management                                               */
@@ -55,6 +55,8 @@ typedef struct xclient {
    Pixmap icon, mask;
    /* the dimension of the icon */
    int icon_width, icon_height;
+   /* is the pixmap shared by severy clients? */
+   char icon_shared;
 } xclient_t;
 
 /*---------------------------------------------------------------------*/

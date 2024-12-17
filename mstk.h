@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Sat Oct 11 05:44:23 2003                          */
-/*    Last change :  Fri Aug 30 06:58:24 2024 (serrano)                */
+/*    Last change :  Mon Dec 16 10:11:55 2024 (serrano)                */
 /*    Copyright   :  2003-24 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    MS X toolkit                                                     */
@@ -60,7 +60,7 @@ extern int window_desktop(Display *, Window);
 extern char *window_class(Display *, Window);
 extern char window_hint_icon(Xinfo_t *, Window, Pixmap *, Pixmap *, int);
 extern char window_netwm_icon(Xinfo_t *, Window, Pixmap *, Pixmap *, int);
-extern void window_update_netwm_icon(Xinfo_t *, Window, Pixmap *, Pixmap *, int);
+extern void window_update_netwm_icon(Xinfo_t *, Window, char *, Pixmap *, Pixmap *, int);
 
 extern Window *desktop_windows(Xinfo_t *, long *);
 extern int current_desktop(Display *, Window);
