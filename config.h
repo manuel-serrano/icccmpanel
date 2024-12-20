@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Mon Oct 13 13:35:06 2003                          */
-/*    Last change :  Tue Dec  3 07:50:54 2024 (serrano)                */
+/*    Last change :  Fri Dec 20 07:46:11 2024 (serrano)                */
 /*    Copyright   :  2003-24 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    Icccmpanel config parsing                                        */
@@ -67,6 +67,8 @@ typedef struct config {
    char *tooltips_fontname;
    pair_t *plugins;
    char *bigcursor_path;
+   int mouse_shaker_speed;
+   int mouse_shaker_sensitivity;
 } config_t;
 
 /*---------------------------------------------------------------------*/

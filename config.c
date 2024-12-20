@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Fri Oct 17 22:18:02 2003                          */
-/*    Last change :  Tue Jul  9 14:39:51 2024 (serrano)                */
+/*    Last change :  Fri Dec 20 07:44:48 2024 (serrano)                */
 /*    Copyright   :  2003-24 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    The parsing of the MSpanel config file.                          */
@@ -268,7 +268,10 @@ default_config(config_t *config) {
    config->icon_directories = cons(dir, NIL);
 
    config->icondescrs = 0L;
-   
+
+   config->mouse_shaker_speed = 12000;
+   config->mouse_shaker_sensitivity = 50;
+
    return config;
 }
 
@@ -694,6 +697,36 @@ parse_icons_descr(config_t *config, pair_t *lst) {
 }
 
 /*---------------------------------------------------------------------*/
+/*    static void                                                      */
+/*    parse_mouse_shaker_sensitivity ...                               */
+/*---------------------------------------------------------------------*/
+static void
+parse_mouse_shaker_sensitivity(config_t *config, pair_t *lst) {
+   integer_t *i = parse_cadr_integer(lst);
+   
+   if (!i) {
+      parse_error("Illegal mouse_shaker_sensitivity", (obj_t *)lst);
+   } else {
+      config->mouse_shaker_sensitivity = INTEGER_VAL(i);
+   }
+}
+
+/*---------------------------------------------------------------------*/
+/*    static void                                                      */
+/*    parse_mouse_shaker_speed ...                                     */
+/*---------------------------------------------------------------------*/
+static void
+parse_mouse_shaker_speed(config_t *config, pair_t *lst) {
+   integer_t *i = parse_cadr_integer(lst);
+   
+   if (!i) {
+      parse_error("Illegal mouse_shaker_speed", (obj_t *)lst);
+   } else {
+      config->mouse_shaker_speed = INTEGER_VAL(i);
+   }
+}
+
+/*---------------------------------------------------------------------*/
 /*    static config_t *                                                */
 /*    parse_config ...                                                 */
 /*---------------------------------------------------------------------*/
@@ -738,6 +771,8 @@ parse_config(config_t *config, char *filename) {
    register_parser(make_symbol("volume"), parse_volume);
    register_parser(make_symbol("cron"), parse_cron);
    register_parser(make_symbol("exec"), parse_exec);
+   register_parser(make_symbol("mouse-shaker-speed"), parse_mouse_shaker_speed);
+   register_parser(make_symbol("mouse-shaker-sensitivity"), parse_mouse_shaker_sensitivity);
    
    printf("Parsing config file `%s'\n", filename);
    

@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Thu Jul 22 14:32:38 2004                          */
-/*    Last change :  Tue Dec 17 08:34:43 2024 (serrano)                */
+/*    Last change :  Fri Dec 20 07:54:39 2024 (serrano)                */
 /*    Copyright   :  2004-24 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    Taskbar management                                               */
@@ -104,21 +104,14 @@ update_xclient_icon(xclient_t *xcl, taskbar_t *tbar, Window win) {
    char *in;
    int icon_size = tbar->config->icon_size;
 
-   fprintf(stderr, "update_xcliient_icon (%s:%d) %s %p\n",
-	   __FILE__, __LINE__, 
-	   xcl->name, xcl->icon);
-
    if (xcl->icon == 0) {
       if (!find_user_icon(xcl, tbar)) {
-	 fprintf(stderr, "!find_user_icon\n");
 	 if (!window_netwm_icon(tbar->xinfo, xcl->win,
 				&(xcl->icon), &(xcl->mask),
 				icon_size)) {
-	    fprintf(stderr, "!window_netwm_icon\n");
 	    if (!window_hint_icon(tbar->xinfo, xcl->win,
 				  &(xcl->icon), &(xcl->mask),
 				  icon_size)) {
-	       fprintf(stderr, "!window_hint_icon\n");
 	       xcl->icon = xcl->mask = 0;
 	    }
 	 }
@@ -205,8 +198,6 @@ make_xclient(taskbar_t *tbar, Window w) {
 /*---------------------------------------------------------------------*/
 void
 free_xclient(xclient_t *xcl, taskbar_t *tbar) {
-   fprintf(stderr, "free_xclient %s %p %p\n", xcl->name, xcl->icon, xcl->mask);
-   
    if (xcl->class) free(xcl->class);
    if (xcl->name) free(xcl->name);
 
