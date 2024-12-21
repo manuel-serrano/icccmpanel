@@ -1,22 +1,22 @@
 /*=====================================================================*/
-/*    serrano/prgm/utils/icccmpanel/cursor.h                           */
+/*    serrano/prgm/utils/icccmpanel/shaker.h                           */
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Mon Oct 13 13:35:06 2003                          */
-/*    Last change :  Sun Nov 24 06:49:07 2024 (serrano)                */
+/*    Last change :  Sat Dec 21 06:28:22 2024 (serrano)                */
 /*    Copyright   :  2003-24 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
-/*    MSpanel cursor                                                   */
+/*    MSpanel shaker                                                   */
 /*=====================================================================*/
-#if (!defined(MSPANEL_CURSOR_H))
-#define MSPANEL_CURSOR_H
+#if (!defined(MSPANEL_SHAKER_H))
+#define MSPANEL_SHAKER_H
 
 /*---------------------------------------------------------------------*/
 /*    extern declarations                                              */
 /*---------------------------------------------------------------------*/
-extern void init_cursor(Xinfo_t *, char *);
-extern int cursor_windowp(Window); 
-extern void cursor_refresh();
-extern void cursor_hide();
-extern void show_cursor(long time, taskbar_t *);
+extern void init_shaker(Xinfo_t *, char *);
+extern int shaker_windowp(Window); 
+extern void shaker_refresh();
+extern void shaker_hide();
+extern void show_shaker(long time, taskbar_t *);
 #endif

@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Fri Jul 23 05:59:11 2004                          */
-/*    Last change :  Fri Dec 20 07:52:18 2024 (serrano)                */
+/*    Last change :  Sat Dec 21 06:28:48 2024 (serrano)                */
 /*    Copyright   :  2004-24 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    Event loop                                                       */
@@ -242,7 +242,7 @@ evloop(taskbar_t *tbar) {
 	       ar = find_area(tbar, ev.xmotion.window);
 	       iar = enter_area(&ev, ar, iar);
 	       if (tbar->config->mouse_shaker_speed > 0) {
-		  show_cursor(((XMotionEvent *)&ev)->time, tbar);
+		  show_shaker(((XMotionEvent *)&ev)->time, tbar);
 	       }
 	       break;
 

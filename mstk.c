@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Sat Oct 11 05:33:42 2003                          */
-/*    Last change :  Mon Dec 16 09:47:08 2024 (serrano)                */
+/*    Last change :  Sat Dec 21 06:29:29 2024 (serrano)                */
 /*    Copyright   :  2003-24 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    Small X toolkit                                                  */
@@ -25,7 +25,7 @@
 #include "mstk.h"
 #include "tooltips.h"
 #include "taskbar.h"
-#include "cursor.h"
+#include "shaker.h"
 
 /*---------------------------------------------------------------------*/
 /*    X atoms                                                          */
@@ -222,9 +222,9 @@ init_mstk(config_t *config) {
    /* initialize the tooltips */
    init_tooltips(xinfo);
    
-   /* initialize the big cursor */
-   if (config->bigcursor_path) {
-      init_cursor(xinfo, config->bigcursor_path);
+   /* initialize the big shaker */
+   if (config->shaker_path) {
+      init_shaker(xinfo, config->shaker_path);
    }
    
    return xinfo;

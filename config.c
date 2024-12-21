@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Fri Oct 17 22:18:02 2003                          */
-/*    Last change :  Fri Dec 20 07:44:48 2024 (serrano)                */
+/*    Last change :  Sat Dec 21 06:27:55 2024 (serrano)                */
 /*    Copyright   :  2003-24 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    The parsing of the MSpanel config file.                          */
@@ -424,16 +424,16 @@ parse_icon_theme(config_t *config, pair_t *lst) {
 
 /*---------------------------------------------------------------------*/
 /*    static void                                                      */
-/*    parse_bigcursor_path ...                                         */
+/*    parse_shaker_path ...                                            */
 /*---------------------------------------------------------------------*/
 static void
-parse_bigcursor_path(config_t *config, pair_t *lst) {
+parse_shaker_path(config_t *config, pair_t *lst) {
    string_t *s = parse_cadr_string(lst);
    
    if (!s) {
-      parse_error("Illegal bigcursor-path", (obj_t *)lst);
+      parse_error("Illegal shaker-path", (obj_t *)lst);
    } else {
-      config->bigcursor_path = STRINGP(s) ? STRING_CHARS(s) : 0;
+      config->shaker_path = STRINGP(s) ? STRING_CHARS(s) : 0;
    }
 }
 
@@ -742,7 +742,7 @@ parse_config(config_t *config, char *filename) {
    register_parser(make_symbol("icon-size"), parse_icon_size);
    register_parser(make_symbol("update-netwmicon"), parse_update_netwmicon);
    register_parser(make_symbol("icon-path"), parse_icon_path);
-   register_parser(make_symbol("bigcursor-path"), parse_bigcursor_path);
+   register_parser(make_symbol("shaker-path"), parse_shaker_path);
    register_parser(make_symbol("palette"), parse_palette);
    register_parser(make_symbol("font"), parse_font);
    register_parser(make_symbol("font-bold"), parse_font_bold);
@@ -856,7 +856,7 @@ make_config(int argc, char *argv[]) {
 
    if (!config) return config;
 
-   config->bigcursor_path = ICCCMPANEL_PREFIX "/" ICCCMPANEL_DIR "/" ICCCMPANEL_ICON_DIR "/48x48/cursor.xpm";
+   config->shaker_path = ICCCMPANEL_PREFIX "/" ICCCMPANEL_DIR "/" ICCCMPANEL_ICON_DIR "/48x48/cursor.xpm";
 
    if (!(rcfile = find_rc_file(argc > 1 ? argv[1] : (char *)0L)))
       return finalize_config(default_config(config));

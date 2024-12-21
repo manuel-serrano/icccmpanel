@@ -1,12 +1,12 @@
 /*=====================================================================*/
-/*    serrano/prgm/utils/icccmpanel/cursor.c                           */
+/*    serrano/prgm/utils/icccmpanel/shaker.c                           */
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Sun Jul 17 17:15:49 2022                          */
-/*    Last change :  Fri Dec 20 07:35:28 2024 (serrano)                */
+/*    Last change :  Sat Dec 21 06:32:57 2024 (serrano)                */
 /*    Copyright   :  2022-24 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
-/*    ICCCMPanel big cursor (on mouse motion)                          */
+/*    ICCCMPanel mouse shaker                                          */
 /*=====================================================================*/
 #include <stdio.h>
 #include <stdlib.h>
@@ -30,26 +30,26 @@
 
 /*---------------------------------------------------------------------*/
 /*    static Window                                                    */
-/*    cursor_window ...                                                */
+/*    shaker_window ...                                                */
 /*---------------------------------------------------------------------*/
-static Window cursor_window = 0;
+static Window shaker_window = 0;
 
-static Xinfo_t *cursor_xinfo = 0;
-static Pixmap cursor_xpm, cursor_mask;
-static int cursor_xpm_w, cursor_xpm_h;
+static Xinfo_t *shaker_xinfo = 0;
+static Pixmap shaker_xpm, shaker_mask;
+static int shaker_xpm_w, shaker_xpm_h;
 
-static int cursor_x, cursor_y;
-static int cursor_state = 0;
+static int shaker_x, shaker_y;
+static int shaker_state = 0;
 
-static void cursor_setup(int x, int y);
-static void init_cursor_xpm(Xinfo_t *, Window, char *);
+static void shaker_setup(int x, int y);
+static void init_shaker_xpm(Xinfo_t *, Window, char *);
 
 /*---------------------------------------------------------------------*/
 /*    void                                                             */
-/*    init_cursor ...                                                  */
+/*    init_shaker ...                                                  */
 /*---------------------------------------------------------------------*/
 void
-init_cursor(Xinfo_t *xinfo, char *xpm_path) {
+init_shaker(Xinfo_t *xinfo, char *xpm_path) {
    Display *disp = xinfo->disp;
    Window win;
    XSetWindowAttributes att;
@@ -122,89 +122,89 @@ init_cursor(Xinfo_t *xinfo, char *xpm_path) {
 		    XA_WM_HINTS, XA_WM_HINTS, 32, PropModeReplace,
 		    (unsigned char *) &wmhints, sizeof(XWMHints) / 4);
 
-   cursor_window = win;
-   cursor_xinfo = copy_xinfo(xinfo);
-   cursor_xinfo->gcb = XCreateGC(disp, win, 0, &gcv);
+   shaker_window = win;
+   shaker_xinfo = copy_xinfo(xinfo);
+   shaker_xinfo->gcb = XCreateGC(disp, win, 0, &gcv);
 
-   /* cursor xpm */
-   init_cursor_xpm(cursor_xinfo, win, xpm_path);
+   /* shaker xpm */
+   init_shaker_xpm(shaker_xinfo, win, xpm_path);
 
-   cursor_hide();
+   shaker_hide();
 
-   /* cursor window events */
-   XSelectInput(disp, cursor_window, ButtonPressMask);
+   /* shaker window events */
+   XSelectInput(disp, shaker_window, ButtonPressMask);
 
-   // cursor_setup(500, 500);
+   // shaker_setup(500, 500);
 }
 
 /*---------------------------------------------------------------------*/
 /*    static void                                                      */
-/*    init_cursor_xpm ...                                              */
+/*    init_shaker_xpm ...                                              */
 /*---------------------------------------------------------------------*/
 static void
-init_cursor_xpm(Xinfo_t *xinfo, Window win, char *xpm_path) {
+init_shaker_xpm(Xinfo_t *xinfo, Window win, char *xpm_path) {
    Pixmap pix;
    int x, y;
    unsigned int d, bw;
    XpmImage image;
    XpmInfo info;
-   Cursor cursor;
+   Cursor shaker;
 
    int res = XpmReadFileToPixmap(xinfo->disp, win, xpm_path,
-				 &cursor_xpm, &cursor_mask,
+				 &shaker_xpm, &shaker_mask,
 				 NULL);
    XpmReadFileToXpmImage(xpm_path, &image, &info);
 
    /* the position of the image in the area */
-   cursor_xpm_w = image.width;
-   cursor_xpm_h = image.height;
+   shaker_xpm_w = image.width;
+   shaker_xpm_h = image.height;
    
-   XMoveResizeWindow(xinfo->disp, cursor_window, x, y, cursor_xpm_w, cursor_xpm_h);
+   XMoveResizeWindow(xinfo->disp, shaker_window, x, y, shaker_xpm_w, shaker_xpm_h);
 
-   if (cursor = XCreateFontCursor(xinfo->disp, XC_dot)) {
-      XDefineCursor(xinfo->disp, win, cursor);
+   if (shaker = XCreateFontCursor(xinfo->disp, XC_dot)) {
+      XDefineCursor(xinfo->disp, win, shaker);
    }
 }
 
 /*---------------------------------------------------------------------*/
 /*    static void                                                      */
-/*    cursor_setup ...                                                 */
+/*    shaker_setup ...                                                 */
 /*---------------------------------------------------------------------*/
 static void
-cursor_setup(int x, int y) {
-   Display *disp = cursor_xinfo->disp;
+shaker_setup(int x, int y) {
+   Display *disp = shaker_xinfo->disp;
 
-   XMoveResizeWindow(disp, cursor_window, x, y, cursor_xpm_w, cursor_xpm_h);
+   XMoveResizeWindow(disp, shaker_window, x, y, shaker_xpm_w, shaker_xpm_h);
 
-   if (cursor_state == 0) {
-      cursor_state = 1;
-      XMapWindow(disp, cursor_window);
+   if (shaker_state == 0) {
+      shaker_state = 1;
+      XMapWindow(disp, shaker_window);
    } else {
-      XClearWindow(disp, cursor_window);
+      XClearWindow(disp, shaker_window);
    }
-   draw_pixmap(cursor_xinfo, cursor_window,
-	       cursor_xpm, cursor_mask,
-	       0, 0, cursor_xpm_w, cursor_xpm_h);
+   draw_pixmap(shaker_xinfo, shaker_window,
+	       shaker_xpm, shaker_mask,
+	       0, 0, shaker_xpm_w, shaker_xpm_h);
 }
 
 /*---------------------------------------------------------------------*/
 /*    void                                                             */
-/*    hide_cursor ...                                                  */
+/*    hide_shaker ...                                                  */
 /*---------------------------------------------------------------------*/
 void
-cursor_hide() {
-   if (cursor_window && cursor_state) {
-      cursor_state = 0;
-      XUnmapWindow(cursor_xinfo->disp, cursor_window);
+shaker_hide() {
+   if (shaker_window && shaker_state) {
+      shaker_state = 0;
+      XUnmapWindow(shaker_xinfo->disp, shaker_window);
    }
 }
 
 /*---------------------------------------------------------------------*/
 /*    void                                                             */
-/*    show_cursor ...                                                  */
+/*    show_shaker ...                                                  */
 /*---------------------------------------------------------------------*/
 void
-show_cursor(long etime, taskbar_t *tbar) {
+show_shaker(long etime, taskbar_t *tbar) {
    static unsigned long long last_time = 0;
    static unsigned long cnt = 0;
    unsigned long cur_time;
@@ -230,15 +230,15 @@ show_cursor(long etime, taskbar_t *tbar) {
 			  &win_x, &win_y,
 			  &mask);
 
-	    cursor_setup(root_x, root_y);
+	    shaker_setup(root_x, root_y);
 	 }
       } else {
-	 cursor_hide();
+	 shaker_hide();
 	 cnt = 0;
       }
       last_time = cur_time;
    } else {
-      cursor_hide();
+      shaker_hide();
       cnt = 0;
    }
 }
