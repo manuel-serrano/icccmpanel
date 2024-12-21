@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Fri Oct 17 22:18:02 2003                          */
-/*    Last change :  Sat Dec 21 06:27:55 2024 (serrano)                */
+/*    Last change :  Sat Dec 21 07:03:14 2024 (serrano)                */
 /*    Copyright   :  2003-24 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    The parsing of the MSpanel config file.                          */
@@ -269,8 +269,8 @@ default_config(config_t *config) {
 
    config->icondescrs = 0L;
 
-   config->mouse_shaker_speed = 12000;
-   config->mouse_shaker_sensitivity = 50;
+   config->mouse_shaker_speed = 100;
+   config->mouse_shaker_sensitivity = 200;
 
    return config;
 }

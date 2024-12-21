@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Sun Jul 17 17:15:49 2022                          */
-/*    Last change :  Sat Dec 21 06:32:57 2024 (serrano)                */
+/*    Last change :  Sat Dec 21 06:35:13 2024 (serrano)                */
 /*    Copyright   :  2022-24 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    ICCCMPanel mouse shaker                                          */
@@ -58,7 +58,7 @@ init_shaker(Xinfo_t *xinfo, char *xpm_path) {
    XWMHints wmhints;
    unsigned long strut[4];
    XGCValues gcv;
-   
+
    att.override_redirect = 1;
    att.background_pixel = 0xffffffff;
    att.cursor = None;
@@ -133,8 +133,6 @@ init_shaker(Xinfo_t *xinfo, char *xpm_path) {
 
    /* shaker window events */
    XSelectInput(disp, shaker_window, ButtonPressMask);
-
-   // shaker_setup(500, 500);
 }
 
 /*---------------------------------------------------------------------*/
@@ -179,12 +177,10 @@ shaker_setup(int x, int y) {
    if (shaker_state == 0) {
       shaker_state = 1;
       XMapWindow(disp, shaker_window);
-   } else {
-      XClearWindow(disp, shaker_window);
-   }
-   draw_pixmap(shaker_xinfo, shaker_window,
+      draw_pixmap(shaker_xinfo, shaker_window,
 	       shaker_xpm, shaker_mask,
 	       0, 0, shaker_xpm_w, shaker_xpm_h);
+   }
 }
 
 /*---------------------------------------------------------------------*/
@@ -207,12 +203,12 @@ void
 show_shaker(long etime, taskbar_t *tbar) {
    static unsigned long long last_time = 0;
    static unsigned long cnt = 0;
-   unsigned long cur_time;
-   struct timeval tv;
+   unsigned long long cur_time;
+   struct timespec tv;
    struct config *config = tbar->config;
 
-   if (gettimeofday(&tv, 0) == 0) {
-      cur_time = ((unsigned long long)(tv.tv_sec * 1000000) + (long long)tv.tv_usec);
+   if (clock_gettime(CLOCK_REALTIME_COARSE, &tv) == 0) {
+      cur_time = ((unsigned long long)(tv.tv_sec * 1000) + (tv.tv_nsec / 1000000));
 
       // fprintf(stderr, "cur=%ld last=%ld diff=%ld cnt=%d\n", cur_time, last_time, cur_time - last_time, cnt);
       if ((cur_time - last_time) < config->mouse_shaker_speed) {
