@@ -3,7 +3,7 @@
 #*    -------------------------------------------------------------    */
 #*    Author      :  Manuel Serrano                                    */
 #*    Creation    :  Sat Oct 11 05:26:43 2003                          */
-#*    Last change :  Fri Jul 19 08:46:39 2024 (serrano)                */
+#*    Last change :  Sat Dec 28 17:25:08 2024 (serrano)                */
 #*    Copyright   :  2003-24 Manuel Serrano                            */
 #*    -------------------------------------------------------------    */
 #*    The Makefile to build ICCCMPANEL                                 */
@@ -35,12 +35,12 @@ OBJECTS	= main.o mstk.o list.o evloop.o tooltips.o config.o \
           taskbar.o area.o read.o \
           grip.o desktop.o hfill.o clock.o app.o icons.o command.o cron.o \
           systray.o wifi.o applet.o hibernate.o volume.o mixer.o exec.o \
-          battery.o cursor.o debug.o
+          battery.o shaker.o debug.o
 INCLUDES= iccmppanel.h mstk.h list.h evloop.h tooltips.h config.h \
           taskbar.h area.h \
           grip.h desktop.h hfill.h clock.h app.h icons.h command.h cron.h \
           systray.h wifi.h applet.h hibernate.h volume.h mixer.h exec.h \
-          battery.h cursor.h debug.h
+          battery.h shaker.h debug.h
 XPM	= # icon.xpm larrow.xpm rarrow.xpm
 
 #*---------------------------------------------------------------------*/
