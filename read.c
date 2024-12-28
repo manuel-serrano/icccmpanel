@@ -3,8 +3,8 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Sun Aug  1 05:55:00 2004                          */
-/*    Last change :  Wed Nov 12 08:17:40 2014 (serrano)                */
-/*    Copyright   :  2004-14 Manuel Serrano                            */
+/*    Last change :  Sat Dec 28 17:20:23 2024 (serrano)                */
+/*    Copyright   :  2004-24 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    parsing                                                          */
 /*=====================================================================*/
@@ -117,7 +117,7 @@ display_token( token_t *tok ) {
 	    return;
 
 	 case TOKEN_HEX:
-	    fprintf( stderr, "%x", tok->val );
+	    fprintf( stderr, "%p", tok->val );
 	    return;
 
 	 case TOKEN_OPENPAR:

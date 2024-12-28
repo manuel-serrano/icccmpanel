@@ -1,3 +1,6 @@
+A minimal taskbar for X (Linux)
+===============================
+
 Requirements
 ============
 

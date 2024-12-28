@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Sat Oct 11 05:33:42 2003                          */
-/*    Last change :  Sat Dec 21 06:29:29 2024 (serrano)                */
+/*    Last change :  Sat Dec 28 17:18:51 2024 (serrano)                */
 /*    Copyright   :  2003-24 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    Small X toolkit                                                  */
@@ -337,7 +337,7 @@ static unsigned long *pixmap_to_rgba(Display *disp, Pixmap icon, Pixmap mask, in
    unsigned long *data = malloc(*rlen * sizeof(long));
 
    if (!data) {
-      fprintf(stderr, "*** ERROR(%s:%d): cannot allocate %d width=%d height=%d\n",
+      fprintf(stderr, "*** ERROR(%s:%d): cannot allocate %ld width=%d height=%d\n",
 	      __FILE__, __LINE__, *rlen * sizeof(long), width, height);
       return 0;
    }
@@ -689,13 +689,11 @@ window_update_netwm_icon(Xinfo_t *xinfo, Window win, char *name, Pixmap *icon, P
 			   (unsigned char *)buffer, length)) {
 	 fprintf(stderr, "*** ERROR(%s:%d): XChangeProperty failed %s\n",
 		 __FILE__, __LINE__, name);
-	 fprintf(stderr, "%d\n", 1/0);
       }
       free(buffer);
    } else {
       fprintf(stderr, "*** ERROR(%s:%d): cannot update icon %s\n",
 	      __FILE__, __LINE__, name);
-      fprintf(stderr, "%d\n", 1/0);
    }
 }
 

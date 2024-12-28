@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Fri Jul 23 05:59:11 2004                          */
-/*    Last change :  Sat Dec 21 06:28:48 2024 (serrano)                */
+/*    Last change :  Sat Dec 28 17:19:16 2024 (serrano)                */
 /*    Copyright   :  2004-24 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    Event loop                                                       */
@@ -356,7 +356,7 @@ x_atom_name(Atom at) {
       case XA_CAP_HEIGHT: return "XA_CAP_HEIGHT";
       case XA_WM_CLASS: return "XA_WM_CLASS";
       case XA_WM_TRANSIENT_FOR: return "XA_WM_TRANSIENT_FOR";
-      default: sprintf(buf, "XA_UNKNOWN (%d)", (long)at); return buf;
+      default: sprintf(buf, "XA_UNKNOWN (%ld)", (long)at); return buf;
    }
 }
 
@@ -404,6 +404,6 @@ x_event_name(XEvent *ev) {
       case MappingNotify: return "MappingNotify";
       case GenericEvent: return "GenericEvent";
       case LASTEvent: return "LASTEvent";
-      default: sprintf(buf, "UNKNOWNevent (%d)", (long)ev->type); return buf;
+      default: sprintf(buf, "UNKNOWNevent (%ld)", (long)ev->type); return buf;
    }
 }

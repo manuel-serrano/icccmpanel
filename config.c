@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Fri Oct 17 22:18:02 2003                          */
-/*    Last change :  Sat Dec 21 07:03:14 2024 (serrano)                */
+/*    Last change :  Sat Dec 28 17:20:01 2024 (serrano)                */
 /*    Copyright   :  2003-24 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    The parsing of the MSpanel config file.                          */
@@ -183,7 +183,7 @@ prefix(char *s) {
 char *
 find_rc_file(char *layout) {
    static char fname[2048];
-   char host[512], buf[512];
+   char host[512], buf[1024];
    char *home = getenv("HOME");
    char *dir;
   

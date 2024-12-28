@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Thu Jul 22 14:32:38 2004                          */
-/*    Last change :  Fri Dec 20 07:54:39 2024 (serrano)                */
+/*    Last change :  Sat Dec 28 17:23:56 2024 (serrano)                */
 /*    Copyright   :  2004-24 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    Taskbar management                                               */
@@ -179,7 +179,6 @@ make_xclient(taskbar_t *tbar, Window w) {
    if (!xcl) {
       fprintf(stderr, "*** ERROR(%s:%d): cannot allocation client\n", 
 	      __FILE__, __LINE__);
-      fprintf(stderr, "%d\n", 1/0);
       return 0;
    }
 
