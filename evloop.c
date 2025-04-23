@@ -3,8 +3,8 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Fri Jul 23 05:59:11 2004                          */
-/*    Last change :  Sat Dec 28 17:19:16 2024 (serrano)                */
-/*    Copyright   :  2004-24 Manuel Serrano                            */
+/*    Last change :  Wed Apr 23 07:22:34 2025 (serrano)                */
+/*    Copyright   :  2004-25 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    Event loop                                                       */
 /*=====================================================================*/
@@ -26,6 +26,7 @@
 
 #include "icccmpanel.h"
 #include "taskbar.h"
+#include "debug.h"
 
 /*---------------------------------------------------------------------*/
 /*    debug                                                            */
@@ -241,10 +242,12 @@ evloop(taskbar_t *tbar) {
 	    case MotionNotify:
 	       ar = find_area(tbar, ev.xmotion.window);
 	       iar = enter_area(&ev, ar, iar);
+#if ICCCMPANEL_MOUSE_SHAKER	       
 	       if (tbar->config->mouse_shaker_speed > 0) {
 		  show_shaker(((XMotionEvent *)&ev)->time, tbar);
 	       }
 	       break;
+#endif	       
 
 	    case ClientMessage:
 	       ar = find_area(tbar, ev.xclient.window);
@@ -276,6 +279,9 @@ evloop(taskbar_t *tbar) {
 	    if (tbar->autohide) taskbar_hide(tbar);
 	    break;
       }
+
+      // debug
+      assert_window_list(tbar);
    }
 }
 

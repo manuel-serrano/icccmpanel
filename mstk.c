@@ -3,8 +3,8 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Sat Oct 11 05:33:42 2003                          */
-/*    Last change :  Sat Dec 28 17:18:51 2024 (serrano)                */
-/*    Copyright   :  2003-24 Manuel Serrano                            */
+/*    Last change :  Wed Apr 23 07:28:38 2025 (serrano)                */
+/*    Copyright   :  2003-25 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    Small X toolkit                                                  */
 /*=====================================================================*/
@@ -133,7 +133,7 @@ init_X(Xinfo_t *xinfo) {
 
    XSetErrorHandler((XErrorHandler)handle_error);
 
-   /* bold contxt */
+   /* bold context */
    do {
       xinfo->xfsb = XLoadQueryFont(disp, xinfo->fontname_bold);
       xinfo->fontname_bold = "fixed";

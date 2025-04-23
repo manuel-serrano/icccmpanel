@@ -3,8 +3,8 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Mon Oct 13 13:35:06 2003                          */
-/*    Last change :  Sat Dec 21 06:30:02 2024 (serrano)                */
-/*    Copyright   :  2003-24 Manuel Serrano                            */
+/*    Last change :  Wed Apr 23 07:23:19 2025 (serrano)                */
+/*    Copyright   :  2003-25 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    Icccmpanel config parsing                                        */
 /*=====================================================================*/
@@ -14,6 +14,7 @@
 #include "list.h"
 
 #define ICCCMPANEL_FREE_LIST 0
+#define ICCCMPANEL_MOUSE_SHAKER 0
 
 /*---------------------------------------------------------------------*/
 /*    icondescr_t ...                                                  */

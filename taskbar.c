@@ -3,8 +3,8 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Thu Jul 22 14:32:38 2004                          */
-/*    Last change :  Sat Dec 28 17:23:56 2024 (serrano)                */
-/*    Copyright   :  2004-24 Manuel Serrano                            */
+/*    Last change :  Wed Apr 23 07:49:24 2025 (serrano)                */
+/*    Copyright   :  2004-25 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    Taskbar management                                               */
 /*=====================================================================*/
@@ -23,12 +23,12 @@
 #include "icccmpanel.h"
 
 /*---------------------------------------------------------------------*/
-/*    static xclient_t *                                               */
+/*    xclient_t *                                                      */
 /*    window_xclient ...                                               */
 /*    -------------------------------------------------------------    */
 /*    Retreive a xclient structure from a X window.                    */
 /*---------------------------------------------------------------------*/
-static xclient_t *
+xclient_t *
 window_xclient(taskbar_t *tbar, Window w) {
    pair_t *ts = tbar->xclients;
 
@@ -459,7 +459,23 @@ make_taskbar(Xinfo_t *xinfo, config_t *config) {
 
    tb->iconcache = make_iconcache(tb);
 
+#if (DEBUG == 0)
+   taskbar_set_frame_colors(tb, WHITE, GREY9);
+#else
+   taskbar_set_frame_colors(tb, GREEN, RED);
+#endif
+
    return tb;
+}
+
+/*---------------------------------------------------------------------*/
+/*    void                                                             */
+/*    taskbar_set_frame_colors ...                                     */
+/*---------------------------------------------------------------------*/
+void
+taskbar_set_frame_colors(taskbar_t *tb, int top, int bottom) {
+   tb->frame_top_color = top;
+   tb->frame_bottom_color = bottom;
 }
 
 /*---------------------------------------------------------------------*/
@@ -640,20 +656,16 @@ taskbar_refresh(taskbar_t *tbar) {
 
    /* refief framing */
    draw_relief(tbar->xinfo, tbar->win,
-		0, linesep, width - 1, height - linesep - 1,
-		0,
-#if (DEBUG !=0)
-		GREEN, RED,
-#else
-		WHITE, GREY9,
-#endif
-		tbar->border);
+	       0, linesep, width - 1, height - linesep - 1,
+	       0,
+	       tbar->frame_top_color, tbar->frame_bottom_color,
+	       tbar->border);
    
    /* separation line */
    for(i = 0; i < linesep; i++) {
       draw_line(tbar->xinfo, tbar->win,
-		 0, i, width - 1, 0,
-		 0, 25);
+		0, i, width - 1, 0,
+		0, 25);
    }
 }
 

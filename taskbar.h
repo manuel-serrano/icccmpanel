@@ -3,8 +3,8 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Thu Jul 22 14:32:38 2004                          */
-/*    Last change :  Tue Dec 17 08:48:22 2024 (serrano)                */
-/*    Copyright   :  2004-24 Manuel Serrano                            */
+/*    Last change :  Wed Apr 23 07:49:55 2025 (serrano)                */
+/*    Copyright   :  2004-25 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    Taskbar management                                               */
 /*=====================================================================*/
@@ -83,6 +83,9 @@ typedef struct taskbar {
    int desktop;
    /* the pixel number for the border */
    int border, aborder, linesep;
+   /* frame colors */
+   int frame_top_color;
+   int frame_bottom_color;
    /* the list of areas */
    pair_t *areas;
    /* the list of xclients  */
@@ -97,15 +100,17 @@ typedef struct taskbar {
 /*---------------------------------------------------------------------*/
 /*    Export ...                                                       */
 /*---------------------------------------------------------------------*/
-extern taskbar_t *make_taskbar( Xinfo_t *, config_t * );
-extern void taskbar_hide( taskbar_t * ); 
-extern void taskbar_unhide( taskbar_t * ); 
-extern void taskbar_refresh( taskbar_t * );
-extern void taskbar_refresh_all( taskbar_t * );
-extern void taskbar_property_notify( taskbar_t *, XEvent * );
-extern void taskbar_destroy_notify( taskbar_t *, XEvent * );
-extern void taskbar_register_xclients( taskbar_t * );
-extern void taskbar_area_do_layout( taskbar_t * );
-extern int taskbar_get_xclient_manager_number( taskbar_t * );
+extern taskbar_t *make_taskbar(Xinfo_t *, config_t *);
+extern void taskbar_set_frame_colors(taskbar_t *, int, int);
+extern xclient_t *window_xclient(taskbar_t *, Window);
+extern void taskbar_hide(taskbar_t *); 
+extern void taskbar_unhide(taskbar_t *); 
+extern void taskbar_refresh(taskbar_t *);
+extern void taskbar_refresh_all(taskbar_t *);
+extern void taskbar_property_notify(taskbar_t *, XEvent *);
+extern void taskbar_destroy_notify(taskbar_t *, XEvent *);
+extern void taskbar_register_xclients(taskbar_t *);
+extern void taskbar_area_do_layout(taskbar_t *);
+extern int taskbar_get_xclient_manager_number(taskbar_t *);
 
 #endif
