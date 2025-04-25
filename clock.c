@@ -3,8 +3,8 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Fri Jul 23 22:15:38 2004                          */
-/*    Last change :  Sat Nov 30 10:36:52 2019 (serrano)                */
-/*    Copyright   :  2004-19 Manuel Serrano                            */
+/*    Last change :  Thu Apr 24 11:19:56 2025 (serrano)                */
+/*    Copyright   :  2004-25 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    The clock                                                        */
 /*=====================================================================*/
@@ -56,7 +56,7 @@ refresh_clock( area_t *ar ) {
 		  0, 0,
 		  ar->width - 1,
 		  ar->height + (relief ? (2 * tbar->aborder) : 0),
-		  0, GREY12, 0, 0 );
+		  0, tbar->frame_gradient_color, 0, 0 );
 
    draw_text( tbar->xinfo, ar->win,
 	      text_x, text_y,

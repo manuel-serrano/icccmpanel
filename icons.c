@@ -3,8 +3,8 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Thu Jul 22 15:21:17 2004                          */
-/*    Last change :  Tue Dec  3 07:55:32 2024 (serrano)                */
-/*    Copyright   :  2004-24 Manuel Serrano                            */
+/*    Last change :  Thu Apr 24 11:18:54 2025 (serrano)                */
+/*    Copyright   :  2004-25 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    The icons.                                                       */
 /*=====================================================================*/
@@ -346,7 +346,7 @@ refresh_icons(area_t *ar) {
    draw_gradient(tbar->xinfo, ar->win,
 		  0, 0, ar->width - 1, ar->height,
 		  0,
-		  GREY12, 0, 1);
+		  tbar->frame_gradient_color, 0, 1);
 }
 
 /*---------------------------------------------------------------------*/

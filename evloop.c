@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Fri Jul 23 05:59:11 2004                          */
-/*    Last change :  Wed Apr 23 07:22:34 2025 (serrano)                */
+/*    Last change :  Wed Apr 23 08:45:32 2025 (serrano)                */
 /*    Copyright   :  2004-25 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    Event loop                                                       */
@@ -181,6 +181,8 @@ evloop(taskbar_t *tbar) {
       while (XPending(tbar->xinfo->disp)) {
 	 XNextEvent(tbar->xinfo->disp, &ev);
 
+	 // fprintf(stderr, "%s\n", x_event_name(&ev));
+	 
 	 switch(ev.type) {
 	    case ButtonPress:
 	       // reset the possible timeout
@@ -205,6 +207,7 @@ evloop(taskbar_t *tbar) {
 	       
 	    case DestroyNotify:
 	       taskbar_destroy_notify(tbar, &ev);
+	       assert_window_list(tbar, ev.xdestroywindow.window);
 	       break;
 
 	    case Expose:
@@ -279,9 +282,6 @@ evloop(taskbar_t *tbar) {
 	    if (tbar->autohide) taskbar_hide(tbar);
 	    break;
       }
-
-      // debug
-      assert_window_list(tbar);
    }
 }
 

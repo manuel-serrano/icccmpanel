@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Thu Jul 22 14:32:38 2004                          */
-/*    Last change :  Wed Apr 23 07:49:24 2025 (serrano)                */
+/*    Last change :  Thu Apr 24 08:35:38 2025 (serrano)                */
 /*    Copyright   :  2004-25 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    Taskbar management                                               */
@@ -460,9 +460,9 @@ make_taskbar(Xinfo_t *xinfo, config_t *config) {
    tb->iconcache = make_iconcache(tb);
 
 #if (DEBUG == 0)
-   taskbar_set_frame_colors(tb, WHITE, GREY9);
+   taskbar_set_frame_colors(tb, GREY12, WHITE, GREY9);
 #else
-   taskbar_set_frame_colors(tb, GREEN, RED);
+   taskbar_set_frame_colors(tb, GREY12, GREEN, RED);
 #endif
 
    return tb;
@@ -473,7 +473,8 @@ make_taskbar(Xinfo_t *xinfo, config_t *config) {
 /*    taskbar_set_frame_colors ...                                     */
 /*---------------------------------------------------------------------*/
 void
-taskbar_set_frame_colors(taskbar_t *tb, int top, int bottom) {
+taskbar_set_frame_colors(taskbar_t *tb, int gradient, int top, int bottom) {
+   tb->frame_gradient_color = gradient;
    tb->frame_top_color = top;
    tb->frame_bottom_color = bottom;
 }
@@ -652,7 +653,7 @@ taskbar_refresh(taskbar_t *tbar) {
    draw_gradient(tbar->xinfo, tbar->win,
 		  1, linesep, width - 1, height - linesep - 1,
 		  0,
-		  GREY12, 0, 0);
+		  tbar->frame_gradient_color, 0, 0);
 
    /* refief framing */
    draw_relief(tbar->xinfo, tbar->win,

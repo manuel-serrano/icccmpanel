@@ -3,8 +3,8 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Fri Jul 23 22:15:38 2004                          */
-/*    Last change :  Sat Nov 30 10:37:01 2019 (serrano)                */
-/*    Copyright   :  2004-19 Manuel Serrano                            */
+/*    Last change :  Thu Apr 24 11:19:33 2025 (serrano)                */
+/*    Copyright   :  2004-25 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    The applets                                                      */
 /*=====================================================================*/
@@ -44,7 +44,7 @@ refresh_applets( area_t *ar ) {
 		  0, relief,
 		  ar->width,
 		  ar->height + (relief ? (2 * tbar->aborder) : 0),
-		  0, GREY12, 0, 0 );
+		  0, tbar->frame_gradient_color, 0, 0 );
    
    while( PAIRP( lst ) ) {
       area_t *ar = (area_t *)CAR( lst );

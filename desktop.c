@@ -3,8 +3,8 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Fri Jul 23 22:15:38 2004                          */
-/*    Last change :  Mon Jul 22 10:59:12 2024 (serrano)                */
-/*    Copyright   :  2004-24 Manuel Serrano                            */
+/*    Last change :  Thu Apr 24 11:20:24 2025 (serrano)                */
+/*    Copyright   :  2004-25 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    The desktop                                                      */
 /*=====================================================================*/
@@ -91,7 +91,7 @@ refresh_desktop(area_t *ar) {
 		  0, relief,
 		  ar->width,
 		  ar->height + (relief ? (2 * tbar->aborder) : 0),
-		  0, GREY12, 0, 0);
+		  0, tbar->frame_gradient_color, 0, 0);
    
    draw_text(xinfo, ar->win, text_x, text_y, dname, alen, 0,
 	      ar->active ? ACTIVE : BLACK,

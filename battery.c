@@ -3,8 +3,8 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Mon Aug 11 10:37:34 2014                          */
-/*    Last change :  Wed Jul 20 07:46:31 2022 (serrano)                */
-/*    Copyright   :  2014-22 Manuel Serrano                            */
+/*    Last change :  Thu Apr 24 11:19:46 2025 (serrano)                */
+/*    Copyright   :  2014-25 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    battery applet                                                   */
 /*=====================================================================*/
@@ -77,7 +77,7 @@ refresh_battery( area_t *ar ) {
 		  0, 0,
 		  ar->width - 1,
 		  ar->height,
-		  0, ar->active ? GREY10 : GREY12, 0, 0 );
+		  0, ar->active ? GREY10 : tbar->frame_gradient_color, 0, 0 );
 
    draw_pixmap( xinfo, ar->win,
 		bat->current_img, bat->current_mask,

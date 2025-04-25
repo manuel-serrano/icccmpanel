@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Thu Jul 22 14:32:38 2004                          */
-/*    Last change :  Wed Apr 23 07:49:55 2025 (serrano)                */
+/*    Last change :  Thu Apr 24 08:34:50 2025 (serrano)                */
 /*    Copyright   :  2004-25 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    Taskbar management                                               */
@@ -84,6 +84,7 @@ typedef struct taskbar {
    /* the pixel number for the border */
    int border, aborder, linesep;
    /* frame colors */
+   int frame_gradient_color;
    int frame_top_color;
    int frame_bottom_color;
    /* the list of areas */
@@ -101,7 +102,7 @@ typedef struct taskbar {
 /*    Export ...                                                       */
 /*---------------------------------------------------------------------*/
 extern taskbar_t *make_taskbar(Xinfo_t *, config_t *);
-extern void taskbar_set_frame_colors(taskbar_t *, int, int);
+extern void taskbar_set_frame_colors(taskbar_t *, int, int, int);
 extern xclient_t *window_xclient(taskbar_t *, Window);
 extern void taskbar_hide(taskbar_t *); 
 extern void taskbar_unhide(taskbar_t *); 

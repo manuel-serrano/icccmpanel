@@ -3,8 +3,8 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Fri Jul 23 22:15:38 2004                          */
-/*    Last change :  Fri Jul 19 08:39:25 2024 (serrano)                */
-/*    Copyright   :  2004-24 Manuel Serrano                            */
+/*    Last change :  Thu Apr 24 08:40:46 2025 (serrano)                */
+/*    Copyright   :  2004-25 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    The applications                                                 */
 /*=====================================================================*/
@@ -91,7 +91,7 @@ button_press_app(XEvent *ev, area_t *ar) {
    
    if (cmd) {
       if (!strcmp(cmd, "__debug__")) {
-	 debug(ar);
+	 debug(tbar, 0L);
       } else if (!fork()) {
 	 setsid();
 	 execl("/bin/sh", "/bin/sh", "-c", cmd, 0);

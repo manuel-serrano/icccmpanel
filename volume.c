@@ -3,8 +3,8 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Mon Aug 11 10:37:34 2014                          */
-/*    Last change :  Sat Nov 30 10:38:58 2019 (serrano)                */
-/*    Copyright   :  2014-19 Manuel Serrano                            */
+/*    Last change :  Thu Apr 24 11:20:45 2025 (serrano)                */
+/*    Copyright   :  2014-25 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    volume applet                                                    */
 /*=====================================================================*/
@@ -80,7 +80,7 @@ refresh_volume( area_t *ar ) {
 		  0, 0,
 		  ar->width - 1,
 		  ar->height,
-		  0, ar->active ? GREY10 : GREY12, 0, 0 );
+		  0, ar->active ? GREY10 : tbar->frame_gradient_color, 0, 0 );
 
    draw_pixmap( xinfo, ar->win,
 		hi->icons[ hi->iconidx ], hi->masks[ hi->iconidx ],
