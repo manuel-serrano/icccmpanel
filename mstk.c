@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Sat Oct 11 05:33:42 2003                          */
-/*    Last change :  Wed Apr 23 07:28:38 2025 (serrano)                */
+/*    Last change :  Sun Apr 27 15:31:52 2025 (serrano)                */
 /*    Copyright   :  2003-25 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    Small X toolkit                                                  */
@@ -271,8 +271,8 @@ scale_icon(Xinfo_t *xinfo, Window win,
    GC mgc;
 
    if (!XGetGeometry(disp, icon, &pix, &x, &y, &w, &h, &bw, &d)) {
-      fprintf(stderr, "*** ERROR(%s:%d): cannot get geometry\n", 
-	      __FILE__, __LINE__);
+      fprintf(stderr, "*** ERROR(%s:%d): cannot get geometry win=%p name=%s\n", 
+	      __FILE__, __LINE__, win, window_name(disp, win));
       return;
    }
 
