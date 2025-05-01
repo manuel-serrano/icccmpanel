@@ -3,8 +3,8 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Sat Oct 11 05:45:32 2003                          */
-/*    Last change :  Fri May  3 14:52:41 2024 (serrano)                */
-/*    Copyright   :  2003-24 Manuel Serrano                            */
+/*    Last change :  Wed Apr 30 14:16:20 2025 (serrano)                */
+/*    Copyright   :  2003-25 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    ICCCMPANEL (from fspanel)                                        */
 /*=====================================================================*/
@@ -60,6 +60,9 @@ main(int argc, char *argv[]) {
    tbar = make_taskbar(xinfo, config);
 
    if (!tbar) exit(11);
+
+   /* reset debug info */
+   unlink("/tmp/icccmpanel.debug");
 
    /* start all the plugin */
    lst = config->plugins;

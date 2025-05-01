@@ -3,8 +3,8 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Sat Jul 24 14:05:58 2004                          */
-/*    Last change :  Sat Dec 21 06:29:07 2024 (serrano)                */
-/*    Copyright   :  2004-24 Manuel Serrano                            */
+/*    Last change :  Tue Apr 29 12:41:35 2025 (serrano)                */
+/*    Copyright   :  2004-25 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    The generic ICCMPPANEL include file                              */
 /*=====================================================================*/
@@ -21,5 +21,6 @@
 #include "tooltips.h"
 #include "shaker.h"
 #include "systray.h"
+#include "debug.h"
 
 #endif

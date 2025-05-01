@@ -3,8 +3,8 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Sat Oct 11 05:44:23 2003                          */
-/*    Last change :  Mon Dec 16 10:11:55 2024 (serrano)                */
-/*    Copyright   :  2003-24 Manuel Serrano                            */
+/*    Last change :  Tue Apr 29 12:09:19 2025 (serrano)                */
+/*    Copyright   :  2003-25 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    MS X toolkit                                                     */
 /*=====================================================================*/
@@ -128,8 +128,9 @@ extern Atom atoms[];
 #define ACTIVE      20
 #define TOOLTIPS    23
 #define TOOLTIPSFG  24
-#define TOOLTIPSBD  25
 #define SHADOW      24
+#define TOOLTIPSBD  25
+#define ORANGE      28
 
 /*---------------------------------------------------------------------*/
 /*    Partial relief                                                   */

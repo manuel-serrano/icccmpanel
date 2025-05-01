@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Thu Jul 22 15:21:17 2004                          */
-/*    Last change :  Wed Apr 23 08:57:24 2025 (serrano)                */
+/*    Last change :  Tue Apr 29 12:12:43 2025 (serrano)                */
 /*    Copyright   :  2004-25 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    The workspace.                                                   */
@@ -14,7 +14,7 @@
 /*---------------------------------------------------------------------*/
 /*    Exports ...                                                      */
 /*---------------------------------------------------------------------*/
-void assert_window_list(taskbar_t *tbar, Window);
+void assert_window_list(taskbar_t *tbar);
 void debug(taskbar_t *bar, char *msg);
 
 #endif

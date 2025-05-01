@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Fri Jul 19 08:43:57 2024                          */
-/*    Last change :  Wed Apr 23 08:30:59 2025 (serrano)                */
+/*    Last change :  Tue Apr 29 12:04:47 2025 (serrano)                */
 /*    Copyright   :  2024-25 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    Icccmap debug                                                    */
@@ -32,11 +32,16 @@
 #include "debug.h"
 
 /*---------------------------------------------------------------------*/
+/*    debug_color_activated                                            */
+/*---------------------------------------------------------------------*/
+static int debug_color = 0;
+
+/*---------------------------------------------------------------------*/
 /*    void                                                             */
 /*    assert_window_list ...                                           */
 /*---------------------------------------------------------------------*/
 void
-assert_window_list(taskbar_t *tbar, Window destroywindow) {
+assert_window_list(taskbar_t *tbar) {
    Xinfo_t *xinfo = tbar->xinfo;
    Display *disp = xinfo->disp;
    Window root_win = xinfo->root_win;
@@ -54,7 +59,7 @@ assert_window_list(taskbar_t *tbar, Window destroywindow) {
    for(i = 0; i < num; i++) {
       Window w = wins[ i ];
 
-      if (w != destroywindow && w != tbar->win && !tooltips_windowp(w)) {
+      if (w != tbar->win && !tooltips_windowp(w)) {
 	 xclient_t *xcl = window_xclient(tbar, w);
 	 char *name = window_name(disp, w);
 	 char *class = window_class(disp, w);
@@ -65,58 +70,45 @@ assert_window_list(taskbar_t *tbar, Window destroywindow) {
 
 	 if (!xcl) {
 	    fail = alloca(2048);
-	    if (destroywindow) {
-	       snprintf(fail, 2048, "cannot find client desktop: %2d win: %p %s:%s mapped: %d (while destroying %p [%s])",
-			desktop, w, name, class, unmappedp, destroywindow, window_name(disp, destroywindow));
-	    } else {
-	       snprintf(fail, 2048, "cannot find client desktop: %2d win: %p %s:%s mapped: %d",
-			desktop, w, name, class, unmappedp);
-	    }
+	    snprintf(fail, 2048, "cannot find client desktop: %2d win: %p %s:%s mapped: %d",
+		     desktop, w, name, class, unmappedp);
 	    break;
 	 } else {
 	    if (!name || !class
 		|| strcmp(xcl->class, class)
-		|| xcl->unmappedp != unmappedp
+		//|| xcl->unmappedp != unmappedp
 		|| xcl->desktop != desktop) {
 	       fail = alloca(2048);
-	       if (destroywindow) {
-		  snprintf(fail, 2048,
-			   "client status mismatch desktop: %d/%d win: %p [%s]/[%s] ([%s]/[%s]) mapped: %d/%d (while destroying %p [%s])", 
-			   desktop, xcl->desktop,
-			   w, name, 
-			   xcl->name, class, xcl->class,
-			   unmappedp, xcl->unmappedp, destroywindow, window_name(disp, destroywindow));
-	       } else {
-		  snprintf(fail, 2048,
-			   "client status mismatch desktop: %d/%d win: %p [%s]/[%s] ([%s]/[%s]) mapped: %d/%d", 
-			   desktop, xcl->desktop,
-			   w, name, 
-			   xcl->name, class, xcl->class,
-			   unmappedp, xcl->unmappedp);
-	       }
-	    break;
+	       snprintf(fail, 2048,
+			"client status mismatch desktop: %d/%d win: %p [%s]/[%s] ([%s]/[%s]) mapped: %d/%d", 
+			desktop, xcl->desktop,
+			w, name, 
+			xcl->name, class, xcl->class,
+			unmappedp, xcl->unmappedp);
+	       break;
 	    }
 	 }
       }
    }
 
    /* check that no icccmpanel window is left pending */
-   if (cnt != length(tbar->xclients)) {
+   if (cnt != length(tbar->xclients) && !fail) {
       if (!fail) fail = alloca(1024);
-      if (destroywindow) {
-	 snprintf(fail, 1024, "client list corrupted (%d/%d) (while destroying %p [%s])", length(tbar->xclients), cnt,
-		  destroywindow, window_name(disp, destroywindow));
-      } else {
-	 snprintf(fail, 1024, "client list corrupted (%d/%d)", length(tbar->xclients), cnt);
-      }
+      snprintf(fail, 1024, "client list corrupted (%d/%d)", length(tbar->xclients), cnt);
    }
 
    if (fail) {
       fprintf(stderr, "*** ICCCMPANEL ERROR: %s\n", fail);
-      taskbar_set_frame_colors(tbar, RED, RED, RED);
-      taskbar_refresh(tbar);
+
+      if (!debug_color) {
+	 debug_color = ORANGE;
+	 taskbar_set_frame_colors(tbar, debug_color, debug_color, debug_color);
+	 taskbar_refresh(tbar);
+      }
       debug(tbar, fail);
    }
+
+   XFree(wins);
 }
 
 /*---------------------------------------------------------------------*/
@@ -223,8 +215,8 @@ debug(taskbar_t *tbar, char *msg) {
       }
    }
 
-   fflush(fd);
    fclose(fd);
+   XFree(wins);
 }
 
 

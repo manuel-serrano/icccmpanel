@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Fri Jul 23 05:59:11 2004                          */
-/*    Last change :  Wed Apr 23 08:45:32 2025 (serrano)                */
+/*    Last change :  Tue Apr 29 12:04:58 2025 (serrano)                */
 /*    Copyright   :  2004-25 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    Event loop                                                       */
@@ -207,7 +207,6 @@ evloop(taskbar_t *tbar) {
 	       
 	    case DestroyNotify:
 	       taskbar_destroy_notify(tbar, &ev);
-	       assert_window_list(tbar, ev.xdestroywindow.window);
 	       break;
 
 	    case Expose:
