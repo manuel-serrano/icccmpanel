@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Fri Jul 19 08:43:57 2024                          */
-/*    Last change :  Mon May 12 08:44:55 2025 (serrano)                */
+/*    Last change :  Mon May 12 08:51:11 2025 (serrano)                */
 /*    Copyright   :  2024-25 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    Icccmap debug                                                    */
@@ -81,6 +81,15 @@ assert_window_list(taskbar_t *tbar) {
 			xcl->name, class, xcl->class,
 			unmappedp, xcl->unmappedp);
 	       break;
+	    } else if (strlen(xcl->name) > 2048) {
+	       fail = alloca(2048);
+	       snprintf(fail, 2048,
+			"client name corrupted: %d/%d win: %p [%s]/[%s] ([%s]/[%s]) mapped: %d/%d", 
+			desktop, xcl->desktop,
+			w, name, 
+			xcl->name, class, xcl->class,
+			unmappedp, xcl->unmappedp);
+	       break;
 	    }
 	 }  
       }
@@ -142,8 +151,16 @@ debug(taskbar_t *tbar, char *msg) {
    for (int i = 0; PAIRP(areas); areas = CDR(areas), i++) {
       area_t *ar = (area_t *)CAR(areas);
 
-      fprintf(fd, " %3d: %s win: %p ignore: %d\n",
-	      i, ar->name, ar->win, ar->ignore_layout);
+      if (iconp(ar)) {
+	 xclicon_t *xcli = (xclicon_t *)ar;
+	 fprintf(fd, " %3d: %s win: %p ignore: %d %p %s:%s\n",
+		 i, ar->name, ar->win, ar->ignore_layout,
+		 xcli->xcl->win,
+		 xcli->xcl->name, xcli->xcl->class);
+      } else {
+	 fprintf(fd, " %3d: %s win: %p ignore: %d\n",
+		 i, ar->name, ar->win, ar->ignore_layout);
+      }
    }
 
    // icons
