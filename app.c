@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Fri Jul 23 22:15:38 2004                          */
-/*    Last change :  Wed Apr 30 14:15:09 2025 (serrano)                */
+/*    Last change :  Mon May 12 08:44:23 2025 (serrano)                */
 /*    Copyright   :  2004-25 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    The applications                                                 */
@@ -92,7 +92,6 @@ button_press_app(XEvent *ev, area_t *ar) {
    if (cmd) {
       if (!strcmp(cmd, "__debug__")) {
 	 debug(tbar, 0L);
-	 taskbar_set_frame_colors(tbar, GREY12, WHITE, GREY9);
       } else if (!fork()) {
 	 setsid();
 	 execl("/bin/sh", "/bin/sh", "-c", cmd, 0);

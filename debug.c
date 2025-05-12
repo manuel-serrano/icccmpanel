@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Fri Jul 19 08:43:57 2024                          */
-/*    Last change :  Tue Apr 29 12:04:47 2025 (serrano)                */
+/*    Last change :  Mon May 12 08:44:55 2025 (serrano)                */
 /*    Copyright   :  2024-25 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    Icccmap debug                                                    */
@@ -30,11 +30,6 @@
 #include "area.h"
 #include "icons.h"
 #include "debug.h"
-
-/*---------------------------------------------------------------------*/
-/*    debug_color_activated                                            */
-/*---------------------------------------------------------------------*/
-static int debug_color = 0;
 
 /*---------------------------------------------------------------------*/
 /*    void                                                             */
@@ -87,24 +82,18 @@ assert_window_list(taskbar_t *tbar) {
 			unmappedp, xcl->unmappedp);
 	       break;
 	    }
-	 }
+	 }  
       }
    }
 
-   /* check that no icccmpanel window is left pending */
-   if (cnt != length(tbar->xclients) && !fail) {
-      if (!fail) fail = alloca(1024);
-      snprintf(fail, 1024, "client list corrupted (%d/%d)", length(tbar->xclients), cnt);
-   }
-
+/*    {* check that no icccmpanel window is left pending *}            */
+/*    if (cnt != length(tbar->xclients) && !fail) {                    */
+/*       if (!fail) fail = alloca(1024);                               */
+/*       snprintf(fail, 1024, "client list corrupted (%d/%d)", length(tbar->xclients), cnt); */
+/*    }                                                                */
+/*                                                                     */
    if (fail) {
       fprintf(stderr, "*** ICCCMPANEL ERROR: %s\n", fail);
-
-      if (!debug_color) {
-	 debug_color = ORANGE;
-	 taskbar_set_frame_colors(tbar, debug_color, debug_color, debug_color);
-	 taskbar_refresh(tbar);
-      }
       debug(tbar, fail);
    }
 
@@ -217,6 +206,13 @@ debug(taskbar_t *tbar, char *msg) {
 
    fclose(fd);
    XFree(wins);
+
+   if (msg) {
+      taskbar_set_frame_colors(tbar, ORANGE, ORANGE, ORANGE);
+   } else {
+      taskbar_set_frame_colors(tbar, GREY12, WHITE, GREY9);
+   }
+   taskbar_refresh(tbar);
 }
 
 
