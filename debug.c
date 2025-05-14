@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Fri Jul 19 08:43:57 2024                          */
-/*    Last change :  Mon May 12 08:51:11 2025 (serrano)                */
+/*    Last change :  Mon May 12 09:43:57 2025 (serrano)                */
 /*    Copyright   :  2024-25 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    Icccmap debug                                                    */
@@ -30,6 +30,65 @@
 #include "area.h"
 #include "icons.h"
 #include "debug.h"
+
+/*---------------------------------------------------------------------*/
+/*    pair_t *                                                         */
+/*    windows ...                                                      */
+/*---------------------------------------------------------------------*/
+pair_t *windows = NIL;
+
+/*---------------------------------------------------------------------*/
+/*    char **                                                          */
+/*    debug_event_names ...                                            */
+/*---------------------------------------------------------------------*/
+static char *debug_event_names[] = {
+   "",
+   "created",
+   "destroyed"
+};
+
+static char event_fail[1024];
+
+/*---------------------------------------------------------------------*/
+/*    void                                                             */
+/*    debug_window_event ...                                           */
+/*---------------------------------------------------------------------*/
+void
+debug_window_event(taskbar_t *tbar, Window win, int event) {
+   pair_t *old = assq((void *)win, windows);
+   
+   switch (event) {
+      case DEBUG_EVENT_WINDOW_CREATED: {
+	 if (old && (INTEGER_VAL(CDR(old))) != DEBUG_EVENT_WINDOW_DESTROYED) {
+	    sprintf(event_fail, "double window creation %p\n", win);
+	    fprintf(stderr, "*** ICCCMPANEL ERROR: %s\n", event_fail);
+	    debug(tbar, event_fail);
+	 } else {
+	    windows = cons(cons((void *)win, (pair_t *)make_integer(event)), windows);
+	 }
+	 break;
+      }
+
+      case DEBUG_EVENT_WINDOW_DESTROYED: {
+	 if (!old) {
+	    sprintf(event_fail, "destroying unregistred window %p\n", win);
+	    fprintf(stderr, "*** ICCCMPANEL ERROR: %s\n", event_fail);
+	    debug(tbar, event_fail);
+	 } else if (INTEGER_VAL(CDR(old)) != DEBUG_EVENT_WINDOW_CREATED){
+	    sprintf(event_fail, "double window destruction %p\n", win);
+	    fprintf(stderr, "*** ICCCMPANEL ERROR: %s\n", event_fail);
+	    debug(tbar, event_fail);
+	 } else {
+	    SET_CDR(old, (pair_t *)make_integer(event));
+	 }
+	 break;
+      }
+
+      default:
+	 fprintf(stderr, "Illegal debug_window_event %d\n", event);
+	 exit(1);
+   }
+}
 
 /*---------------------------------------------------------------------*/
 /*    void                                                             */
@@ -77,8 +136,9 @@ assert_window_list(taskbar_t *tbar) {
 	       snprintf(fail, 2048,
 			"client status mismatch desktop: %d/%d win: %p [%s]/[%s] ([%s]/[%s]) mapped: %d/%d", 
 			desktop, xcl->desktop,
-			w, name, 
-			xcl->name, class, xcl->class,
+			w,
+			name, xcl->name,
+			class, xcl->class,
 			unmappedp, xcl->unmappedp);
 	       break;
 	    } else if (strlen(xcl->name) > 2048) {
@@ -153,9 +213,9 @@ debug(taskbar_t *tbar, char *msg) {
 
       if (iconp(ar)) {
 	 xclicon_t *xcli = (xclicon_t *)ar;
-	 fprintf(fd, " %3d: %s win: %p ignore: %d %p %s:%s\n",
-		 i, ar->name, ar->win, ar->ignore_layout,
-		 xcli->xcl->win,
+	 fprintf(fd, " %3d: %s win: %p ignore: %d active: %d %p %s:%s \n",
+		 i, ar->name, ar->win, ar->ignore_layout, ar->active,
+		 xcli->xcl->win, 
 		 xcli->xcl->name, xcli->xcl->class);
       } else {
 	 fprintf(fd, " %3d: %s win: %p ignore: %d\n",
@@ -217,10 +277,46 @@ debug(taskbar_t *tbar, char *msg) {
 	 char unmappedp = window_iconifiedp(disp, w);
 	 fprintf(fd, "%c%3d: desktop: %2d %p %s:%s mapped: %d\n",
 		 (inarea ? ' ': '!'),
-		 cnt++, desktop, w, name, class, unmappedp);
+		 cnt++, desktop, w,
+		 name, class,
+		 unmappedp);
       }
    }
 
+   // window events
+   fprintf(fd, "\nwindow events %d\n", length(windows));
+   
+   pair_t *prev = NIL;
+   pair_t *ws = windows;
+   
+   while (PAIRP(ws)) {
+      pair_t *car = CAR(ws);
+      
+      switch (INTEGER_VAL(CDR(car))) {
+	 case DEBUG_EVENT_WINDOW_CREATED: {
+	    fprintf(fd, "  %p: created [%s]\n", CAR(car), window_name(disp, (Window)(CAR(car))));
+	    if (!PAIRP(prev)) {
+	       windows = prev = ws;
+	    } else {
+	       SET_CDR(prev, ws);
+	       prev = ws;
+
+	    }
+	    break;
+	 }
+	    
+	 case DEBUG_EVENT_WINDOW_DESTROYED: {
+	    fprintf(fd, "  %p: destroyed\n", CAR(car));
+	    free(CDR(car));
+	    free(car);
+	    break;
+	 }
+      }
+      ws = CDR(ws);
+   }
+   
+   fprintf(fd, "\n\n");
+	   
    fclose(fd);
    XFree(wins);
 
@@ -229,7 +325,7 @@ debug(taskbar_t *tbar, char *msg) {
    } else {
       taskbar_set_frame_colors(tbar, GREY12, WHITE, GREY9);
    }
-   taskbar_refresh(tbar);
+   taskbar_refresh_all(tbar);
 }
 
 

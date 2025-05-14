@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Thu Jul 22 14:32:38 2004                          */
-/*    Last change :  Tue Apr 29 14:04:24 2025 (serrano)                */
+/*    Last change :  Wed May 14 08:17:13 2025 (serrano)                */
 /*    Copyright   :  2004-25 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    Taskbar management                                               */
@@ -509,6 +509,8 @@ taskbar_register_xclients(taskbar_t *tbar) {
 	 if (!xcl) {
 	    pair_t *lst = tbar->areas;
 
+	    debug_window_event(tbar, w, DEBUG_EVENT_WINDOW_CREATED);
+	 
 	    XSelectInput(disp, w, PropertyChangeMask | StructureNotifyMask);
 
 	    xcl = get_xclient(tbar, w);
@@ -802,6 +804,8 @@ taskbar_destroy_notify(taskbar_t *tbar, XEvent *ev) {
        && !tooltips_windowp(win)) {
       xclient_t *xcl = window_xclient(tbar, win);
 
+      debug_window_event(tbar, win, DEBUG_EVENT_WINDOW_DESTROYED);
+
       if (xcl) {
 	 pair_t *lst = tbar->areas;
 
@@ -815,7 +819,7 @@ taskbar_destroy_notify(taskbar_t *tbar, XEvent *ev) {
 	    if (ar->destroy_notify) ar->destroy_notify(ar, xcl);
 	    lst = CDR(lst);
 	 }
-
+	 
 	 /* remove the client from the active list */
 	 tbar->xclients = remq(xcl, tbar->xclients);
 	 free_xclient(xcl, tbar);

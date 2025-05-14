@@ -3,8 +3,8 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Wed Oct 15 07:04:04 2003                          */
-/*    Last change :  Tue Aug 12 19:28:29 2014 (serrano)                */
-/*    Copyright   :  2003-14 Manuel Serrano                            */
+/*    Last change :  Wed May 14 07:51:04 2025 (serrano)                */
+/*    Copyright   :  2003-25 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    List toolkit                                                     */
 /*=====================================================================*/
@@ -64,55 +64,57 @@ typedef struct integer {
 /*---------------------------------------------------------------------*/
 /*    Pairs                                                            */
 /*---------------------------------------------------------------------*/
-#define PAIRP( o ) ((o) && (((obj_t *)(o))->type == TYPE_PAIR))
-#define NULLP( o ) (((pair_t *)(o)) == NIL)
+#define PAIRP(o) ((o) && (((obj_t *)(o))->type == TYPE_PAIR))
+#define NULLP(o) (((pair_t *)(o)) == NIL)
 
 #define NIL 0
 
-#define CAR( o ) (((pair_t *)(o))->car)
-#define CDR( o ) (((pair_t *)(o))->cdr)
-#define CADR( o ) (CAR( CDR( o ) ) )
-#define CDDR( o ) (CDR( CDR( o ) ) )
-#define CADDR( o ) (CAR( CDDR( o ) ))
-#define CDDDR( o ) (CDR( CDDR( o ) ))
+#define CAR(o) (((pair_t *)(o))->car)
+#define CDR(o) (((pair_t *)(o))->cdr)
+#define CADR(o) (CAR(CDR(o)))
+#define CDDR(o) (CDR(CDR(o)))
+#define CADDR(o) (CAR(CDDR(o)))
+#define CDDDR(o) (CDR(CDDR(o)))
 
-#define SET_CAR( o, v ) (((pair_t *)(o))->car = (v))
-#define SET_CDR( o, v ) (((pair_t *)(o))->cdr = (v))
+#define SET_CAR(o, v) (((pair_t *)(o))->car = (v))
+#define SET_CDR(o, v) (((pair_t *)(o))->cdr = (v))
 
 /*---------------------------------------------------------------------*/
 /*    Symbols                                                          */
 /*---------------------------------------------------------------------*/
-#define SYMBOLP( o ) ((o) && (((obj_t *)(o))->type == TYPE_SYMBOL))
-#define SYMBOL_CHARS( o ) (&(((symbol_t *)(o))->chars[ 0 ]))
-#define SYMBOL_EQ( o1, o2 ) ((o1) == (o2))
+#define SYMBOLP(o) ((o) && (((obj_t *)(o))->type == TYPE_SYMBOL))
+#define SYMBOL_CHARS(o) (&(((symbol_t *)(o))->chars[ 0 ]))
+#define SYMBOL_EQ(o1, o2) ((o1) == (o2))
 
 /*---------------------------------------------------------------------*/
 /*    Strings                                                          */
 /*---------------------------------------------------------------------*/
-#define STRINGP( o ) ((o) && (((obj_t *)(o))->type == TYPE_STRING))
-#define STRING_CHARS( o ) (&(((string_t *)(o))->chars[ 0 ]))
-#define STRING_IS( o, s ) (!strcmp( (&(((string_t *)(o))->chars[ 0 ])), s ))
+#define STRINGP(o) ((o) && (((obj_t *)(o))->type == TYPE_STRING))
+#define STRING_CHARS(o) (&(((string_t *)(o))->chars[ 0 ]))
+#define STRING_IS(o, s) (!strcmp((&(((string_t *)(o))->chars[ 0 ])), s))
 
 /*---------------------------------------------------------------------*/
 /*    Integers                                                         */
 /*---------------------------------------------------------------------*/
-#define INTEGERP( o ) ((o) && (((obj_t *)(o))->type == TYPE_INTEGER))
-#define INTEGER_VAL( o ) (((integer_t *)(o))->val)
+#define INTEGERP(o) ((o) && (((obj_t *)(o))->type == TYPE_INTEGER))
+#define INTEGER_VAL(o) (((integer_t *)(o))->val)
 
 /*---------------------------------------------------------------------*/
 /*    Export                                                           */
 /*---------------------------------------------------------------------*/
-extern char *type_name( obj_t * );
-extern void display( void *, obj_t * );
+extern char *type_name(obj_t *);
+extern void display(void *, obj_t *);
 
-extern pair_t *cons( void *a, pair_t *d );
-extern pair_t *remq( void *o, pair_t *l );
-extern pair_t *memq( void *o, pair_t *l );
-extern pair_t *reverse( pair_t *l );
-extern pair_t *last_pair( pair_t *l );
-extern int length( pair_t *l );
+extern pair_t *cons(void *a, pair_t *d);
+extern pair_t *remq(void *o, pair_t *l);
+extern pair_t *memq(void *o, pair_t *l);
+extern pair_t *assq(void *o, pair_t *l);
+extern pair_t *reverse(pair_t *l);
+extern pair_t *last_pair(pair_t *l);
+extern int length(pair_t *l);
+extern void free_list(pair_t *l);
 
-extern symbol_t *make_symbol( char * );
-extern string_t *make_string( char * );
-extern integer_t *make_integer( long );
+extern symbol_t *make_symbol(char *);
+extern string_t *make_string(char *);
+extern integer_t *make_integer(long);
 #endif

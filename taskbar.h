@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Thu Jul 22 14:32:38 2004                          */
-/*    Last change :  Thu Apr 24 08:34:50 2025 (serrano)                */
+/*    Last change :  Tue May 13 14:13:33 2025 (serrano)                */
 /*    Copyright   :  2004-25 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    Taskbar management                                               */
@@ -49,7 +49,7 @@ typedef struct xclient {
    int desktop;
    /* is it iconified */
    int unmappedp;
-   /* user pointer */
+   /* user pointers */
    void *user[XCLIENT_MAX_NUMBER];
    /* the icon associated with the xclient */
    Pixmap icon, mask;
