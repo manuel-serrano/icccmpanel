@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Fri Jul 19 08:43:57 2024                          */
-/*    Last change :  Mon May 12 09:43:57 2025 (serrano)                */
+/*    Last change :  Wed May 14 14:10:39 2025 (serrano)                */
 /*    Copyright   :  2024-25 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    Icccmap debug                                                    */
@@ -155,12 +155,6 @@ assert_window_list(taskbar_t *tbar) {
       }
    }
 
-/*    {* check that no icccmpanel window is left pending *}            */
-/*    if (cnt != length(tbar->xclients) && !fail) {                    */
-/*       if (!fail) fail = alloca(1024);                               */
-/*       snprintf(fail, 1024, "client list corrupted (%d/%d)", length(tbar->xclients), cnt); */
-/*    }                                                                */
-/*                                                                     */
    if (fail) {
       fprintf(stderr, "*** ICCCMPANEL ERROR: %s\n", fail);
       debug(tbar, fail);
