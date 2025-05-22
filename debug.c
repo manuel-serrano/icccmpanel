@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Fri Jul 19 08:43:57 2024                          */
-/*    Last change :  Mon May 12 09:43:57 2025 (serrano)                */
+/*    Last change :  Thu May 22 12:31:41 2025 (serrano)                */
 /*    Copyright   :  2024-25 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    Icccmap debug                                                    */
@@ -44,7 +44,8 @@ pair_t *windows = NIL;
 static char *debug_event_names[] = {
    "",
    "created",
-   "destroyed"
+   "destroyed",
+   "registered"
 };
 
 static char event_fail[1024];
@@ -84,6 +85,17 @@ debug_window_event(taskbar_t *tbar, Window win, int event) {
 	 break;
       }
 
+      case DEBUG_EVENT_AREA_REGISTERED: {
+	 if (!old) {
+	    Xinfo_t *xinfo = tbar->xinfo;
+	    Display *disp = xinfo->disp;
+	    sprintf(event_fail, "registering area of unregistred window %p [%s:%s]\n", win, window_name(disp, win), window_class(disp, win));
+	    fprintf(stderr, "*** ICCCMPANEL ERROR: %s\n", event_fail);
+	    debug(tbar, event_fail);
+	 }
+	 break;
+      }
+	 
       default:
 	 fprintf(stderr, "Illegal debug_window_event %d\n", event);
 	 exit(1);
@@ -327,5 +339,3 @@ debug(taskbar_t *tbar, char *msg) {
    }
    taskbar_refresh_all(tbar);
 }
-
-

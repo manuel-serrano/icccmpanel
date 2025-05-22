@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Thu Jul 22 14:32:38 2004                          */
-/*    Last change :  Wed May 14 08:17:13 2025 (serrano)                */
+/*    Last change :  Thu May 22 12:44:21 2025 (serrano)                */
 /*    Copyright   :  2004-25 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    Taskbar management                                               */
@@ -505,12 +505,12 @@ taskbar_register_xclients(taskbar_t *tbar) {
 
       if (w != tbar->win && !tooltips_windowp(w) && !find_area(tbar, w)) {
 	 xclient_t *xcl = window_xclient(tbar, w);
-	 
+
 	 if (!xcl) {
 	    pair_t *lst = tbar->areas;
 
 	    debug_window_event(tbar, w, DEBUG_EVENT_WINDOW_CREATED);
-	 
+
 	    XSelectInput(disp, w, PropertyChangeMask | StructureNotifyMask);
 
 	    xcl = get_xclient(tbar, w);

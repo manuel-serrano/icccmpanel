@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Thu Jul 22 15:21:17 2004                          */
-/*    Last change :  Thu Apr 24 11:18:54 2025 (serrano)                */
+/*    Last change :  Thu May 22 12:20:42 2025 (serrano)                */
 /*    Copyright   :  2004-25 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    The icons.                                                       */
@@ -189,6 +189,7 @@ enter_notify_xclicon(XEvent *ev, area_t *ar) {
    taskbar_t *tbar = ar->taskbar;
    xclicon_t *xcli = (xclicon_t *)ar;
    ar->active = 1;
+
    refresh_xclicon(ar);
    
    tooltips_setup(xcli->xcl->name,
@@ -205,6 +206,7 @@ static void
 leave_notify_xclicon(XEvent *ev, area_t *ar) {
    xclicon_t *xcli = (xclicon_t *)ar;
    ar->active = 0;
+
    refresh_xclicon(ar);
    tooltips_hide();
 }
@@ -239,6 +241,8 @@ fill_xclicon(xclicon_t *xcli, area_t *parent, xclient_t *xcl) {
    /* bind the area in the taskbar */
    ar->taskbar = tbar;
    tbar->areas = cons(ar, tbar->areas);
+
+   debug_window_event(tbar, xcl->win, DEBUG_EVENT_AREA_REGISTERED);
 
    ar->refresh = &refresh_xclicon;
    ar->state_notify = &state_notify_xclicon;
@@ -283,7 +287,7 @@ make_xclicon(area_t *parent, xclient_t *xcl) {
       exit(11);
    }
 
-   return fill_xclicon(xcli, parent, xcl);
+   return xcli;
 }
 
 /*---------------------------------------------------------------------*/
@@ -315,6 +319,7 @@ bind_xclicon(ipicons_t *ip, xclient_t *xcl) {
    if (NULLP(ip->_freexclicons)) {
       xclicon_t *xcli = make_xclicon((area_t *)ip, xcl);
 
+      fill_xclicon(xcli, (area_t *)ip, xcl);
       ip->xclicons = cons(xcli, ip->xclicons);
 
       return xcli;
@@ -485,11 +490,17 @@ state_notify_icons(area_t *ar, xclient_t *xcl) {
 }
 
 /*---------------------------------------------------------------------*/
-/*    area_t *                                                         */
-/*    make_icons ...                                                   */
+/*    void *                                                           */
+/*    start_icons ...                                                  */
 /*---------------------------------------------------------------------*/
-area_t *
-make_icons(taskbar_t *tbar, int width, int height, char im, char iad) {
+void *
+start_icons(void *tb, pair_t *args) {
+   taskbar_t *tbar = (taskbar_t *)tb;
+   config_t *config = tbar->config;
+   int width = INTEGER_VAL(CAR(args));
+   int height = config->taskbar_height - 1;
+   char im =  !SYMBOL_EQ(CADR(args), sym_false);
+   char iad =  !SYMBOL_EQ(CAR(CDDR(args)), sym_false);
    area_t *ar = calloc(1, sizeof(ipicons_t));
    ipicons_t *ip = (ipicons_t *)ar;
 
@@ -527,21 +538,6 @@ make_icons(taskbar_t *tbar, int width, int height, char im, char iad) {
    ip->icon_all_desktop = iad;
    
    return ar;
-}
-
-/*---------------------------------------------------------------------*/
-/*    void *                                                           */
-/*    start_icons ...                                                  */
-/*---------------------------------------------------------------------*/
-void *
-start_icons(void *tb, pair_t *args) {
-   taskbar_t *tbar = (taskbar_t *)tb;
-   config_t *config = tbar->config;
-   int width = INTEGER_VAL(CAR(args));
-   char im =  !SYMBOL_EQ(CADR(args), sym_false);
-   char iad =  !SYMBOL_EQ(CAR(CDDR(args)), sym_false);
-
-   return make_icons(tbar, width, config->taskbar_height - 1, im, iad);
 }
 
 /*---------------------------------------------------------------------*/
