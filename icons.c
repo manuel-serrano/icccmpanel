@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Thu Jul 22 15:21:17 2004                          */
-/*    Last change :  Thu May 22 12:20:42 2025 (serrano)                */
+/*    Last change :  Sun May 25 13:57:50 2025 (serrano)                */
 /*    Copyright   :  2004-25 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    The icons.                                                       */
@@ -242,7 +242,7 @@ fill_xclicon(xclicon_t *xcli, area_t *parent, xclient_t *xcl) {
    ar->taskbar = tbar;
    tbar->areas = cons(ar, tbar->areas);
 
-   debug_window_event(tbar, xcl->win, DEBUG_EVENT_AREA_REGISTERED);
+   debug_window_event(tbar, xcl->win, DEBUG_EVENT_WINDOW_CREATED);
 
    ar->refresh = &refresh_xclicon;
    ar->state_notify = &state_notify_xclicon;

@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Fri Jul 19 08:43:57 2024                          */
-/*    Last change :  Wed May 14 14:10:39 2025 (serrano)                */
+/*    Last change :  Fri May 23 13:16:22 2025 (serrano)                */
 /*    Copyright   :  2024-25 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    Icccmap debug                                                    */
@@ -56,16 +56,19 @@ static char event_fail[1024];
 /*---------------------------------------------------------------------*/
 void
 debug_window_event(taskbar_t *tbar, Window win, int event) {
+   Xinfo_t *xinfo = tbar->xinfo;
+   Display *disp = xinfo->disp;
    pair_t *old = assq((void *)win, windows);
    
    switch (event) {
       case DEBUG_EVENT_WINDOW_CREATED: {
-	 if (old && (INTEGER_VAL(CDR(old))) != DEBUG_EVENT_WINDOW_DESTROYED) {
+	 if ((old) && (INTEGER_VAL(CADR(old))) != DEBUG_EVENT_WINDOW_DESTROYED) {
 	    sprintf(event_fail, "double window creation %p\n", win);
 	    fprintf(stderr, "*** ICCCMPANEL ERROR: %s\n", event_fail);
-	    debug(tbar, event_fail);
+	    debug(tbar, event_fail, RED);
 	 } else {
-	    windows = cons(cons((void *)win, (pair_t *)make_integer(event)), windows);
+	    pair_t *cell = cons(make_integer(event), (pair_t *)window_name(disp, win));
+	    windows = cons(cons((void *)win, cell), windows);
 	 }
 	 break;
       }
@@ -74,27 +77,29 @@ debug_window_event(taskbar_t *tbar, Window win, int event) {
 	 if (!old) {
 	    sprintf(event_fail, "destroying unregistred window %p\n", win);
 	    fprintf(stderr, "*** ICCCMPANEL ERROR: %s\n", event_fail);
-	    debug(tbar, event_fail);
-	 } else if (INTEGER_VAL(CDR(old)) != DEBUG_EVENT_WINDOW_CREATED){
+	    debug(tbar, event_fail, RED);
+	 } else if (INTEGER_VAL(CADR(old)) != DEBUG_EVENT_WINDOW_CREATED
+		    && INTEGER_VAL(CADR(old)) != DEBUG_EVENT_AREA_REGISTERED) {
 	    sprintf(event_fail, "double window destruction %p\n", win);
 	    fprintf(stderr, "*** ICCCMPANEL ERROR: %s\n", event_fail);
-	    debug(tbar, event_fail);
+	    debug(tbar, event_fail, RED);
 	 } else {
-	    SET_CDR(old, (pair_t *)make_integer(event));
+	    pair_t *cell = cons(make_integer(event), (pair_t *)window_name(disp, win));
+	    windows = cons(cons((void *)win, cell), windows);
 	 }
 	 break;
       }
 
-      case DEBUG_EVENT_AREA_REGISTERED: {
-	 if (!old) {
-	    Xinfo_t *xinfo = tbar->xinfo;
-	    Display *disp = xinfo->disp;
-	    sprintf(event_fail, "registering area of unregistred window %p [%s:%s]\n", win, window_name(disp, win), window_class(disp, win));
-	    fprintf(stderr, "*** ICCCMPANEL ERROR: %s\n", event_fail);
-	    debug(tbar, event_fail);
-	 }
-	 break;
-      }
+/*       case DEBUG_EVENT_AREA_REGISTERED: {                           */
+/* 	 if (!old) {                                                   */
+/* 	    sprintf(event_fail, "registering area of unregistred window %p [%s:%s]\n", win, window_name(disp, win), window_class(disp, win)); */
+/* 	    fprintf(stderr, "*** ICCCMPANEL ERROR: %s\n", event_fail); */
+/* 	    debug(tbar, event_fail, RED);                              */
+/* 	 } else {                                                      */
+/* 	    SET_CAR(CDR(old), (pair_t *)make_integer(event));          */
+/* 	 }                                                             */
+/* 	 break;                                                        */
+/*       }                                                             */
 	 
       default:
 	 fprintf(stderr, "Illegal debug_window_event %d\n", event);
@@ -115,7 +120,8 @@ assert_window_list(taskbar_t *tbar) {
    long num, i;
    long cnt = 0;
    char *fail = 0;
-
+   int failcolor = RED;
+   
    /* get the window list */
    wins = get_window_prop_data(disp, root_win,
 			       atom__NET_CLIENT_LIST, XA_WINDOW,
@@ -145,6 +151,7 @@ assert_window_list(taskbar_t *tbar) {
 		//|| xcl->unmappedp != unmappedp
 		|| xcl->desktop != desktop) {
 	       fail = alloca(2048);
+	       failcolor = ORANGE;
 	       snprintf(fail, 2048,
 			"client status mismatch desktop: %d/%d win: %p [%s]/[%s] ([%s]/[%s]) mapped: %d/%d", 
 			desktop, xcl->desktop,
@@ -163,13 +170,16 @@ assert_window_list(taskbar_t *tbar) {
 			unmappedp, xcl->unmappedp);
 	       break;
 	    }
-	 }  
+	 }
+
+	 if (name) free(name);
+	 if (class) free(class);
       }
    }
 
    if (fail) {
       fprintf(stderr, "*** ICCCMPANEL ERROR: %s\n", fail);
-      debug(tbar, fail);
+      debug(tbar, fail, failcolor);
    }
 
    XFree(wins);
@@ -180,7 +190,7 @@ assert_window_list(taskbar_t *tbar) {
 /*    debug ...                                                        */
 /*---------------------------------------------------------------------*/
 void
-debug(taskbar_t *tbar, char *msg) {
+debug(taskbar_t *tbar, char *msg, long color) {
    Xinfo_t *xinfo = tbar->xinfo;
    pair_t *areas = tbar->areas;
    int desktop = current_desktop(xinfo->disp, xinfo->root_win);
@@ -286,6 +296,8 @@ debug(taskbar_t *tbar, char *msg) {
 		 cnt++, desktop, w,
 		 name, class,
 		 unmappedp);
+	 if (name) free(name);
+	 if (class) free(class);
       }
    }
 
@@ -298,25 +310,18 @@ debug(taskbar_t *tbar, char *msg) {
    while (PAIRP(ws)) {
       pair_t *car = CAR(ws);
       
-      switch (INTEGER_VAL(CDR(car))) {
-	 case DEBUG_EVENT_WINDOW_CREATED: {
-	    fprintf(fd, "  %p: created [%s]\n", CAR(car), window_name(disp, (Window)(CAR(car))));
-	    if (!PAIRP(prev)) {
-	       windows = prev = ws;
-	    } else {
-	       SET_CDR(prev, ws);
-	       prev = ws;
+      switch (INTEGER_VAL(CADR(car))) {
+	 case DEBUG_EVENT_WINDOW_CREATED:
+	    fprintf(fd, "  %p: created [%s]\n", CAR(car), CDDR(car));
+	    break;
 
-	    }
+	 case DEBUG_EVENT_AREA_REGISTERED:
+	    fprintf(fd, "  %p: registered [%s]\n", CAR(car), CDDR(car));
 	    break;
-	 }
 	    
-	 case DEBUG_EVENT_WINDOW_DESTROYED: {
-	    fprintf(fd, "  %p: destroyed\n", CAR(car));
-	    free(CDR(car));
-	    free(car);
+	 case DEBUG_EVENT_WINDOW_DESTROYED:
+	    fprintf(fd, "  %p: destroyed\n", CAR(car), CDDR(car));
 	    break;
-	 }
       }
       ws = CDR(ws);
    }
@@ -327,7 +332,7 @@ debug(taskbar_t *tbar, char *msg) {
    XFree(wins);
 
    if (msg) {
-      taskbar_set_frame_colors(tbar, ORANGE, ORANGE, ORANGE);
+      taskbar_set_frame_colors(tbar, color, color, color);
    } else {
       taskbar_set_frame_colors(tbar, GREY12, WHITE, GREY9);
    }

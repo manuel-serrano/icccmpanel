@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Thu Jul 22 14:32:38 2004                          */
-/*    Last change :  Thu May 22 12:44:21 2025 (serrano)                */
+/*    Last change :  Fri May 23 13:18:55 2025 (serrano)                */
 /*    Copyright   :  2004-25 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    Taskbar management                                               */
@@ -509,8 +509,6 @@ taskbar_register_xclients(taskbar_t *tbar) {
 	 if (!xcl) {
 	    pair_t *lst = tbar->areas;
 
-	    debug_window_event(tbar, w, DEBUG_EVENT_WINDOW_CREATED);
-
 	    XSelectInput(disp, w, PropertyChangeMask | StructureNotifyMask);
 
 	    xcl = get_xclient(tbar, w);
@@ -755,6 +753,7 @@ taskbar_property_notify(taskbar_t *tbar, XEvent *ev) {
 	 xclient_t *xcl = window_xclient(tbar, win);
 
 	 if (xcl) {
+	    if (xcl->name) free(xcl->name);
 	    xcl->name = window_name(disp, win);
 
 	    update_xclient_icon(xcl, tbar, win);
