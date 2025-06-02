@@ -3,8 +3,8 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Sun Mar 18 17:03:45 2007                          */
-/*    Last change :  Wed Jan 31 07:37:04 2024 (serrano)                */
-/*    Copyright   :  2007-24 Manuel Serrano                            */
+/*    Last change :  Mon Jun  2 07:38:08 2025 (serrano)                */
+/*    Copyright   :  2007-25 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    System tray implementation                                       */
 /*    The specification can be found at:                               */
@@ -73,7 +73,7 @@ typedef struct systrayicon {
 /*---------------------------------------------------------------------*/
 static void
 destroy_notify_systray(area_t *ar, xclient_t *xcl) {
-   /* fprintf(stderr, "destroy_notify_systray...xcl->win=%p\n", xcl->win); */
+/*    fprintf(stderr, "destroy_notify_systray...xcl->win=%p\n", xcl->win); */
 }
 
 /*---------------------------------------------------------------------*/
@@ -127,7 +127,8 @@ destroy_systray_icon(area_t *ar, xclient_t *xcl) {
       fprintf(stderr, "destroy_systray_icon: name=%s win=%p parent=%p\n",
 	       sti->area.name, ar->win, sti->parent);
       */
-   
+
+      fprintf(stderr, "%s:%d XDestroy %p\n", __FILE__, __LINE__, sti->parent);
       XDestroyWindow(tbar->xinfo->disp, sti->parent);
       tbar->areas = remq(ar, tbar->areas);
       st->icons = remq(ar, st->icons);
@@ -157,24 +158,22 @@ systray_icon_add(ipsystray_t *st, Window id) {
    int border = tbar->aborder;
    Window win = make_area_window_parent(tbar, ar->win);
    int iconsz = ar->height;
-   char *name = window_name(disp, id);
    int systray_icon_width = tbar->config->app_width;
 
    /* initialize the systray area */
    sti->area.win = id;
    sti->area.ignore_layout = 1;
-   //sti->area.width = SYSTRAY_ICON_SIZE + border;
    sti->area.width = systray_icon_width + border;
    sti->area.height = iconsz;
    sti->area.refresh = &refresh_systray_icon;
    sti->area.destroy_notify = &destroy_systray_icon;
    sti->area.taskbar = tbar;
-   sti->area.name = malloc(strlen(name) + 1);
+   sti->area.name = window_name(disp, id);
    sti->systray = st;
    sti->parent = win;
 
-   strcpy(sti->area.name, name);
-   
+   debug_window_event(tbar, id, DEBUG_EVENT_WINDOW_CREATED);
+
    /* enlarge the tray area */
    //ar->uwidth += (SYSTRAY_ICON_SIZE + border);
    ar->uwidth += (systray_icon_width + border);

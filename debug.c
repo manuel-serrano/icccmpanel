@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Fri Jul 19 08:43:57 2024                          */
-/*    Last change :  Fri May 23 13:16:22 2025 (serrano)                */
+/*    Last change :  Mon Jun  2 07:34:33 2025 (serrano)                */
 /*    Copyright   :  2024-25 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    Icccmap debug                                                    */
@@ -75,13 +75,21 @@ debug_window_event(taskbar_t *tbar, Window win, int event) {
 
       case DEBUG_EVENT_WINDOW_DESTROYED: {
 	 if (!old) {
-	    sprintf(event_fail, "destroying unregistred window %p\n", win);
+	    char *name = window_name(disp, win);
+	    char *class = window_class(disp, win);
+	    sprintf(event_fail, "destroying unregistred window %p (%s:%s)\n", win, name, class);
 	    fprintf(stderr, "*** ICCCMPANEL ERROR: %s\n", event_fail);
+	    free(name);
+	    free(class);
 	    debug(tbar, event_fail, RED);
 	 } else if (INTEGER_VAL(CADR(old)) != DEBUG_EVENT_WINDOW_CREATED
 		    && INTEGER_VAL(CADR(old)) != DEBUG_EVENT_AREA_REGISTERED) {
-	    sprintf(event_fail, "double window destruction %p\n", win);
+	    char *name = window_name(disp, win);
+	    char *class = window_class(disp, win);
+	    sprintf(event_fail, "double window destruction %p (%s:%s)\n", win, name, class);
 	    fprintf(stderr, "*** ICCCMPANEL ERROR: %s\n", event_fail);
+	    free(name);
+	    free(class);
 	    debug(tbar, event_fail, RED);
 	 } else {
 	    pair_t *cell = cons(make_integer(event), (pair_t *)window_name(disp, win));
