@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Thu Jul 22 14:32:38 2004                          */
-/*    Last change :  Thu Jun 12 13:25:20 2025 (serrano)                */
+/*    Last change :  Fri Jun 13 16:30:17 2025 (serrano)                */
 /*    Copyright   :  2004-25 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    Taskbar management                                               */
@@ -761,6 +761,7 @@ taskbar_property_notify(taskbar_t *tbar, XEvent *ev) {
    /* store the new desktop value */
    tbar->desktop = current_desktop(disp, xinfo->root_win);
 
+   fprintf(stderr, "taskbar_prop_notify win=%p root_win=%p\n", win, tbar->xinfo->root_win);
    if (win == tbar->xinfo->root_win) {
       if (at == atom__NET_CURRENT_DESKTOP) {
 	 /* the desktop has changed */

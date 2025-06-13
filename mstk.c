@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Sat Oct 11 05:33:42 2003                          */
-/*    Last change :  Thu Jun 12 11:41:40 2025 (serrano)                */
+/*    Last change :  Fri Jun 13 09:04:50 2025 (serrano)                */
 /*    Copyright   :  2003-25 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    Small X toolkit                                                  */
@@ -110,7 +110,9 @@ handle_error(Display *d, XErrorEvent *ev) {
    char buf[1024];
    
    XGetErrorText(d, ev->error_code, buf, sizeof(buf));
+
    fprintf(stderr, "Xlib error: %s\nicccmpanel exit...\n", buf);
+   fprintf(stderr, "%s:%d forcing sigsev %d\n", __FILE__, __LINE__, 1/0);
    exit (1);
 }
 
@@ -284,6 +286,10 @@ scale_icon(Xinfo_t *xinfo, Window win,
       return;
    }
 
+#if DEBUG      
+   fprintf(stderr, "%s:%d scale_icon x=%d y=%d w=%d h=%d\n", x, y, w, h);
+#endif
+      
    pix = XCreatePixmap(disp, win, nw, nh, depth);
 
    if (mask != None) {
@@ -602,8 +608,8 @@ window_hint_icon(Xinfo_t *xinfo, Window win, Pixmap *icon, Pixmap *mask, int ico
    if (hin) {
       int res = 0;
       
-      if ((hin->flags & IconPixmapHint)) {
-	 if ((hin->flags & IconMaskHint)) {
+      if (hin->flags & IconPixmapHint) {
+	 if (hin->flags & IconMaskHint) {
 	    *mask = hin->icon_mask;
 	 }
 
@@ -612,6 +618,10 @@ window_hint_icon(Xinfo_t *xinfo, Window win, Pixmap *icon, Pixmap *mask, int ico
       }
       XFree(hin);
 
+#if DEBUG      
+      fprintf(stderr, "%s:%d window_hint_icon icon=%p mask=%p\n", icon, mask);
+#endif
+      
       scale_icon(xinfo, win, *icon, *mask, icon, mask, icon_size, icon_size);
       
       return res;
@@ -988,6 +998,13 @@ draw_pixmap(Xinfo_t *xinfo, Window win,
 	     int x, int y, int w, int h) {
    Display *disp = (xinfo)->disp;
    GC gc = (xinfo)->gcb;
+   
+#if DEBUG
+   fprintf(stderr, "%s:%d draw_pixmap win=%p px=%s.\n",
+	   __FILE__, __LINE__,
+	   win, icon);
+#endif
+   
    XSetClipMask(disp, gc, mask);
    XSetClipOrigin(disp, gc, x, y);
    XCopyArea(disp, icon, win, gc, 0, 0, w, h, x, y);

@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Fri Jul 23 05:59:11 2004                          */
-/*    Last change :  Fri Jun 13 08:20:49 2025 (serrano)                */
+/*    Last change :  Fri Jun 13 09:06:33 2025 (serrano)                */
 /*    Copyright   :  2004-25 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    Event loop                                                       */
@@ -189,7 +189,7 @@ evloop(taskbar_t *tbar) {
       while (XPending(tbar->xinfo->disp)) {
 	 XNextEvent(tbar->xinfo->disp, &ev);
 
-#if DEBUG
+#if DEBUG && 0
 	 fprintf(stderr, "%s:%d got event %s\n", __FILE__, __LINE__, x_event_name(&ev));
 #endif
 
