@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Sat Oct 11 05:33:42 2003                          */
-/*    Last change :  Tue Apr 29 12:09:53 2025 (serrano)                */
+/*    Last change :  Thu Jun 12 11:41:40 2025 (serrano)                */
 /*    Copyright   :  2003-25 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    Small X toolkit                                                  */
@@ -53,10 +53,11 @@ static char *atom_names[] = {
    "_NET_WM_STATE_STICKY",
    /* misc */
    "CARDINAL",
+   "UTF8_STRING",
 };
 
-#define ATOM_COUNT (sizeof(atom_names) / sizeof(atom_names[ 0 ]))
-Atom atoms[ ATOM_COUNT ];
+#define ATOM_COUNT (sizeof(atom_names) / sizeof(atom_names[0]))
+Atom atoms[ATOM_COUNT];
 
 /*---------------------------------------------------------------------*/
 /*    palette                                                          */
@@ -97,15 +98,20 @@ color_t palette[] = {
 /*    unsigned long                                                    */
 /*    palette ...                                                      */
 /*---------------------------------------------------------------------*/
-unsigned long mstk_palette[ MSTK_PALETTE_COUNT ];
-unsigned long mstk_grey_palette[ 256 ];
+unsigned long mstk_palette[MSTK_PALETTE_COUNT];
+unsigned long mstk_grey_palette[256];
 
 /*---------------------------------------------------------------------*/
 /*    void                                                             */
 /*    handle_error ...                                                 */
 /*---------------------------------------------------------------------*/
 static void
-handle_error(Display * d, XErrorEvent * ev) {
+handle_error(Display *d, XErrorEvent *ev) {
+   char buf[1024];
+   
+   XGetErrorText(d, ev->error_code, buf, sizeof(buf));
+   fprintf(stderr, "Xlib error: %s\nicccmpanel exit...\n", buf);
+   exit (1);
 }
 
 /*---------------------------------------------------------------------*/
@@ -128,6 +134,9 @@ init_X(Xinfo_t *xinfo) {
    xinfo->screen_height = DisplayHeight(disp, screen);
    xinfo->screen_width = DisplayWidth(disp, screen);
    xinfo->root_win = RootWindow(disp, screen);
+
+   // collect property keys
+   XInternAtoms(xinfo->disp, atom_names, ATOM_COUNT, False, atoms);
 
    /* helps us catch windows closing/opening */
    XSelectInput(disp, xinfo->root_win, PropertyChangeMask);
@@ -161,6 +170,7 @@ init_X(Xinfo_t *xinfo) {
 			   GCFont | GCGraphicsExposures,
 			   &gcpv);
    
+
    return 0;
 }
 
@@ -197,15 +207,14 @@ init_mstk(config_t *config) {
 
    /* initialize colors */
    for (i = 0; i < MSTK_PALETTE_COUNT; i++) {
-      xcl.red = palette[ i ].red;
-      xcl.blue = palette[ i ].blue;
-      xcl.green = palette[ i ].green;
+      xcl.red = palette[i].red;
+      xcl.blue = palette[i].blue;
+      xcl.green = palette[i].green;
       XAllocColor(xinfo->disp,
 		   DefaultColormap(xinfo->disp, xinfo->screen),
 		   &xcl);
-      mstk_palette[ i ] = xcl.pixel;
+      mstk_palette[i] = xcl.pixel;
    }
-
 
    /* initialize the grey colors */
    for (i = 0, g = config->gradient_grey_min;
@@ -215,10 +224,8 @@ init_mstk(config_t *config) {
       XAllocColor(xinfo->disp,
 		   DefaultColormap(xinfo->disp, xinfo->screen),
 		   &xcl);
-      mstk_grey_palette[ i ] = xcl.pixel;
+      mstk_grey_palette[i] = xcl.pixel;
    }
-
-   XInternAtoms(xinfo->disp, atom_names, ATOM_COUNT, False, atoms);
 
    /* initialize the tooltips */
    init_tooltips(xinfo);
@@ -469,11 +476,11 @@ client_msg(Display * disp, Window win, char *msg,
    event.xclient.message_type = XInternAtom(disp, msg, False);
    event.xclient.window = win;
    event.xclient.format = 32;
-   event.xclient.data.l[ 0 ] = data0;
-   event.xclient.data.l[ 1 ] = data1;
-   event.xclient.data.l[ 2 ] = data2;
-   event.xclient.data.l[ 3 ] = data3;
-   event.xclient.data.l[ 4 ] = data4;
+   event.xclient.data.l[0] = data0;
+   event.xclient.data.l[1] = data1;
+   event.xclient.data.l[2] = data2;
+   event.xclient.data.l[3] = data3;
+   event.xclient.data.l[4] = data4;
 
    if (XSendEvent(disp, DefaultRootWindow(disp), False, mask, &event)) {
       return 0;
@@ -495,12 +502,12 @@ get_window_prop_data(Display *disp, Window win,
    unsigned long items_ret;
    unsigned long after_ret;
    unsigned char *prop_data = 0;
+   int status;
 
-   XGetWindowProperty(disp, win, prop, 0, 0x7fffffff, False,
-		       type,
-		       &type_ret, &format_ret, &items_ret,
-		       &after_ret, &prop_data);
-
+   status = XGetWindowProperty(disp, win, prop, 0, 0x7fffffff, False,
+		      type, &type_ret, &format_ret, &items_ret,
+		      &after_ret, &prop_data);
+   
    if (items) *items = items_ret;
 
    return prop_data;
@@ -529,7 +536,7 @@ get_window_prop_int(Display *disp, Window win, Atom at) {
 /*---------------------------------------------------------------------*/
 char *
 window_name(Display *disp, Window win) {
-   char *data = get_window_prop_data(disp, win, atom__NET_WM_NAME, AnyPropertyType, 0);
+   char *data = get_window_prop_data(disp, win, atom__NET_WM_NAME, atom__UTF8_STRING, 0);
 
    if (data) {
       char *res = strdup(data);
@@ -630,8 +637,8 @@ window_netwm_icon(Xinfo_t *xinfo, Window win, Pixmap *icon, Pixmap *mask, int ic
 
       /* traversal to find the best match */
       while (i < len) {
-	 long w = data[ i ];
-	 long h = data[ i + 1 ];
+	 long w = data[i];
+	 long h = data[i + 1];
 	 long di = w - icon_size;
 
 	 if (di == 0) {
@@ -647,9 +654,9 @@ window_netwm_icon(Xinfo_t *xinfo, Window win, Pixmap *icon, Pixmap *mask, int ic
 
       /* get the icon */
       if (m >= 0) {
-	 long w = data[ m ];
-	 long h = data[ m + 1 ];
-	 unsigned long *buf = &(data[ m + 2 ]);
+	 long w = data[m];
+	 long h = data[m + 1];
+	 unsigned long *buf = &(data[m + 2]);
 	    
 	 rgba_to_pixmap(xinfo, win, buf, w, h, icon, mask);
 
@@ -748,7 +755,7 @@ switch_desktop(Display *disp, Window win, int desk) {
    xev.window = win;
    xev.message_type = atom__NET_CURRENT_DESKTOP;
    xev.format = 32;
-   xev.data.l[ 0 ] = desk;
+   xev.data.l[0] = desk;
    XSendEvent(disp, win, False, SubstructureNotifyMask | SubstructureRedirectMask, (XEvent *)&xev);
 }
 
@@ -764,7 +771,7 @@ window_iconifiedp(Display *disp, Window win) {
    data = get_window_prop_data(disp, win, atom_WM_STATE, atom_WM_STATE, 0);
 
    if (data) {
-      if (data[ 0 ] == IconicState) 
+      if (data[0] == IconicState) 
 	 ret = 1;
       XFree(data);
    }
@@ -819,7 +826,7 @@ draw_text(Xinfo_t *xinfo, Window win, int x, int y,
    unsigned long *color = palette ? palette : mstk_palette;
 
    if (shadow >= 0) {
-      XSetForeground(disp, gc, color[ shadow ]);
+      XSetForeground(disp, gc, color[shadow]);
       XDrawString(disp, win, gc, x + 1, y + 1, text, len);
       if (shadow_size >= 2) {
 	 XDrawString(disp, win, gc, x + 2, y + 2, text, len);
@@ -832,7 +839,7 @@ draw_text(Xinfo_t *xinfo, Window win, int x, int y,
       }
    }
    
-   XSetForeground(disp, gc, color[ c ]);
+   XSetForeground(disp, gc, color[c]);
    XDrawString(disp, win, gc, x, y, text, len);
 }
 
@@ -849,7 +856,7 @@ draw_text_plain(Xinfo_t *xinfo, Window win, int x, int y,
    unsigned long *color = palette ? palette : mstk_palette;
 
    if (shadow >= 0) {
-      XSetForeground(disp, gc, color[ shadow ]);
+      XSetForeground(disp, gc, color[shadow]);
       XDrawString(disp, win, gc, x + 1, y + 1, text, len);
       if (shadow_size >= 2) {
 	 XDrawString(disp, win, gc, x + 2, y + 2, text, len);
@@ -862,7 +869,7 @@ draw_text_plain(Xinfo_t *xinfo, Window win, int x, int y,
       }
    }
    
-   XSetForeground(disp, gc, color[ c ]);
+   XSetForeground(disp, gc, color[c]);
    XDrawString(disp, win, gc, x, y, text, len);
 }
 
@@ -877,7 +884,7 @@ draw_line(Xinfo_t *xinfo, Window win,
    Display *disp = (xinfo)->disp;
    GC gc = (xinfo)->gcb;
    unsigned long *color = palette ? palette : mstk_palette;
-   XSetForeground(disp, gc, color[ c ]);
+   XSetForeground(disp, gc, color[c]);
    XDrawLine(disp, win, gc, x, y, x + w, y + h);
 }
 
@@ -899,7 +906,7 @@ draw_gradient(Xinfo_t *xinfo, Window win,
 
    if (step || sw) {
       for (i = 0, c = cf, j = sw; i < h; i++) {
-	 XSetForeground(disp, gc, color[ c ]);
+	 XSetForeground(disp, gc, color[c]);
 	 XDrawLine(disp, win, gc, x, y + i, x + w, y + i);
 
 	 if (--j == 0) {
@@ -909,7 +916,7 @@ draw_gradient(Xinfo_t *xinfo, Window win,
       }
    } else {
       for (i = 0; i < h; i++) {
-	 XSetForeground(disp, gc, color[ cf ]);
+	 XSetForeground(disp, gc, color[cf]);
 	 XDrawLine(disp, win, gc, x, y + i, x + w, y + i);
       }
    }
@@ -931,10 +938,10 @@ draw_relief(Xinfo_t *xinfo, Window win,
    int i;
    
    for (i = 0; i < border; i++) {
-      XSetForeground(disp, gc, color[ c0 ]);
+      XSetForeground(disp, gc, color[c0]);
       XDrawLine(disp, win, gc, x + i, y + i, x + i, y + h - i);
       XDrawLine(disp, win, gc, x + i, y + i, x + w - i, y + i);
-      XSetForeground(disp, gc, color[ c1 ]);
+      XSetForeground(disp, gc, color[c1]);
       XDrawLine(disp, win, gc, x + w - i , y + h - i, x + w - i, y + i);
       XDrawLine(disp, win, gc, x + i + 1, y + h - i, x + w - i, y + h - i);
    }
@@ -955,12 +962,12 @@ draw_partial_relief(Xinfo_t *xinfo, Window win, int mask,
    int i;
    
    for (i = 0; i < border; i++) {
-      XSetForeground(disp, gc, color[ c0 ]);
+      XSetForeground(disp, gc, color[c0]);
       if (mask & RELIEF_LEFT)
 	 XDrawLine(disp, win, gc, x + i, y + i, x + i, y + h - i);
       if (mask & RELIEF_TOP)
 	 XDrawLine(disp, win, gc, x + i, y + i, x + w - i, y + i);
-      XSetForeground(disp, gc, color[ c1 ]);
+      XSetForeground(disp, gc, color[c1]);
       if (mask & RELIEF_RIGHT)
 	 XDrawLine(disp, win, gc, x + w - i , y + h - i, x + w - i, y + i);
       if (mask & RELIEF_BOTTOM)
@@ -993,9 +1000,9 @@ draw_pixmap(Xinfo_t *xinfo, Window win,
 /*---------------------------------------------------------------------*/
 static void
 draw_dot(Display *disp, Window win, GC gc, int x, int y) {
-   XSetForeground(disp, gc, mstk_grey_palette[ 0xf7 ]);
+   XSetForeground(disp, gc, mstk_grey_palette[0xf7]);
    XDrawPoint(disp, win, gc, x, y);
-   XSetForeground(disp, gc, mstk_grey_palette[ 0x40 ]);
+   XSetForeground(disp, gc, mstk_grey_palette[0x40]);
    XDrawPoint(disp, win, gc, x + 1, y + 1);
 }
 

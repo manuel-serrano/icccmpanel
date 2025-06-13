@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Sat Oct 11 05:45:32 2003                          */
-/*    Last change :  Wed Apr 30 14:16:20 2025 (serrano)                */
+/*    Last change :  Thu Jun 12 13:26:25 2025 (serrano)                */
 /*    Copyright   :  2003-25 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    ICCCMPANEL (from fspanel)                                        */
@@ -56,10 +56,21 @@ main(int argc, char *argv[]) {
    /* initialize our simple X toolkit */
    xinfo = init_mstk(config);
 
+#if DEBUG
+   fprintf(stderr, "### mstk intialized disp=%p root=%p\n", xinfo->disp, xinfo->root_win);
+#endif
+   
    /* allocate the taskbar */
    tbar = make_taskbar(xinfo, config);
 
-   if (!tbar) exit(11);
+#if DEBUG
+   fprintf(stderr, "### taskbar created.\n");
+#endif
+   
+   if (!tbar) {
+      fprintf(stderr, "*** ERROR: cannot create taskbar\nicccmap exit...\n");
+      exit(11);
+   }
 
    /* reset debug info */
    unlink("/tmp/icccmpanel.debug");
@@ -74,13 +85,25 @@ main(int argc, char *argv[]) {
       lst = CDR(lst);
    }
 
+#if DEBUG
+   fprintf(stderr, "### plugins created.\n");
+#endif
+   
    /* build the taskbar */
    taskbar_area_do_layout(tbar);
    taskbar_register_xclients(tbar);
    taskbar_refresh_all(tbar);
    
+#if DEBUG
+   fprintf(stderr, "### taskbar ready.\n");
+#endif
+   
    /* refresh the taskbar */
    XSync(xinfo->disp, True);
+   
+#if DEBUG
+   fprintf(stderr, "### Entering event loop.\n");
+#endif
    
    /* the event loop */
    evloop(tbar);

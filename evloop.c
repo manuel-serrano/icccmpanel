@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Fri Jul 23 05:59:11 2004                          */
-/*    Last change :  Tue Apr 29 12:04:58 2025 (serrano)                */
+/*    Last change :  Fri Jun 13 08:20:49 2025 (serrano)                */
 /*    Copyright   :  2004-25 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    Event loop                                                       */
@@ -101,8 +101,12 @@ evloop(taskbar_t *tbar) {
    KeyCode altr_keycode = XKeysymToKeycode(tbar->xinfo->disp,XK_Alt_R);
    KeyCode altl_keycode = XKeysymToKeycode(tbar->xinfo->disp,XK_Alt_L);
    unsigned int ignored_modmask = 0; // stub
-    
+
    xfd = ConnectionNumber(tbar->xinfo->disp);
+#if DEBUG
+   fprintf(stderr, "%s:%d connection number: %d\n", __FILE__, __LINE__, xfd);
+#endif
+   
    XSelectInput(tbar->xinfo->disp, tbar->xinfo->root_win,
 		//ButtonPressMask
 		KeyPressMask | KeyReleaseMask
@@ -120,6 +124,10 @@ evloop(taskbar_t *tbar) {
             Mod1Mask,
 	    tbar->xinfo->root_win, True,
 	    GrabModeAsync, GrabModeAsync);
+   
+#if DEBUG
+   fprintf(stderr, "%s:%d keys grabbed\n", __FILE__, __LINE__);
+#endif
    
    while (1) {
       area_t *ar;
@@ -173,7 +181,7 @@ evloop(taskbar_t *tbar) {
 	    }
 	 }
       }
-
+      
       // the evt variable is used to delay Leave/Notify event until
       // no pending events are to be processed
       evt = 0;
@@ -181,8 +189,10 @@ evloop(taskbar_t *tbar) {
       while (XPending(tbar->xinfo->disp)) {
 	 XNextEvent(tbar->xinfo->disp, &ev);
 
-	 // fprintf(stderr, "%s\n", x_event_name(&ev));
-	 
+#if DEBUG
+	 fprintf(stderr, "%s:%d got event %s\n", __FILE__, __LINE__, x_event_name(&ev));
+#endif
+
 	 switch(ev.type) {
 	    case ButtonPress:
 	       // reset the possible timeout

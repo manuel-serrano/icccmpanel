@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Sat Oct 11 05:44:23 2003                          */
-/*    Last change :  Tue Apr 29 12:09:19 2025 (serrano)                */
+/*    Last change :  Fri Jun 13 07:35:59 2025 (serrano)                */
 /*    Copyright   :  2003-25 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    MS X toolkit                                                     */
@@ -92,25 +92,26 @@ extern void draw_grill(Xinfo_t *, Window, int, int, int, int);
 
 extern Atom atoms[];
 
-#define atom_KWM_WIN_ICON atoms[ 0 ]
-#define atom_WM_STATE atoms[ 1 ]
-#define atom__MOTIF_WM_HINTS atoms[ 2 ]
-#define atom__NET_WM_STATE atoms[ 3 ]
-#define atom__NET_WM_STATE_SKIP_TASKBAR atoms[ 4 ]
-#define atom__NET_WM_STATE_SHADED atoms[ 5 ]
-#define atom__NET_WM_DESKTOP atoms[ 6 ]
-#define atom__NET_WM_WINDOW_TYPE atoms[ 7 ]
-#define atom__NET_WM_WINDOW_TYPE_DOCK atoms[ 8 ]
-#define atom__NET_WM_WINDOW_TYPE_TOOLBAR atoms[ 9 ]
-#define atom__NET_WM_STRUT atoms[ 10 ]
-#define atom__NET_WM_NAME atoms[ 11 ]
-#define atom__NET_WM_ICON atoms[ 12 ]
-#define atom__WIN_HINTS atoms[ 13 ]
-#define atom__NET_CLIENT_LIST atoms[ 14 ]
-#define atom__NET_NUMBER_OF_DESKTOPS atoms[ 15 ]
-#define atom__NET_CURRENT_DESKTOP atoms[ 16 ]
-#define atom__NET_WM_STATE_STICKY atoms[ 17 ]
-#define atom__CARDINAL atoms[ 18 ]
+#define atom_KWM_WIN_ICON atoms[0]
+#define atom_WM_STATE atoms[1]
+#define atom__MOTIF_WM_HINTS atoms[2]
+#define atom__NET_WM_STATE atoms[3]
+#define atom__NET_WM_STATE_SKIP_TASKBAR atoms[4]
+#define atom__NET_WM_STATE_SHADED atoms[5]
+#define atom__NET_WM_DESKTOP atoms[6]
+#define atom__NET_WM_WINDOW_TYPE atoms[7]
+#define atom__NET_WM_WINDOW_TYPE_DOCK atoms[8]
+#define atom__NET_WM_WINDOW_TYPE_TOOLBAR atoms[9]
+#define atom__NET_WM_STRUT atoms[10]
+#define atom__NET_WM_NAME atoms[11]
+#define atom__NET_WM_ICON atoms[12]
+#define atom__WIN_HINTS atoms[13]
+#define atom__NET_CLIENT_LIST atoms[14]
+#define atom__NET_NUMBER_OF_DESKTOPS atoms[15]
+#define atom__NET_CURRENT_DESKTOP atoms[16]
+#define atom__NET_WM_STATE_STICKY atoms[17]
+#define atom__CARDINAL atoms[18]
+#define atom__UTF8_STRING atoms[19]
 
 /*---------------------------------------------------------------------*/
 /*    Colors                                                           */

@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Thu Jul 22 14:32:38 2004                          */
-/*    Last change :  Fri May 23 13:18:55 2025 (serrano)                */
+/*    Last change :  Thu Jun 12 13:25:20 2025 (serrano)                */
 /*    Copyright   :  2004-25 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    Taskbar management                                               */
@@ -317,10 +317,10 @@ make_taskbar(Xinfo_t *xinfo, config_t *config) {
       | PointerMotionMask
       | KeyPressMask;
 
-    /* taskbar x and width */
+   /* taskbar x and width */
    if (config->taskbar_x >= 0) {
       tbar_x = config->taskbar_x;
-      tbar_w = xinfo->screen_width - config->taskbar_width;
+      tbar_w = config->taskbar_width > 0 ? config->taskbar_width : xinfo->screen_width;
 
       if (tbar_x >  xinfo->screen_width)
 	 tbar_x = 0;
@@ -381,6 +381,10 @@ make_taskbar(Xinfo_t *xinfo, config_t *config) {
 		       /* vmask   */ CWBackPixel | CWEventMask | CWOverrideRedirect,
 		       /* attribs */ &att);
 
+#if DEBUG
+   fprintf(stderr, "%s:%d taskbar initialized.\n", __FILE__, __LINE__);
+#endif
+   
    /* reserve "WINHEIGHT" pixels at the bottom of the screen */
    strut[ 0 ] = 0;
    strut[ 1 ] = 0;
@@ -388,6 +392,9 @@ make_taskbar(Xinfo_t *xinfo, config_t *config) {
    strut[ 3 ] = tbar_h;
    XChangeProperty(disp, win, atom__NET_WM_STRUT, XA_CARDINAL, 32,
 		    PropModeReplace, (unsigned char *) strut, 4);
+#if DEBUG
+   fprintf(stderr, "%s:%d props set.\n", __FILE__, __LINE__);
+#endif
 
    /* reside on ALL desktops */
    set_window_prop(disp, win, atom__NET_WM_DESKTOP, XA_CARDINAL, 0xFFFFFFFF);
@@ -407,6 +414,9 @@ make_taskbar(Xinfo_t *xinfo, config_t *config) {
    XChangeProperty(disp, win, atom__MOTIF_WM_HINTS, atom__MOTIF_WM_HINTS, 32,
 		    PropModeReplace,
 		    (unsigned char *)&mwm, sizeof(MWMHints) / 4);
+#if DEBUG
+   fprintf(stderr, "%s:%d props set (2).\n", __FILE__, __LINE__);
+#endif
 
    /* make sure the WM obays our window position */
    size_hints.flags = PPosition;
@@ -418,6 +428,10 @@ make_taskbar(Xinfo_t *xinfo, config_t *config) {
    
    XMoveWindow(disp, win, tbar_x, tbar_y);
 
+#if DEBUG
+   fprintf(stderr, "%s:%d window moves.\n", __FILE__, __LINE__);
+#endif
+   
    /* make our window unfocusable */
    wmhints.flags = InputHint;
    wmhints.input = False;
@@ -426,10 +440,23 @@ make_taskbar(Xinfo_t *xinfo, config_t *config) {
    XChangeProperty(disp, win, XA_WM_HINTS, XA_WM_HINTS, 32, PropModeReplace,
 		    (unsigned char *)&wmhints, sizeof(XWMHints) / 4);
 
+#if DEBUG
+   fprintf(stderr, "%s:%d props set (3).\n", __FILE__, __LINE__);
+#endif
+   
    /* receive the window event */
    XMapWindow(disp, win);
+   
+#if DEBUG
+   fprintf(stderr, "%s:%d window mapped.\n", __FILE__, __LINE__);
+#endif
+   
    if (!config->taskbar_always_on_top) XLowerWindow(disp, win);
 
+#if DEBUG
+   fprintf(stderr, "%s:%d taskbar lowered.\n", __FILE__, __LINE__);
+#endif
+   
    tb->xinfo = xinfo;
    tb->config = config;
    tb->win = win;
@@ -449,6 +476,9 @@ make_taskbar(Xinfo_t *xinfo, config_t *config) {
    tb->height = tbar_h;
    
    tb->desktop = current_desktop(xinfo->disp, xinfo->root_win);
+#if DEBUG
+   fprintf(stderr, "%s:%d current desktop %d.\n", __FILE__, __LINE__, tb->desktop);
+#endif
    
    tb->areas = NIL;
    
@@ -465,6 +495,10 @@ make_taskbar(Xinfo_t *xinfo, config_t *config) {
    taskbar_set_frame_colors(tb, GREY12, GREEN, RED);
 #endif
 
+#if DEBUG
+   fprintf(stderr, "%s:%d taskbar color set.\n", __FILE__, __LINE__);
+#endif
+   
    return tb;
 }
 

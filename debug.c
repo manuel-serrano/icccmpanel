@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Fri Jul 19 08:43:57 2024                          */
-/*    Last change :  Mon Jun  2 07:34:33 2025 (serrano)                */
+/*    Last change :  Fri Jun 13 08:49:19 2025 (serrano)                */
 /*    Copyright   :  2024-25 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    Icccmap debug                                                    */
@@ -59,7 +59,7 @@ debug_window_event(taskbar_t *tbar, Window win, int event) {
    Xinfo_t *xinfo = tbar->xinfo;
    Display *disp = xinfo->disp;
    pair_t *old = assq((void *)win, windows);
-   
+
    switch (event) {
       case DEBUG_EVENT_WINDOW_CREATED: {
 	 if ((old) && (INTEGER_VAL(CADR(old))) != DEBUG_EVENT_WINDOW_DESTROYED) {
@@ -92,7 +92,7 @@ debug_window_event(taskbar_t *tbar, Window win, int event) {
 	    free(class);
 	    debug(tbar, event_fail, RED);
 	 } else {
-	    pair_t *cell = cons(make_integer(event), (pair_t *)window_name(disp, win));
+	    pair_t *cell = cons(make_integer(event), (void *)win);
 	    windows = cons(cons((void *)win, cell), windows);
 	 }
 	 break;
@@ -328,7 +328,7 @@ debug(taskbar_t *tbar, char *msg, long color) {
 	    break;
 	    
 	 case DEBUG_EVENT_WINDOW_DESTROYED:
-	    fprintf(fd, "  %p: destroyed\n", CAR(car), CDDR(car));
+	    fprintf(fd, "  %p: destroyed\n", CAR(car));
 	    break;
       }
       ws = CDR(ws);
