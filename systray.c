@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Sun Mar 18 17:03:45 2007                          */
-/*    Last change :  Mon Jun  2 07:38:08 2025 (serrano)                */
+/*    Last change :  Fri Jun 13 08:58:50 2025 (serrano)                */
 /*    Copyright   :  2007-25 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    System tray implementation                                       */
@@ -128,7 +128,6 @@ destroy_systray_icon(area_t *ar, xclient_t *xcl) {
 	       sti->area.name, ar->win, sti->parent);
       */
 
-      fprintf(stderr, "%s:%d XDestroy %p\n", __FILE__, __LINE__, sti->parent);
       XDestroyWindow(tbar->xinfo->disp, sti->parent);
       tbar->areas = remq(ar, tbar->areas);
       st->icons = remq(ar, st->icons);
