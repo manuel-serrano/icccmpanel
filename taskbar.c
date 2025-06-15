@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Thu Jul 22 14:32:38 2004                          */
-/*    Last change :  Fri Jun 13 16:30:17 2025 (serrano)                */
+/*    Last change :  Sat Jun 14 06:51:42 2025 (serrano)                */
 /*    Copyright   :  2004-25 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    Taskbar management                                               */
@@ -176,6 +176,10 @@ make_xclient(taskbar_t *tbar, Window w) {
    xclient_t *xcl = malloc(sizeof(xclient_t));
    memset(xcl, 0, sizeof(xclient_t));
 
+#if DEBUG
+   fprintf(stderr, "%s:%d make_xclient w=%p\n", __FILE__, __LINE__, w);
+#endif
+   
    if (!xcl) {
       fprintf(stderr, "*** ERROR(%s:%d): cannot allocation client\n", 
 	      __FILE__, __LINE__);
@@ -534,12 +538,16 @@ taskbar_register_xclients(taskbar_t *tbar) {
 			       &num);
 
    /* check all the windows */
-   for(i = 0; i < num; i++) {
-      Window w = wins[ i ];
+   for (i = 0; i < num; i++) {
+      Window w = wins[i];
 
       if (w != tbar->win && !tooltips_windowp(w) && !find_area(tbar, w)) {
 	 xclient_t *xcl = window_xclient(tbar, w);
 
+#if DEBUG	 
+	 fprintf(stderr, "%s:%d register_xclient: w=%p xcl=%p\n", __FILE__, __LINE__, w, xcl);
+#endif	 
+	 
 	 if (!xcl) {
 	    pair_t *lst = tbar->areas;
 
@@ -761,7 +769,6 @@ taskbar_property_notify(taskbar_t *tbar, XEvent *ev) {
    /* store the new desktop value */
    tbar->desktop = current_desktop(disp, xinfo->root_win);
 
-   fprintf(stderr, "taskbar_prop_notify win=%p root_win=%p\n", win, tbar->xinfo->root_win);
    if (win == tbar->xinfo->root_win) {
       if (at == atom__NET_CURRENT_DESKTOP) {
 	 /* the desktop has changed */

@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Sat Oct 11 05:33:42 2003                          */
-/*    Last change :  Fri Jun 13 09:04:50 2025 (serrano)                */
+/*    Last change :  Sun Jun 15 13:16:48 2025 (serrano)                */
 /*    Copyright   :  2003-25 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    Small X toolkit                                                  */
@@ -21,6 +21,7 @@
 #  include <X11/xpm.h>
 #endif
 
+#include "configure.h"
 #include "config.h"
 #include "mstk.h"
 #include "tooltips.h"
@@ -268,9 +269,9 @@ closeup_mstk(Xinfo_t *xinfo) {
 /*---------------------------------------------------------------------*/
 void
 scale_icon(Xinfo_t *xinfo, Window win, 
-	    Pixmap icon, Pixmap mask,
-	    Pixmap *ricon, Pixmap *rmask,
-	    int nw, int nh) {
+	   Pixmap icon, Pixmap mask,
+	   Pixmap *ricon, Pixmap *rmask,
+	   int nw, int nh) {
    Display *disp = (xinfo)->disp;
    GC gc = (xinfo)->gcb;
    int depth = xinfo->screen_depth;
@@ -281,8 +282,10 @@ scale_icon(Xinfo_t *xinfo, Window win,
    GC mgc;
 
    if (!XGetGeometry(disp, icon, &pix, &x, &y, &w, &h, &bw, &d)) {
+      char *name = window_name(disp, win);
       fprintf(stderr, "*** ERROR(%s:%d): cannot get geometry win=%p name=%s\n", 
-	      __FILE__, __LINE__, win, window_name(disp, win));
+	      __FILE__, __LINE__, win, name);
+      free(name);
       return;
    }
 
@@ -544,6 +547,10 @@ char *
 window_name(Display *disp, Window win) {
    char *data = get_window_prop_data(disp, win, atom__NET_WM_NAME, atom__UTF8_STRING, 0);
 
+#if DEBUG
+   fprintf(stderr, "%s:%d window_name w=%p\n", __FILE__, __LINE__, win);
+#endif
+   
    if (data) {
       char *res = strdup(data);
       XFree(data);
@@ -570,6 +577,10 @@ window_class(Display *disp, Window win) {
    long num;
    XClassHint ch;
 
+#if DEBUG
+   fprintf(stderr, "%s:%d window_class w=%p\n", __FILE__, __LINE__, win);
+#endif
+   
    if (XGetClassHint(disp, win, &ch) == 0) {
       char *data = get_window_prop_data(disp, win, XA_WM_CLASS, XA_STRING, &num);
 
@@ -618,8 +629,13 @@ window_hint_icon(Xinfo_t *xinfo, Window win, Pixmap *icon, Pixmap *mask, int ico
       }
       XFree(hin);
 
-#if DEBUG      
-      fprintf(stderr, "%s:%d window_hint_icon icon=%p mask=%p\n", icon, mask);
+#if DEBUG
+      fprintf(stderr, "%s:%d window_hint_icon icon=%p mask=%p\n",
+	      __FILE__, __LINE__, icon, mask);
+      char *name = window_name(disp, win);
+      fprintf(stderr, "%s:%d window_hint_icon name=%s\n",
+	      __FILE__, __LINE__, name);
+      free(name);
 #endif
       
       scale_icon(xinfo, win, *icon, *mask, icon, mask, icon_size, icon_size);
@@ -1000,7 +1016,7 @@ draw_pixmap(Xinfo_t *xinfo, Window win,
    GC gc = (xinfo)->gcb;
    
 #if DEBUG
-   fprintf(stderr, "%s:%d draw_pixmap win=%p px=%s.\n",
+   fprintf(stderr, "%s:%d draw_pixmap win=%p px=%p.\n",
 	   __FILE__, __LINE__,
 	   win, icon);
 #endif
