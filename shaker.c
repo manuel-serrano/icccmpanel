@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Sun Jul 17 17:15:49 2022                          */
-/*    Last change :  Wed Apr 23 07:27:27 2025 (serrano)                */
+/*    Last change :  Tue Jun 17 09:24:19 2025 (serrano)                */
 /*    Copyright   :  2022-25 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    ICCCMPanel mouse shaker                                          */
@@ -50,7 +50,7 @@ static void init_shaker_xpm(Xinfo_t *, Window, char *);
 /*---------------------------------------------------------------------*/
 void
 init_shaker(Xinfo_t *xinfo, char *xpm_path) {
-#if ICCCMPANEL_MOUSE_SHAKER
+#if !ICCCMPANEL_MOUSE_SHAKER
    return ;
 #else   
    Display *disp = xinfo->disp;

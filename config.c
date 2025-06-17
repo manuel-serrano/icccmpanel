@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Fri Oct 17 22:18:02 2003                          */
-/*    Last change :  Tue Jun 17 07:44:51 2025 (serrano)                */
+/*    Last change :  Tue Jun 17 09:19:11 2025 (serrano)                */
 /*    Copyright   :  2003-25 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    The parsing of the MSpanel config file.                          */
@@ -271,6 +271,8 @@ default_config(config_t *config) {
 
    config->mouse_shaker_speed = 100;
    config->mouse_shaker_sensitivity = 200;
+
+   config->sexp = NIL;
    
    return config;
 }
@@ -410,7 +412,7 @@ parse_icon_theme(config_t *config, pair_t *lst) {
       int len = strlen(ICCCMPANEL_PREFIX) +
 	 strlen(ICCCMPANEL_DIR) + 
 	 strlen(ICCCMPANEL_ICON_DIR) +
-	 strlen(name) + 2 + 1;
+	 strlen(name) + 3 + 1;
       char *dir = malloc(len);
       sprintf(dir, "%s/%s/%s/%s",
 	       ICCCMPANEL_PREFIX,
@@ -793,7 +795,9 @@ parse_config(config_t *config, char *filename) {
 	       parse_pair(config, (pair_t *)o);
 	    }
 	 }
-	 free_obj(o);
+	 // keep a pointer to the sexp so that valgrind does not
+	 // complain about a memory leak.
+	 cfg->sexp = cons(o, cfg->sexp);
       }		
       return cfg;
    }
