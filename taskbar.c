@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Thu Jul 22 14:32:38 2004                          */
-/*    Last change :  Sat Jun 14 06:51:42 2025 (serrano)                */
+/*    Last change :  Mon Jun 16 07:44:39 2025 (serrano)                */
 /*    Copyright   :  2004-25 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    Taskbar management                                               */
@@ -747,9 +747,9 @@ taskbar_info(taskbar_t *tbar, int src) {
 				&num);
 
    for(i = 0, numi = 0, numid = 0; i < num; i++) {
-      if (window_iconifiedp(tbar->xinfo->disp, wins[ i ])) {
+      if (window_iconifiedp(tbar->xinfo->disp, wins[i])) {
 	 numi++;
-	 if (window_desktop(tbar->xinfo->disp, wins[ i ]) == dt) numid++;
+	 if (window_desktop(tbar->xinfo->disp, wins[i]) == dt) numid++;
       }
    }
 	    
@@ -837,6 +837,10 @@ void
 taskbar_destroy_notify(taskbar_t *tbar, XEvent *ev) {
    Window win = ev->xdestroywindow.window;
 
+#if DEBUG
+   fprintf(stderr, "%s:%d taskbar_destroy_notify win=%p\n", __FILE__, __LINE__, win);
+#endif
+   
    /* store the new desktop value */
    tbar->desktop = current_desktop(tbar->xinfo->disp, tbar->xinfo->root_win);
    

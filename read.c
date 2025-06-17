@@ -3,8 +3,8 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Sun Aug  1 05:55:00 2004                          */
-/*    Last change :  Sat Dec 28 17:20:23 2024 (serrano)                */
-/*    Copyright   :  2004-24 Manuel Serrano                            */
+/*    Last change :  Tue Jun 17 07:39:54 2025 (serrano)                */
+/*    Copyright   :  2004-25 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    parsing                                                          */
 /*=====================================================================*/
@@ -37,21 +37,21 @@ typedef struct token {
 /*---------------------------------------------------------------------*/
 /*    Local declarations                                               */
 /*---------------------------------------------------------------------*/
-static pair_t *do_read_list( FILE * );
+static pair_t *do_read_list(FILE *);
 
 /*---------------------------------------------------------------------*/
 /*    token_t *                                                        */
 /*    make_token ...                                                   */
 /*---------------------------------------------------------------------*/
 token_t *
-make_token( int tok, char *val ) {
-   token_t *tk = calloc( 1, sizeof( token_t ) );
+make_token(int tok, char *val) {
+   token_t *tk = calloc(1, sizeof(token_t));
 
    tk->tok = tok;
 
-   if( val ) {
-      tk->val = malloc( strlen( val ) + 1 );
-      strcpy( tk->val, val );
+   if (val) {
+      tk->val = malloc(strlen(val) + 1);
+      strcpy(tk->val, val);
    }
    
    return tk;
@@ -62,12 +62,12 @@ make_token( int tok, char *val ) {
 /*    token_type ...                                                   */
 /*---------------------------------------------------------------------*/
 static char *
-token_type( token_t *tok ) {
-   if( !tok ) {
+token_type(token_t *tok) {
+   if (!tok) {
       return "???";
    }
    
-   switch( tok->tok ) {
+   switch (tok->tok) {
       case TOKEN_NONE:
 	 return "???";
 
@@ -102,38 +102,38 @@ token_type( token_t *tok ) {
 /*    display_token ...                                                */
 /*---------------------------------------------------------------------*/
 static void
-display_token( token_t *tok ) {
-   if( !tok ) {
-      printf( "???" );
+display_token(token_t *tok) {
+   if (!tok) {
+      printf("???");
    } else {
-      switch( tok->tok ) {
+      switch (tok->tok) {
 	 case TOKEN_NONE:
 	    return;
 
 	 case TOKEN_SYMBOL:
 	 case TOKEN_STRING:
 	 case TOKEN_INT:
-	    fprintf( stderr, "%s", tok->val );
+	    fprintf(stderr, "%s", tok->val);
 	    return;
 
 	 case TOKEN_HEX:
-	    fprintf( stderr, "%p", tok->val );
+	    fprintf(stderr, "%p", tok->val);
 	    return;
 
 	 case TOKEN_OPENPAR:
-	    fprintf( stderr, "(" );
+	    fprintf(stderr, "(");
 	    return;
 	 
 	 case TOKEN_CLOPAR:
-	    fprintf( stderr, ")" );
+	    fprintf(stderr, ")");
 	    return;
 	 
 	 case TOKEN_GUIL:
-	    fprintf( stderr, "\"" );
+	    fprintf(stderr, "\"");
 	    return;
 	 
 	 default:
-	    fprintf( stderr, "???" );
+	    fprintf(stderr, "???");
 	    return;
       }
    }
@@ -144,31 +144,31 @@ display_token( token_t *tok ) {
 /*    parse_token ...                                                  */
 /*---------------------------------------------------------------------*/
 token_t *
-parse_token( FILE *file ) {
-   static char buffer[ 1024 ];
+parse_token(FILE *file) {
+   static char buffer[1024];
    static int last = 0;
    int c, i = 0;
    int tok = TOKEN_NONE;
 
-   c = last ? last : fgetc( file );
+   c = last ? last : fgetc(file);
 
-   while( c != EOF ) {
-      switch( c ) {
+   while (c != EOF) {
+      switch (c) {
 	 case '(':
 	 case ')':
 	 case '"':
-	    if( i == 0 ) {
+	    if (i == 0) {
 	       last = 0;
-	       return make_token( c, 0L );
+	       return make_token(c, 0L);
 	    } else {
 	       goto _end;
 	    }
 
 	 case ';':
-	    if( i == 0 ) {
+	    if (i == 0) {
 	       do {
-		  c = fgetc( file );
-	       } while( (c != EOF) && (c != '\n') );
+		  c = fgetc(file);
+	       } while ((c != EOF) && (c != '\n'));
 	       last = 0;
 	       goto _next;
 	    } else {
@@ -179,7 +179,7 @@ parse_token( FILE *file ) {
 	 case '\t':
 	 case '\n':
 	    last = 0;
-	    if( i == 0 )
+	    if (i == 0)
 	       goto _next;
 	    else
 	       goto _end;
@@ -194,7 +194,7 @@ parse_token( FILE *file ) {
 	 case '7':
 	 case '8':
 	 case '9':
-	    if( i == 0 ) tok = TOKEN_INT;
+	    if (i == 0) tok = TOKEN_INT;
 	    break;
 
 	 case 'a':
@@ -209,22 +209,22 @@ parse_token( FILE *file ) {
 	 case 'D':
 	 case 'E':
 	 case 'F':
-	    if( !(i >= 2) && (tok == TOKEN_HEX) ) {
+	    if (!(i >= 2) && (tok == TOKEN_HEX)) {
 	       tok = TOKEN_SYMBOL;
 	    }
 	    break;
 
 	 case 'x':
-	    if( (i == 1) && buffer[ 0 ] == '0') {
+	    if ((i == 1) && buffer[ 0 ] == '0') {
 	       tok = TOKEN_HEX;
-	    } else if( tok == TOKEN_NONE ) {
+	    } else if (tok == TOKEN_NONE) {
 	       tok = TOKEN_SYMBOL;
 	    }
 	    break;
 	    
 	 case '+':
 	 case '-':
-	    tok = ( i == 0 ) ? TOKEN_INT : TOKEN_SYMBOL;
+	    tok = (i == 0) ? TOKEN_INT : TOKEN_SYMBOL;
 	    break;
 	    
 	 default:
@@ -234,15 +234,15 @@ parse_token( FILE *file ) {
       
       buffer[ i++ ] = c;
 _next:
-      c = fgetc( file );
+      c = fgetc(file);
    }
 
 _end:
    last = c;
    
-   if( tok != TOKEN_NONE ) {
+   if (tok != TOKEN_NONE) {
       buffer[ i ] = 0;
-      return make_token( tok, buffer );
+      return make_token(tok, buffer);
    } else {
       return 0L;
    }
@@ -253,24 +253,24 @@ _end:
 /*    readstring ...                                                   */
 /*---------------------------------------------------------------------*/
 string_t *
-readstring( FILE *file ) {
-   token_t *tok = parse_token( file );
+readstring(FILE *file) {
+   token_t *tok = parse_token(file);
 
-   if( !tok ) {
-      fprintf( stderr, "Premature end of file\n" );
+   if (!tok) {
+      fprintf(stderr, "Premature end of file\n");
       return 0L;
    } else {
-      if( tok->tok == TOKEN_SYMBOL ) {
-	 token_t *tok2 = parse_token( file );
+      if (tok->tok == TOKEN_SYMBOL) {
+	 token_t *tok2 = parse_token(file);
 
-	 if( !tok2 ) {
-	    fprintf( stderr, "Premature end of file\n" );
+	 if (!tok2) {
+	    fprintf(stderr, "Premature end of file\n");
 	    return 0L;
 	 } else {
-	    if( tok2->tok == TOKEN_GUIL ) {
-	       return make_string( tok->val );
+	    if (tok2->tok == TOKEN_GUIL) {
+	       return make_string(tok->val);
 	    } else {
-	       fprintf( stderr, "Illegal string...%s\n", tok->val );
+	       fprintf(stderr, "Illegal string...%s\n", tok->val);
 	       return 0L;
 	    }
 	 }
@@ -283,23 +283,23 @@ readstring( FILE *file ) {
 /*    readguil ...                                                     */
 /*---------------------------------------------------------------------*/
 string_t *
-readguil( FILE *file ) {
+readguil(FILE *file) {
    static char buffer[ 1024 ];
    int c, i = 0;
 
-   c = fgetc( file );
+   c = fgetc(file);
    
-   while( c != EOF ) {
-      if( c == '"' ) {
+   while (c != EOF) {
+      if (c == '"') {
 	 buffer[ i ] = 0;
-	 return make_string( buffer );
+	 return make_string(buffer);
       } else {
 	 buffer[ i++ ] = c;
-	 c = fgetc( file );
+	 c = fgetc(file);
       }
    }
 
-   fprintf( stderr, "Premature end of file\n" );
+   fprintf(stderr, "Premature end of file\n");
    return 0L;
 }
 
@@ -308,47 +308,47 @@ readguil( FILE *file ) {
 /*    readlist ...                                                     */
 /*---------------------------------------------------------------------*/
 pair_t *
-readlist( FILE *file ) {
-   token_t *tok = parse_token( file );
+readlist(FILE *file) {
+   token_t *tok = parse_token(file);
    pair_t *res = NIL;
 
-   if( !tok ) {
-      fprintf( stderr, "Premature end of file\n" );
+   if (!tok) {
+      fprintf(stderr, "Premature end of file\n");
    } else {
-      if( tok->tok == TOKEN_CLOPAR ) {
+      if (tok->tok == TOKEN_CLOPAR) {
 	 return res;
       } else {
 	 obj_t *car;
-	 switch( tok->tok ) {
+	 switch (tok->tok) {
 	    case TOKEN_OPENPAR:
-	       car = (obj_t *)readlist( file );
+	       car = (obj_t *)readlist(file);
 	       break;
 	    
 	    case TOKEN_SYMBOL:
-	       car = (obj_t *)make_symbol( tok->val );
+	       car = (obj_t *)make_symbol(tok->val);
 	       break;
 	    
 	    case TOKEN_GUIL:
-	       car = (obj_t *)readguil( file );
-	       if( !car ) car = (obj_t *)NIL;
+	       car = (obj_t *)readguil(file);
+	       if (!car) car = (obj_t *)NIL;
 	       break;
 	    
 	    case TOKEN_INT:
-	       car = (obj_t *)make_integer( atol( tok->val ) );
+	       car = (obj_t *)make_integer(atol(tok->val));
 	       break;
 	    
 	    case TOKEN_HEX:
-	       car = (obj_t *)make_integer( strtol( tok->val + 2, 0, 16 ) );
+	       car = (obj_t *)make_integer(strtol(tok->val + 2, 0, 16));
 	       break;
 	    
 	    default:
-	       fprintf( stderr, "Illegal %s: %s\n",
-			token_type( tok ),
-			tok->val );
+	       fprintf(stderr, "Illegal %s: %s\n",
+			token_type(tok),
+			tok->val);
 	       car = (obj_t *)NIL;
 	 } 
 	 
-	 return cons( car, readlist( file ) );
+	 return cons(car, readlist(file));
       }
    }
 }
@@ -358,33 +358,34 @@ readlist( FILE *file ) {
 /*    readobj ...                                                      */
 /*---------------------------------------------------------------------*/
 obj_t *
-readobj( FILE *file ) {
-   token_t *tok = parse_token( file );
+readobj(FILE *file) {
+   token_t *tok = parse_token(file);
 
-   if( !tok ) {
+   if (!tok) {
       return 0L;
    } else {
-      switch( tok->tok ) {
+      switch (tok->tok) {
 	 case TOKEN_OPENPAR:
-	    return (obj_t *)readlist( file );
+	    return (obj_t *)readlist(file);
 	    
 	 case TOKEN_SYMBOL:
-	    return (obj_t *)make_symbol( tok->val );
+	    return (obj_t *)make_symbol(tok->val);
 	    
 	 case TOKEN_STRING:
-	    return (obj_t *)make_string( tok->val );
+	    return (obj_t *)make_string(tok->val);
 	    
 	 case TOKEN_INT:
-	    return (obj_t *)make_integer( atol( tok->val ) );
+	    return (obj_t *)make_integer(atol(tok->val));
 	    
 	 case TOKEN_HEX:
-	    return (obj_t *)make_integer( strtol( tok->val + 2, 0, 16 ) );
+	    return (obj_t *)make_integer(strtol(tok->val + 2, 0, 16));
 	    
 	 default:
-	    fprintf( stderr, "Illegal token %s: %s\n",
-		     token_type( tok ),
-		     tok->val );
+	    fprintf(stderr, "Illegal token %s: %s\n",
+		     token_type(tok),
+		     tok->val);
 	    return (obj_t *)NIL;
       }
+      free(tok);
    }
 }

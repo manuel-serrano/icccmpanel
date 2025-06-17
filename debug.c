@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Fri Jul 19 08:43:57 2024                          */
-/*    Last change :  Fri Jun 13 08:49:19 2025 (serrano)                */
+/*    Last change :  Mon Jun 16 07:59:28 2025 (serrano)                */
 /*    Copyright   :  2024-25 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    Icccmap debug                                                    */
@@ -137,7 +137,7 @@ assert_window_list(taskbar_t *tbar) {
 
    /* check that all windows are registered */
    for(i = 0; i < num; i++) {
-      Window w = wins[ i ];
+      Window w = wins[i];
 
       if (w != tbar->win && !tooltips_windowp(w)) {
 	 xclient_t *xcl = window_xclient(tbar, w);
@@ -277,7 +277,7 @@ debug(taskbar_t *tbar, char *msg, long color) {
    // actual windows
    fprintf(fd, "\nwindows\n");
    for (int i = 0; i < num; i++) {
-      Window w = wins[ i ];
+      Window w = wins[i];
       int desktop = window_desktop(tbar->xinfo->disp, w);
       char inarea = 0;
 

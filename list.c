@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Wed Oct 15 07:04:35 2003                          */
-/*    Last change :  Wed May 14 07:52:07 2025 (serrano)                */
+/*    Last change :  Tue Jun 17 07:42:55 2025 (serrano)                */
 /*    Copyright   :  2003-25 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    List toolkit                                                     */
@@ -19,7 +19,7 @@
 /*---------------------------------------------------------------------*/
 char *
 type_name(obj_t * o) {
-   switch(o->type) {
+   switch (o->type) {
       case TYPE_PAIR: return "pair";
       case TYPE_SYMBOL: return "symbol";
       case TYPE_STRING: return "string";
@@ -59,7 +59,7 @@ display(void *fout, obj_t *o) {
       fprintf((FILE *)fout, "()");
       return;
    } else {
-      switch(o->type) {
+      switch (o->type) {
 	 case TYPE_PAIR:
 	    display_list((FILE *)fout,(pair_t *)o);
 	    return;
@@ -216,19 +216,6 @@ length(pair_t *lst) {
 }
 
 /*---------------------------------------------------------------------*/
-/*    void                                                             */
-/*    free_list ...                                                    */
-/*---------------------------------------------------------------------*/
-void
-free_list(pair_t *lst) {
-   while (PAIRP(lst)) {
-      pair_t *cdr = CDR(lst);
-      free(lst);
-      lst = cdr;
-   }
-}
-
-/*---------------------------------------------------------------------*/
 /*    string_t *                                                       */
 /*    make_symbol ...                                                  */
 /*---------------------------------------------------------------------*/
@@ -283,4 +270,38 @@ make_integer(long v) {
 
    return res;
 }
-   
+
+/*---------------------------------------------------------------------*/
+/*    void                                                             */
+/*    free_list ...                                                    */
+/*---------------------------------------------------------------------*/
+void
+free_list(pair_t *lst) {
+   while (PAIRP(lst)) {
+      pair_t *cdr = CDR(lst);
+      free_obj(CAR(lst));
+      free(lst);
+      lst = cdr;
+   }
+}
+
+/*---------------------------------------------------------------------*/
+/*    void                                                             */
+/*    free_obj ...                                                     */
+/*---------------------------------------------------------------------*/
+void
+free_obj(obj_t *o) {
+   switch (o->type) {
+      case TYPE_PAIR:
+	 free_list((pair_t *)o);
+	 break;
+	 
+      case TYPE_SYMBOL:
+      case TYPE_STRING:
+      case TYPE_INTEGER:
+	 free(o);
+	 break;
+	 
+      default: return;
+   }
+}

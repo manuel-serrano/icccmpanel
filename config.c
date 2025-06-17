@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Fri Oct 17 22:18:02 2003                          */
-/*    Last change :  Wed Apr 23 07:26:24 2025 (serrano)                */
+/*    Last change :  Tue Jun 17 07:44:51 2025 (serrano)                */
 /*    Copyright   :  2003-25 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    The parsing of the MSpanel config file.                          */
@@ -793,6 +793,7 @@ parse_config(config_t *config, char *filename) {
 	       parse_pair(config, (pair_t *)o);
 	    }
 	 }
+	 free_obj(o);
       }		
       return cfg;
    }

@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Wed Oct 15 07:04:04 2003                          */
-/*    Last change :  Wed May 14 07:51:04 2025 (serrano)                */
+/*    Last change :  Tue Jun 17 07:44:39 2025 (serrano)                */
 /*    Copyright   :  2003-25 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    List toolkit                                                     */
@@ -117,4 +117,6 @@ extern void free_list(pair_t *l);
 extern symbol_t *make_symbol(char *);
 extern string_t *make_string(char *);
 extern integer_t *make_integer(long);
+
+extern void free_obj(obj_t *);
 #endif

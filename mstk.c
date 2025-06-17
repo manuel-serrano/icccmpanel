@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Sat Oct 11 05:33:42 2003                          */
-/*    Last change :  Sun Jun 15 13:16:48 2025 (serrano)                */
+/*    Last change :  Mon Jun 16 07:56:18 2025 (serrano)                */
 /*    Copyright   :  2003-25 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    Small X toolkit                                                  */
@@ -234,7 +234,7 @@ init_mstk(config_t *config) {
    init_tooltips(xinfo);
    
    /* initialize the big shaker */
-   if (config->shaker_path) {
+   if (config->mouse_shaker_speed > 0) {
       init_shaker(xinfo, config->shaker_path);
    }
    
@@ -373,6 +373,9 @@ static unsigned long *pixmap_to_rgba(Display *disp, Pixmap icon, Pixmap mask, in
        }
    }
 
+   if (icon_img) XDestroyImage(icon_img);
+   if (mask_img) XDestroyImage(mask_img);
+   
    return data;
 }
 
@@ -514,8 +517,8 @@ get_window_prop_data(Display *disp, Window win,
    int status;
 
    status = XGetWindowProperty(disp, win, prop, 0, 0x7fffffff, False,
-		      type, &type_ret, &format_ret, &items_ret,
-		      &after_ret, &prop_data);
+			       type, &type_ret, &format_ret, &items_ret,
+			       &after_ret, &prop_data);
    
    if (items) *items = items_ret;
 
@@ -598,8 +601,9 @@ window_class(Display *disp, Window win) {
 	 XFree(ch.res_class);
       }
 
-      if (ch.res_name != 0)
+      if (ch.res_name != 0) {
 	 XFree(ch.res_name);
+      }
 
       return res;
    }
@@ -729,17 +733,6 @@ window_update_netwm_icon(Xinfo_t *xinfo, Window win, char *name, Pixmap *icon, P
       fprintf(stderr, "*** ERROR(%s:%d): cannot update icon %s\n",
 	      __FILE__, __LINE__, name);
    }
-}
-
-/*---------------------------------------------------------------------*/
-/*    Window *                                                         */
-/*    desktop_windows ...                                              */
-/*---------------------------------------------------------------------*/
-Window *
-desktop_windows(Xinfo_t *xinfo, long *num) {
-   get_window_prop_data(xinfo->disp, xinfo->root_win,
-			 atom__NET_CLIENT_LIST, XA_WINDOW,
-			 num);
 }
 
 /*---------------------------------------------------------------------*/

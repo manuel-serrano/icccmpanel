@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Fri Jul 23 22:15:38 2004                          */
-/*    Last change :  Sat May 24 13:04:29 2025 (serrano)                */
+/*    Last change :  Tue Jun 17 07:37:05 2025 (serrano)                */
 /*    Copyright   :  2004-25 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    The applications                                                 */
@@ -223,7 +223,7 @@ void
 parse_apps(config_t *config, pair_t *lst) {
    pair_t *l = CDR(lst);
    char cmd = 0;
-   char *cmdicon = "exec.xpm";
+   char *cmdicon = 0;
    symbol_t *sym_command = make_symbol(":command");
    symbol_t *sym_command_icon = make_symbol(":command-icon");
    symbol_t *sym_icon = make_symbol(":icon");
@@ -282,14 +282,22 @@ parse_apps(config_t *config, pair_t *lst) {
    }
 
    args = cons(apps, NIL);
-   if (cmd)
-      args = cons(sym_true,
-		   cons(make_string(cmdicon),
-			 cons(make_integer(applen), args)));
-   else
+   if (cmd) {
+      string_t *ci;
+      
+      if (cmdicon) {
+	 ci = make_string(cmdicon);
+	 free(cmdicon);
+      } else {
+	 ci = make_string("exec.xmp");
+      }
+      
+      args = cons(sym_true, cons(ci, cons(make_integer(applen), args)));
+   } else {
       args = cons(sym_false,
-		   cons(sym_false,
-			 cons(make_integer(0), args)));
+		  cons(sym_false,
+		       cons(make_integer(0), args)));
+   }
    
    register_plugin(config, make_plugin(start_apps, args));
 }
