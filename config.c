@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Fri Oct 17 22:18:02 2003                          */
-/*    Last change :  Tue Jun 17 09:19:11 2025 (serrano)                */
+/*    Last change :  Wed Jun 18 08:36:39 2025 (serrano)                */
 /*    Copyright   :  2003-25 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    The parsing of the MSpanel config file.                          */
@@ -272,8 +272,6 @@ default_config(config_t *config) {
    config->mouse_shaker_speed = 100;
    config->mouse_shaker_sensitivity = 200;
 
-   config->sexp = NIL;
-   
    return config;
 }
 
@@ -795,9 +793,6 @@ parse_config(config_t *config, char *filename) {
 	       parse_pair(config, (pair_t *)o);
 	    }
 	 }
-	 // keep a pointer to the sexp so that valgrind does not
-	 // complain about a memory leak.
-	 cfg->sexp = cons(o, cfg->sexp);
       }		
       return cfg;
    }

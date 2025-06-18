@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Sat Oct 11 05:33:42 2003                          */
-/*    Last change :  Mon Jun 16 07:56:18 2025 (serrano)                */
+/*    Last change :  Wed Jun 18 08:42:28 2025 (serrano)                */
 /*    Copyright   :  2003-25 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    Small X toolkit                                                  */
@@ -509,20 +509,27 @@ client_msg(Display * disp, Window win, char *msg,
 void *
 get_window_prop_data(Display *disp, Window win,
 		      Atom prop, Atom type, long *items) {
-   Atom type_ret;
-   int format_ret;
-   unsigned long items_ret;
-   unsigned long after_ret;
-   unsigned char *prop_data = 0;
-   int status;
-
-   status = XGetWindowProperty(disp, win, prop, 0, 0x7fffffff, False,
-			       type, &type_ret, &format_ret, &items_ret,
-			       &after_ret, &prop_data);
+   XWindowAttributes attr;
    
-   if (items) *items = items_ret;
+   // check first that the window exists
+   if (XGetWindowAttributes(disp, win, &attr)) {
+      Atom type_ret;
+      int format_ret;
+      unsigned long items_ret;
+      unsigned long after_ret;
+      unsigned char *prop_data = 0;
+      int status;
 
-   return prop_data;
+      status = XGetWindowProperty(disp, win, prop, 0, 0x7fffffff, False,
+				  type, &type_ret, &format_ret, &items_ret,
+				  &after_ret, &prop_data);
+   
+      if (items) *items = items_ret;
+
+      return prop_data;
+   } else {
+      return 0L;
+   }
 }
 
 /*---------------------------------------------------------------------*/
@@ -550,7 +557,7 @@ char *
 window_name(Display *disp, Window win) {
    char *data = get_window_prop_data(disp, win, atom__NET_WM_NAME, atom__UTF8_STRING, 0);
 
-#if DEBUG
+#if DEBUG > 2
    fprintf(stderr, "%s:%d window_name w=%p\n", __FILE__, __LINE__, win);
 #endif
    
@@ -580,7 +587,7 @@ window_class(Display *disp, Window win) {
    long num;
    XClassHint ch;
 
-#if DEBUG
+#if DEBUG > 2
    fprintf(stderr, "%s:%d window_class w=%p\n", __FILE__, __LINE__, win);
 #endif
    
@@ -1008,8 +1015,8 @@ draw_pixmap(Xinfo_t *xinfo, Window win,
    Display *disp = (xinfo)->disp;
    GC gc = (xinfo)->gcb;
    
-#if DEBUG
-   fprintf(stderr, "%s:%d draw_pixmap win=%p px=%p.\n",
+#if DEBUG > 2
+   fprintf(stderr, "%s:%d draw_pixmap win=%p px=%p\n",
 	   __FILE__, __LINE__,
 	   win, icon);
 #endif

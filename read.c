@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Sun Aug  1 05:55:00 2004                          */
-/*    Last change :  Tue Jun 17 07:39:54 2025 (serrano)                */
+/*    Last change :  Tue Jun 17 10:53:13 2025 (serrano)                */
 /*    Copyright   :  2004-25 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    parsing                                                          */
@@ -55,6 +55,16 @@ make_token(int tok, char *val) {
    }
    
    return tk;
+}
+
+/*---------------------------------------------------------------------*/
+/*    void                                                             */
+/*    free_token ...                                                   */
+/*---------------------------------------------------------------------*/
+void
+free_token(token_t *tok) {
+   if (tok->val) free(tok->val);
+   free(tok);
 }
 
 /*---------------------------------------------------------------------*/
@@ -265,11 +275,16 @@ readstring(FILE *file) {
 
 	 if (!tok2) {
 	    fprintf(stderr, "Premature end of file\n");
+	    free_token(tok);
 	    return 0L;
 	 } else {
 	    if (tok2->tok == TOKEN_GUIL) {
+	       free_token(tok);
+	       free(tok2);
 	       return make_string(tok->val);
 	    } else {
+	       free_token(tok);
+	       free(tok2);
 	       fprintf(stderr, "Illegal string...%s\n", tok->val);
 	       return 0L;
 	    }
@@ -316,6 +331,7 @@ readlist(FILE *file) {
       fprintf(stderr, "Premature end of file\n");
    } else {
       if (tok->tok == TOKEN_CLOPAR) {
+	 free_token(tok);
 	 return res;
       } else {
 	 obj_t *car;
@@ -347,7 +363,8 @@ readlist(FILE *file) {
 			tok->val);
 	       car = (obj_t *)NIL;
 	 } 
-	 
+
+	 free_token(tok);
 	 return cons(car, readlist(file));
       }
    }
@@ -364,28 +381,37 @@ readobj(FILE *file) {
    if (!tok) {
       return 0L;
    } else {
+      obj_t *obj;
+      
       switch (tok->tok) {
 	 case TOKEN_OPENPAR:
-	    return (obj_t *)readlist(file);
+	    obj = (obj_t *)readlist(file);
+	    break;
 	    
 	 case TOKEN_SYMBOL:
-	    return (obj_t *)make_symbol(tok->val);
+	    obj = (obj_t *)make_symbol(tok->val);
+	    break;
 	    
 	 case TOKEN_STRING:
-	    return (obj_t *)make_string(tok->val);
+	    obj = (obj_t *)make_string(tok->val);
+	    break;
 	    
 	 case TOKEN_INT:
-	    return (obj_t *)make_integer(atol(tok->val));
+	    obj = (obj_t *)make_integer(atol(tok->val));
+	    break;
 	    
 	 case TOKEN_HEX:
-	    return (obj_t *)make_integer(strtol(tok->val + 2, 0, 16));
+	    obj = (obj_t *)make_integer(strtol(tok->val + 2, 0, 16));
+	    break;
 	    
 	 default:
 	    fprintf(stderr, "Illegal token %s: %s\n",
 		     token_type(tok),
 		     tok->val);
-	    return (obj_t *)NIL;
+	    obj =(obj_t *)NIL;
       }
-      free(tok);
+      free_token(tok);
+
+      return obj;
    }
 }
