@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Sat Oct 11 05:33:42 2003                          */
-/*    Last change :  Fri Jun 20 14:38:11 2025 (serrano)                */
+/*    Last change :  Fri Jun 20 17:25:22 2025 (serrano)                */
 /*    Copyright   :  2003-25 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    Small X toolkit                                                  */
@@ -126,8 +126,8 @@ handle_error(Display *d, XErrorEvent *ev) {
       XGetErrorText(d, ev->error_code, buf, sizeof(buf));
 
       fprintf(stderr, "Xlib error: %s\nicccmpanel exit...\n", buf);
-      fprintf(stderr, "%s:%d forcing sigsev %d\n", __FILE__, __LINE__, 1/0);
-      exit (1);
+/*       fprintf(stderr, "%s:%d forcing sigsev %d\n", __FILE__, __LINE__, 1/0); */
+/*       exit (1);                                                     */
    }
 }
 
