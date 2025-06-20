@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Sat Oct 11 05:44:23 2003                          */
-/*    Last change :  Fri Jun 13 07:35:59 2025 (serrano)                */
+/*    Last change :  Fri Jun 20 14:41:55 2025 (serrano)                */
 /*    Copyright   :  2003-25 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    MS X toolkit                                                     */
@@ -55,6 +55,7 @@ extern void closeup_mstk(Xinfo_t *);
 extern void *get_window_prop_data(Display *, Window, Atom, Atom, long *);
 extern void set_window_prop(Display *,  Window, Atom, Atom, long);
 
+extern int window_exists(Display *, Window);
 extern char *window_name(Display *, Window);
 extern int window_desktop(Display *, Window);
 extern char *window_class(Display *, Window);

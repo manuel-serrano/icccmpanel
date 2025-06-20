@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Sat Oct 11 05:33:42 2003                          */
-/*    Last change :  Wed Jun 18 08:42:28 2025 (serrano)                */
+/*    Last change :  Fri Jun 20 14:38:11 2025 (serrano)                */
 /*    Copyright   :  2003-25 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    Small X toolkit                                                  */
@@ -101,6 +101,18 @@ color_t palette[] = {
 /*---------------------------------------------------------------------*/
 unsigned long mstk_palette[MSTK_PALETTE_COUNT];
 unsigned long mstk_grey_palette[256];
+static int error_handler_enabled = 1;
+
+/*---------------------------------------------------------------------*/
+/*    int                                                              */
+/*    enable_error_handler ...                                         */
+/*---------------------------------------------------------------------*/
+static int
+enable_error_handler(int n) {
+   int p = error_handler_enabled;
+   error_handler_enabled = n;
+   return p;
+}
 
 /*---------------------------------------------------------------------*/
 /*    void                                                             */
@@ -108,13 +120,15 @@ unsigned long mstk_grey_palette[256];
 /*---------------------------------------------------------------------*/
 static void
 handle_error(Display *d, XErrorEvent *ev) {
-   char buf[1024];
+   if (error_handler_enabled) {
+      char buf[1024];
    
-   XGetErrorText(d, ev->error_code, buf, sizeof(buf));
+      XGetErrorText(d, ev->error_code, buf, sizeof(buf));
 
-   fprintf(stderr, "Xlib error: %s\nicccmpanel exit...\n", buf);
-   fprintf(stderr, "%s:%d forcing sigsev %d\n", __FILE__, __LINE__, 1/0);
-   exit (1);
+      fprintf(stderr, "Xlib error: %s\nicccmpanel exit...\n", buf);
+      fprintf(stderr, "%s:%d forcing sigsev %d\n", __FILE__, __LINE__, 1/0);
+      exit (1);
+   }
 }
 
 /*---------------------------------------------------------------------*/
@@ -277,11 +291,12 @@ scale_icon(Xinfo_t *xinfo, Window win,
    int depth = xinfo->screen_depth;
    int xx, yy, x, y;
    unsigned int w, h, d, bw;
+   Window root;
    Pixmap pix, mk = None;
    XGCValues gcv;
    GC mgc;
 
-   if (!XGetGeometry(disp, icon, &pix, &x, &y, &w, &h, &bw, &d)) {
+   if (!XGetGeometry(disp, icon, &root, &x, &y, &w, &h, &bw, &d)) {
       char *name = window_name(disp, win);
       fprintf(stderr, "*** ERROR(%s:%d): cannot get geometry win=%p name=%s\n", 
 	      __FILE__, __LINE__, win, name);
@@ -547,6 +562,23 @@ get_window_prop_int(Display *disp, Window win, Atom at) {
       XFree(data);
    }
    return num;
+}
+
+/*---------------------------------------------------------------------*/
+/*    int                                                              */
+/*    window_exists ...                                                */
+/*---------------------------------------------------------------------*/
+int
+window_exists(Display *disp, Window win) {
+   XWindowAttributes attr;
+   int o = enable_error_handler(0);
+   if (XGetWindowAttributes(disp, win, &attr)) {
+      enable_error_handler(o);
+      return 1;
+   } else {
+      enable_error_handler(o);
+      return 0;
+   }
 }
 
 /*---------------------------------------------------------------------*/

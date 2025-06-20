@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Thu Jul 22 14:32:38 2004                          */
-/*    Last change :  Mon Jun 16 07:44:39 2025 (serrano)                */
+/*    Last change :  Fri Jun 20 14:33:35 2025 (serrano)                */
 /*    Copyright   :  2004-25 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    Taskbar management                                               */
@@ -541,7 +541,9 @@ taskbar_register_xclients(taskbar_t *tbar) {
    for (i = 0; i < num; i++) {
       Window w = wins[i];
 
-      if (w != tbar->win && !tooltips_windowp(w) && !find_area(tbar, w)) {
+      if (w != tbar->win && !tooltips_windowp(w)
+	  && !find_area(tbar, w)
+	  && window_exists(disp, w)) {
 	 xclient_t *xcl = window_xclient(tbar, w);
 
 #if DEBUG	 
