@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Thu Jul 22 14:32:38 2004                          */
-/*    Last change :  Fri Jun 20 14:33:35 2025 (serrano)                */
+/*    Last change :  Fri Jun 20 15:25:38 2025 (serrano)                */
 /*    Copyright   :  2004-25 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    Taskbar management                                               */
@@ -790,7 +790,7 @@ taskbar_property_notify(taskbar_t *tbar, XEvent *ev) {
 	    taskbar_register_xclients(tbar);
 	 }
       }
-   } else {
+   } else if (window_exists(disp, win)) {
       area_t *ar = find_area(tbar, win);
 
       if (at == XA_WM_NAME) {
