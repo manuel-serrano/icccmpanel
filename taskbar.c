@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Thu Jul 22 14:32:38 2004                          */
-/*    Last change :  Fri Jun 20 15:25:38 2025 (serrano)                */
+/*    Last change :  Wed Jun 25 07:33:59 2025 (serrano)                */
 /*    Copyright   :  2004-25 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    Taskbar management                                               */
@@ -571,7 +571,7 @@ taskbar_register_xclients(taskbar_t *tbar) {
    }
 
    XFree(wins);
-   assert_window_list(tbar);
+   // assert_window_list(tbar);
 }
 
 /*---------------------------------------------------------------------*/
