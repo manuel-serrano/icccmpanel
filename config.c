@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Fri Oct 17 22:18:02 2003                          */
-/*    Last change :  Wed Jun 18 08:36:39 2025 (serrano)                */
+/*    Last change :  Sat Aug 16 10:40:50 2025 (serrano)                */
 /*    Copyright   :  2003-25 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    The parsing of the MSpanel config file.                          */
@@ -191,17 +191,29 @@ find_rc_file(char *layout) {
    sprintf(buf, "icccmpanel.%s", host);
    dir = buf;
   
+#if DEBUG
+   fprintf(stderr, "rc layout=%s\n", layout);
+#endif   
+	   
    while (dir) {
       if (layout) {
 	 sprintf(fname, "%s/.config/%s/icccmpanelrc.%s.%s", home, dir, host, layout);
+#if DEBUG
+	 fprintf(stderr, "trying rc file=%s\n", fname);
+#endif
 	 if (!access(fname, R_OK)) return fname;
       }
       
       sprintf(fname, "%s/.config/%s/icccmpanelrc.%s", home, dir, host);
-
+#if DEBUG
+   fprintf(stderr, "trying rc file=%s\n", fname);
+#endif
       if (!access(fname, R_OK)) return fname;
       
       sprintf(fname, "%s/.config/%s/icccmpanelrc", home, dir);
+#if DEBUG
+      fprintf(stderr, "trying rc file=%s\n", fname);
+#endif
       if (!access(fname, R_OK)) return fname;
 
       dir = prefix(dir);
@@ -212,6 +224,10 @@ find_rc_file(char *layout) {
 	    ICCCMPANEL_DIR,
 	    ICCCMPANEL_RELEASE);
 
+#if DEBUG
+   fprintf(stderr, "trying rc file=%s\n", fname);
+#endif
+   
    if (!access(fname, R_OK))
       return fname;
    else
@@ -773,8 +789,10 @@ parse_config(config_t *config, char *filename) {
    register_parser(make_symbol("exec"), parse_exec);
    register_parser(make_symbol("mouse-shaker-speed"), parse_mouse_shaker_speed);
    register_parser(make_symbol("mouse-shaker-sensitivity"), parse_mouse_shaker_sensitivity);
-   
+
+#if DEBUG
    printf("Parsing config file `%s'\n", filename);
+#endif
    
    if (!fin) {
       fprintf(stderr, "Can't open config file `%s'\n", filename);
