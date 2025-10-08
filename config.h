@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Mon Oct 13 13:35:06 2003                          */
-/*    Last change :  Wed Jun 18 08:39:16 2025 (serrano)                */
+/*    Last change :  Wed Oct  8 07:15:59 2025 (serrano)                */
 /*    Copyright   :  2003-25 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    Icccmpanel config parsing                                        */
@@ -75,10 +75,10 @@ typedef struct config {
 /*---------------------------------------------------------------------*/
 /*    extern declarations                                              */
 /*---------------------------------------------------------------------*/
-extern config_t *make_config();
+extern config_t *make_config(int, char *[]);
 extern plugin_t *make_plugin(void *(*)(void *, pair_t *), pair_t *);
 extern char *find_icon(config_t *, char *);
-extern char *find_rc_file();
+extern char *find_rc_file(char *);
 extern char *expand_env(char *);
 
 extern void parse_error(char *, obj_t *);
