@@ -12,6 +12,10 @@
 ;;    (auto-hide <#t|#f>)
 (auto-hide #f)
 
+;; auto-raise
+;;    (auto-raise <#t|#f>)
+(auto-raise #t)
+
 ;; icons description:
 ;;    (icons (icon <string> {:name <string>}? <string>)*)
 (icons-descr

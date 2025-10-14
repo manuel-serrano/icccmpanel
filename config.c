@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Fri Oct 17 22:18:02 2003                          */
-/*    Last change :  Sat Aug 16 10:40:50 2025 (serrano)                */
+/*    Last change :  Wed Oct 15 01:12:48 2025 (serrano)                */
 /*    Copyright   :  2003-25 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    The parsing of the MSpanel config file.                          */
@@ -288,6 +288,8 @@ default_config(config_t *config) {
    config->mouse_shaker_speed = 100;
    config->mouse_shaker_sensitivity = 200;
 
+   config->auto_raise = 1;
+
    return config;
 }
 
@@ -450,6 +452,21 @@ parse_shaker_path(config_t *config, pair_t *lst) {
       parse_error("Illegal shaker-path", (obj_t *)lst);
    } else {
       config->shaker_path = STRINGP(s) ? STRING_CHARS(s) : 0;
+   }
+}
+
+/*---------------------------------------------------------------------*/
+/*    static void                                                      */
+/*    parse_auto_raise ...                                             */
+/*---------------------------------------------------------------------*/
+static void
+parse_auto_raise(config_t *config, pair_t *lst) {
+   symbol_t *s = parse_cadr_symbol(lst);
+   
+   if (!s) {
+      parse_error("Illegal auto-raise", (obj_t *)lst);
+   } else {
+      config->auto_raise = SYMBOL_EQ(s, sym_true);
    }
 }
 
@@ -789,6 +806,7 @@ parse_config(config_t *config, char *filename) {
    register_parser(make_symbol("exec"), parse_exec);
    register_parser(make_symbol("mouse-shaker-speed"), parse_mouse_shaker_speed);
    register_parser(make_symbol("mouse-shaker-sensitivity"), parse_mouse_shaker_sensitivity);
+   register_parser(make_symbol("auto-raise"), parse_auto_raise);
 
 #if DEBUG
    printf("Parsing config file `%s'\n", filename);

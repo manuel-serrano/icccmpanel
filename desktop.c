@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Fri Jul 23 22:15:38 2004                          */
-/*    Last change :  Thu Apr 24 11:20:24 2025 (serrano)                */
+/*    Last change :  Wed Oct 15 01:11:14 2025 (serrano)                */
 /*    Copyright   :  2004-25 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    The desktop                                                      */
@@ -56,10 +56,11 @@ refresh_desktop(area_t *ar) {
    int i;
    int desktop = current_desktop(xinfo->disp, xinfo->root_win);
 
-   /* force a client refresh */
-   // 22ju2024, don't think this is required
-   // taskbar_register_xclients(tbar);
-   
+   /* automatic raise of the icccmpanel when configured */
+   if (tbar->config->auto_raise) {
+      XRaiseWindow(xinfo->disp, tbar->win);
+   }
+
    /* compute the desktop info */
    if (desktop > DESKTOPNAMES_COUNT) {
       dname = "???";

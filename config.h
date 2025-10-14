@@ -3,7 +3,7 @@
 /*    -------------------------------------------------------------    */
 /*    Author      :  Manuel Serrano                                    */
 /*    Creation    :  Mon Oct 13 13:35:06 2003                          */
-/*    Last change :  Wed Oct  8 07:15:59 2025 (serrano)                */
+/*    Last change :  Wed Oct 15 01:12:17 2025 (serrano)                */
 /*    Copyright   :  2003-25 Manuel Serrano                            */
 /*    -------------------------------------------------------------    */
 /*    Icccmpanel config parsing                                        */
@@ -70,6 +70,7 @@ typedef struct config {
    char *shaker_path;
    int mouse_shaker_speed;
    int mouse_shaker_sensitivity;
+   int auto_raise;
 } config_t;
 
 /*---------------------------------------------------------------------*/
